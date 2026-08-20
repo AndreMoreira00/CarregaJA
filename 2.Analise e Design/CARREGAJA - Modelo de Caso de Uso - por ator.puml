@@ -1,0 +1,181 @@
+' =====================================================================
+' CARREGAJA - Modelo de Caso de Uso, recortado por ator
+' Quatro diagramas, um por ator. Servem para leitura e para a
+' apresentação; o diagrama completo está no arquivo
+' "CARREGAJA - Modelo de Caso de Uso.puml".
+' =====================================================================
+
+@startuml CARREGAJA-CasoDeUso-Motorista
+title Motorista — autoatendimento no totem
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #264653
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #F7F9F9
+  BorderColor #264653
+}
+
+actor "Motorista" as MOT
+
+rectangle "CARREGAJA" {
+  usecase "UC01\nConsultar Painel de Vagas" as UC01
+  usecase "UC02\nIniciar Sessão de Recarga" as UC02
+  usecase "UC03\nCalcular Previsão\nde Conclusão" as UC03
+  usecase "UC04\nUtilizar Perfil Genérico\nde Veículo" as UC04
+}
+
+MOT --> UC01
+MOT --> UC02
+UC02 ..> UC03 : <<include>>
+UC04 ..> UC02 : <<extend>>
+
+note bottom of UC04
+  Acionado quando o modelo
+  informado não consta do
+  catálogo. A previsão passa
+  a ser marcada como aproximada.
+end note
+
+note as N1
+  O Motorista é anônimo:
+  não possui cadastro nem
+  credenciais. Identifica-se
+  pela placa e pelo código
+  de sessão.
+end note
+
+@enduml
+
+
+@startuml CARREGAJA-CasoDeUso-OperadorCaixa
+title Operador de Caixa — ponto de pagamento
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #264653
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #F7F9F9
+  BorderColor #264653
+}
+
+actor "Operador de Caixa" as OPC
+
+rectangle "CARREGAJA" {
+  usecase "UC16\nAutenticar Usuário" as UC16
+  usecase "UC05\nEncerrar Sessão de Recarga" as UC05
+  usecase "UC06\nLocalizar Sessão Ativa" as UC06
+  usecase "UC07\nApurar Valor da Sessão" as UC07
+  usecase "UC08\nConsultar Sessões Ativas" as UC08
+}
+
+OPC --> UC16
+OPC --> UC05
+OPC --> UC08
+UC05 ..> UC06 : <<include>>
+UC05 ..> UC07 : <<include>>
+
+note bottom of UC05
+  Único ponto de encerramento
+  de sessão do sistema.
+  O totem não encerra.
+end note
+
+note as N2
+  Perfil restrito: não altera
+  tarifa, não acessa relatórios
+  financeiros e não modifica o
+  mapa do estacionamento.
+end note
+
+@enduml
+
+
+@startuml CARREGAJA-CasoDeUso-Estabelecimento
+title Estabelecimento — gestão do estacionamento
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #264653
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #F7F9F9
+  BorderColor #264653
+}
+
+actor "Estabelecimento" as EST
+
+rectangle "CARREGAJA" {
+  usecase "UC16\nAutenticar Usuário" as UC16
+  usecase "UC10\nManter Vagas com Carregador" as UC10
+  usecase "UC11\nDefinir Tarifa de Ocupação" as UC11
+  usecase "UC12\nManter Operadores de Caixa" as UC12
+  usecase "UC01\nConsultar Painel de Vagas" as UC01
+  usecase "UC08\nConsultar Sessões Ativas" as UC08
+  usecase "UC09\nEncerrar Sessão Órfã" as UC09
+  usecase "UC13\nConsultar Relatórios de\nUtilização e Receita" as UC13
+  usecase "UC06\nLocalizar Sessão Ativa" as UC06
+  usecase "UC07\nApurar Valor da Sessão" as UC07
+}
+
+EST --> UC16
+EST --> UC10
+EST --> UC11
+EST --> UC12
+EST --> UC01
+EST --> UC08
+EST --> UC09
+EST --> UC13
+UC09 ..> UC06 : <<include>>
+UC09 ..> UC07 : <<include>>
+
+note bottom of UC09
+  Encerramento administrativo
+  de sessão aberta além do
+  limite máximo. Registra
+  justificativa e responsável.
+end note
+
+@enduml
+
+
+@startuml CARREGAJA-CasoDeUso-Administrador
+title Administrador do Sistema — operação do produto
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #264653
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #F7F9F9
+  BorderColor #264653
+}
+
+actor "Administrador\ndo Sistema" as ADM
+
+rectangle "CARREGAJA" {
+  usecase "UC16\nAutenticar Usuário" as UC16
+  usecase "UC14\nManter Catálogo de\nModelos de Veículo" as UC14
+  usecase "UC15\nManter Estabelecimentos\nAssinantes" as UC15
+}
+
+ADM --> UC16
+ADM --> UC14
+ADM --> UC15
+
+note bottom of UC14
+  Inclui os perfis genéricos
+  por porte de veículo, usados
+  quando o modelo do motorista
+  não está cadastrado (UC04).
+end note
+
+note as N3
+  Único ator com alcance sobre
+  todos os estabelecimentos
+  assinantes.
+end note
+
+@enduml
