@@ -1,7 +1,7 @@
 # CarregaJA
 
-Sistema de gerenciamento de vagas de estacionamento e gasto de energia para carregar carros
-elétricos. Projeto da disciplina **Engenharia de Software 1**.
+Sistema de agendamento de vagas com carregador e rateio do consumo de energia em um condomínio
+residencial. Projeto da disciplina **Engenharia de Software 1**.
 
 O que a disciplina avalia é o **processo**: como cada etapa é executada, documentada e
 evidenciada. O código é meio, não fim.
@@ -36,10 +36,28 @@ professor avaliará apresentando o artefato **Checklist de Projeto** (aba `Ver-I
 | Tarefa da WBS | Situação |
 |---|---|
 | Criar Repositório do Projeto | ✅ Concluída — estrutura oficial do `Estrutura-Projeto.zip` |
-| Definir o Escopo do Sistema | 🔄 Visão escrita; falta o Modelo de Caso de Uso |
+| Definir o Escopo do Sistema | 🔄 Visão v2.0 e Modelo de Caso de Uso v2.0 escritos; falta aprovação do PO |
+| *Detalhar Requisitos* (Fase 2) | ⏩ **Antecipada.** História de Usuário v1.0 escrita na Iniciação, por decisão da equipe, para tornar o escopo verificável antes da aprovação. Estimativas em aberto |
 | Reunião de Planejamento do Projeto | ⬜ Pendente — Planilha de PCP |
 | Reunião de Revisão do Planejamento | ⬜ Pendente |
 | Reunião de Revisão do Sprint | ⬜ Pendente — preenche o Checklist |
+
+**Pendências abertas do escopo reduzido (27/08/2026):**
+
+| Pendência | Onde trava |
+|---|---|
+| `CARREGAJA - Visão.docx` ainda é a v1.1 | O `.md` é a fonte da verdade. **Pandoc já instalado** — regerar só depois que o escopo v2.0 estabilizar, para não converter duas vezes |
+| Tolerância de comparecimento (UC10) sem valor definido | Parâmetro de configuração; decidir antes de detalhar o caso de uso |
+| Aprovação do escopo reduzido pelo PO | Item 11 do Checklist — mais relevante agora, por alterar o produto acordado |
+
+**Diagramas.** Os `.puml` em `2.Analise e Design/` são a fonte; os `.png`/`.svg` são gerados.
+Depois de editar um `.puml`, regerar os dois formatos — os arquivos da v1.0, com os atores que
+deixaram de existir, já foram removidos:
+
+```bash
+java -jar plantuml.jar -charset UTF-8 -tpng "CARREGAJA - Modelo de Caso de Uso.puml" "CARREGAJA - Modelo de Caso de Uso - por ator.puml"
+java -jar plantuml.jar -charset UTF-8 -tsvg "CARREGAJA - Modelo de Caso de Uso.puml" "CARREGAJA - Modelo de Caso de Uso - por ator.puml"
+```
 
 > Manter esta seção atualizada conforme o projeto avança.
 
@@ -74,37 +92,56 @@ executa.
 
 ## Escopo do produto
 
-**CARREGAJA** — SaaS B2B para gestão de vagas com carregador de veículos elétricos em
-estacionamentos comerciais. O **estabelecimento** é o cliente contratante; o **motorista** é o
-usuário final, atendido por um **totem** de autoatendimento.
+**CARREGAJA** — sistema de **agendamento e rateio** de recarga de veículos elétricos para **um
+condomínio residencial específico**. Poucas vagas com carregador na área comum, muitos
+apartamentos disputando-as, e a energia saindo da conta de luz que todos pagam. O morador
+agenda pelo celular, registra a recarga ao chegar, e o síndico fecha o mês com o valor por
+apartamento.
+
+> **Houve redução de escopo em 27/08/2026 (Visão v2.0).** A v1.1 descrevia um SaaS B2B por
+> assinatura para estacionamentos comerciais, com totem, motorista anônimo e encerramento no
+> caixa. Foi descartado por não caber no prazo e na capacidade da equipe. **Ao ler qualquer
+> coisa anterior a essa data — commits, issues, PRs, a v1.1 do Visão — assumir que descreve o
+> produto antigo.**
 
 Decisões de escopo já fechadas — não reabrir sem motivo:
 
 | Decisão | Definição |
 |---|---|
-| **Atores** | Administrador do Sistema · Estabelecimento · **Operador de Caixa** · Motorista |
-| **Cobrança** | Por **tempo de ocupação** da vaga × tarifa/hora do estabelecimento |
-| **Início da sessão** | No **totem**, junto às vagas: vaga, modelo, bateria, placa → comprovante com código |
-| **Encerramento** | **Exclusivamente no ponto de pagamento**, pelo Operador de Caixa. O totem não encerra |
-| **Pagamento** | Fora do sistema — a recarga é somada à conta que o cliente já iria quitar |
-| **Identificação** | Motorista **anônimo**: placa + código de sessão impresso no comprovante de início |
+| **Atores** | **Morador** · **Síndico** · *Tempo* (ator temporal, dispara só a expiração de reserva) |
+| **Alcance** | **Um único condomínio.** Sem multiempresa, sem gestão de assinantes |
+| **Canal** | Aplicação **web no celular**. Sem totem, sem app nativo |
+| **Identificação** | Morador **cadastrado**, com login, vinculado a um **apartamento** — a unidade de rateio |
+| **Agendamento** | Reserva de vaga por janela de horário, com **tolerância de comparecimento**; não compareceu, a vaga é liberada |
+| **Limite de reserva** | **1 agendamento futuro em aberto por morador**, antecedência máxima de **7 dias** |
+| **Duração da sessão** | Máximo de **6 horas** (parâmetro, não valor fixo). Atingido o limite o sistema **sinaliza como excedida e mantém a sessão aberta** — não encerra sozinho |
+| **Apuração** | Por **energia estimada** (kWh) × tarifa do kWh vigente no início da sessão |
+| **Cobrança** | Fora do sistema — o síndico fecha o mês e a administradora lança na cota condominial |
+| **Veículo** | Cadastrado **uma vez** pelo morador (modelo, capacidade, potência máx.). Sem catálogo compartilhado |
+| **Encerramento** | O **próprio morador** encerra sua sessão. O síndico só encerra sessão órfã, por via administrativa registrada |
 | **Hardware** | **Sem integração** com os carregadores — tudo é declarado por pessoas |
-| **Catálogo de modelos** | Mantido pelo Administrador; perfis genéricos por porte como fallback |
-
-**Por que o encerramento é no caixa, e não no totem:** o totem fica junto às vagas, fora do
-estabelecimento. Encerrar ali obrigaria o cliente a sair, encerrar e voltar para pagar — e em
-restaurante, supermercado ou hotel, que não têm cancela, nada o obrigaria a voltar. Encerrando
-no ponto de pagamento, a recarga entra numa conta que ele já ia quitar. Funciona igual para
-estabelecimento com e sem controle de saída.
 
 **A regra de negócio central:** `potência efetiva = min(potência do carregador, potência máxima
-do carro)`. É ela que justifica o catálogo de modelos existir e é o maior risco técnico do
+do carro)`. É ela que justifica o cadastro de veículo existir e é o maior risco técnico do
 projeto — deve ser atacada primeiro na Elaboração, como arquitetura executável.
 
-> **Por que a cobrança é por tempo e não por energia:** a energia seria calculada a partir da
-> potência do carro, que o motorista declara — permitindo subdeclarar para pagar menos.
-> Cobrando por tempo, nenhum campo declarado afeta o preço, e ocupar a vaga após concluir a
-> recarga passa a ter custo.
+**A fórmula da apuração**, que decorre dela:
+
+```
+energia a repor  = capacidade da bateria × (100% − nível informado)
+energia estimada = min(potência efetiva × duração, energia a repor)
+valor da sessão  = energia estimada × tarifa vigente no início
+```
+
+> **Por que a apuração é por energia, e não por tempo como na v1.1:** o argumento anterior era
+> anti-fraude — o motorista anônimo poderia subdeclarar a potência para pagar menos. Aqui o
+> morador é identificado, recorrente, e cadastra o veículo **uma vez só**, sob vista do síndico.
+> A brecha fecha, e a energia passa a ser a unidade certa: é em kWh que a concessionária cobra
+> o condomínio, e é isso que o rateio devolve.
+
+> **Consequência aceita:** como a energia é limitada pela carga que faltava, **ocupar a vaga
+> depois de carregado não custa nada**. O instrumento de rotatividade passa a ser o
+> agendamento, não o preço. Ver risco RI-04 do Visão.
 
 ## Onde cada artefato vai
 

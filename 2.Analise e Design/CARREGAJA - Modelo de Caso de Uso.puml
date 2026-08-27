@@ -1,10 +1,10 @@
 @startuml CARREGAJA-ModeloCasoDeUso-Geral
 ' =====================================================================
 ' CARREGAJA - Modelo de Caso de Uso (visão geral)
-' Projeto: Sistema de Gerenciamento de Recarga de Veículos Elétricos
-'          em Estacionamentos
-' Versão do modelo: 1.0
-' Derivado de: 1.Requisitos/CARREGAJA - Visão.md (v1.1)
+' Projeto: Sistema de Agendamento e Rateio de Recarga de Veículos
+'          Elétricos em Condomínio
+' Versão do modelo: 2.0
+' Derivado de: 1.Requisitos/CARREGAJA - Visão.md (v2.0)
 ' =====================================================================
 
 title CARREGAJA — Modelo de Caso de Uso
@@ -22,88 +22,72 @@ skinparam rectangle {
   BorderColor #264653
 }
 
-actor "Motorista" as MOT
-actor "Operador de Caixa" as OPC
-actor "Estabelecimento" as EST
-actor "Administrador\ndo Sistema" as ADM
+actor "Morador" as MOR
+actor "Síndico" as SIN
+actor "Tempo" as TMP #CDD6D6
 
 rectangle "CARREGAJA" {
 
-  ' ---------- Operação no totem ----------
-  usecase "UC01\nConsultar Painel de Vagas" as UC01
-  usecase "UC02\nIniciar Sessão de Recarga" as UC02
-  usecase "UC03\nCalcular Previsão\nde Conclusão" as UC03
-  usecase "UC04\nUtilizar Perfil Genérico\nde Veículo" as UC04
-
-  ' ---------- Operação no ponto de pagamento ----------
-  usecase "UC05\nEncerrar Sessão de Recarga" as UC05
-  usecase "UC06\nLocalizar Sessão Ativa" as UC06
-  usecase "UC07\nApurar Valor da Sessão" as UC07
-  usecase "UC08\nConsultar Sessões Ativas" as UC08
-
-  ' ---------- Gestão do estabelecimento ----------
-  usecase "UC09\nEncerrar Sessão Órfã" as UC09
-  usecase "UC10\nManter Vagas com Carregador" as UC10
-  usecase "UC11\nDefinir Tarifa de Ocupação" as UC11
-  usecase "UC12\nManter Operadores de Caixa" as UC12
-  usecase "UC13\nConsultar Relatórios de\nUtilização e Receita" as UC13
-
-  ' ---------- Administração do produto ----------
-  usecase "UC14\nManter Catálogo de\nModelos de Veículo" as UC14
-  usecase "UC15\nManter Estabelecimentos\nAssinantes" as UC15
-
   ' ---------- Acesso ----------
-  usecase "UC16\nAutenticar Usuário" as UC16
+  usecase "UC01\nAutenticar Usuário" as UC01
+
+  ' ---------- Uso pelo morador ----------
+  usecase "UC02\nConsultar Painel de Vagas" as UC02
+  usecase "UC03\nManter Agendamento" as UC03
+  usecase "UC04\nIniciar Sessão de Recarga" as UC04
+  usecase "UC05\nCalcular Previsão\nde Conclusão" as UC05 #2A9D8F
+  usecase "UC06\nEncerrar Sessão de Recarga" as UC06
+  usecase "UC07\nApurar Energia da Sessão" as UC07 #2A9D8F
+  usecase "UC08\nManter Veículo" as UC08
+  usecase "UC09\nConsultar Consumo do Mês" as UC09
+
+  ' ---------- Automático (ator temporal) ----------
+  usecase "UC10\nExpirar Reserva\nNão Utilizada" as UC10
+
+  ' ---------- Gestão do condomínio ----------
+  usecase "UC11\nManter Vagas\ncom Carregador" as UC11
+  usecase "UC12\nDefinir Tarifa de Energia" as UC12
+  usecase "UC13\nManter Moradores" as UC13
+  usecase "UC14\nEncerrar Sessão Órfã" as UC14
+  usecase "UC15\nFechar Mês e Gerar Rateio" as UC15
+  usecase "UC16\nConsultar Histórico\nde Utilização" as UC16
 }
 
-' ===================== Associações =====================
-MOT --> UC01
-MOT --> UC02
+' ---------- Associações do Morador ----------
+MOR -- UC01
+MOR -- UC02
+MOR -- UC03
+MOR -- UC04
+MOR -- UC06
+MOR -- UC08
+MOR -- UC09
 
-OPC --> UC05
-OPC --> UC08
-OPC --> UC16
+' ---------- Associação do ator temporal ----------
+TMP -- UC10
 
-EST --> UC01
-EST --> UC08
-EST --> UC09
-EST --> UC10
-EST --> UC11
-EST --> UC12
-EST --> UC13
-EST --> UC16
+' ---------- Associações do Síndico ----------
+SIN -- UC01
+SIN -- UC02
+SIN -- UC11
+SIN -- UC12
+SIN -- UC13
+SIN -- UC14
+SIN -- UC15
+SIN -- UC16
 
-ADM --> UC14
-ADM --> UC15
-ADM --> UC16
+' ---------- Relacionamentos entre casos de uso ----------
+UC03 ..> UC05 : <<include>>
+UC04 ..> UC05 : <<include>>
+UC06 ..> UC07 : <<include>>
+UC14 ..> UC07 : <<include>>
+UC15 ..> UC07 : <<include>>
 
-' ===================== Relacionamentos =====================
-UC02 ..> UC03 : <<include>>
-UC05 ..> UC06 : <<include>>
-UC05 ..> UC07 : <<include>>
-UC09 ..> UC06 : <<include>>
-UC09 ..> UC07 : <<include>>
-
-UC04 ..> UC02 : <<extend>>
-
-note bottom of UC03
-  Potência efetiva =
-  min(potência do carregador,
-      potência máxima do veículo)
-end note
-
-note bottom of UC07
-  Valor = tempo de ocupação
-  x tarifa/hora vigente no
-  início da sessão
-end note
-
-note right of UC16
-  Pré-condição de todos os
-  casos de uso do Operador
-  de Caixa, do Estabelecimento
-  e do Administrador.
-  O Motorista não se autentica.
+note bottom of UC05
+  Os casos de uso UC05 e UC07 concentram
+  a regra de negócio do sistema.
+  Devem ser atacados primeiro na fase de
+  Elaboração, como arquitetura executável
+  (risco RI-10 do documento Visão).
 end note
 
 @enduml

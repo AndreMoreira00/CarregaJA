@@ -1,12 +1,23 @@
 ' =====================================================================
-' CARREGAJA - Modelo de Caso de Uso, recortado por ator
-' Quatro diagramas, um por ator. Servem para leitura e para a
-' apresentação; o diagrama completo está no arquivo
-' "CARREGAJA - Modelo de Caso de Uso.puml".
+' CARREGAJA - Modelo de Caso de Uso (diagramas por ator)
+' Projeto: Sistema de Agendamento e Rateio de Recarga de Veículos
+'          Elétricos em Condomínio
+' Versão do modelo: 2.0
+' Derivado de: 1.Requisitos/CARREGAJA - Visão.md (v2.0)
+'
+' Este arquivo contém três diagramas independentes, um por ator.
+' Cada @startuml gera uma imagem própria, nomeada pelo identificador
+' que segue a diretiva.
 ' =====================================================================
 
-@startuml CARREGAJA-CasoDeUso-Motorista
-title Motorista — autoatendimento no totem
+
+' =====================================================================
+' 1. MORADOR
+' =====================================================================
+@startuml CARREGAJA-CasoDeUso-Morador
+
+title CARREGAJA — Casos de Uso do Morador
+
 left to right direction
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -16,41 +27,54 @@ skinparam usecase {
   BackgroundColor #F7F9F9
   BorderColor #264653
 }
-
-actor "Motorista" as MOT
-
-rectangle "CARREGAJA" {
-  usecase "UC01\nConsultar Painel de Vagas" as UC01
-  usecase "UC02\nIniciar Sessão de Recarga" as UC02
-  usecase "UC03\nCalcular Previsão\nde Conclusão" as UC03
-  usecase "UC04\nUtilizar Perfil Genérico\nde Veículo" as UC04
+skinparam rectangle {
+  BorderColor #264653
 }
 
-MOT --> UC01
-MOT --> UC02
-UC02 ..> UC03 : <<include>>
-UC04 ..> UC02 : <<extend>>
+actor "Morador" as MOR
+
+rectangle "CARREGAJA" {
+  usecase "UC01\nAutenticar Usuário" as UC01
+  usecase "UC02\nConsultar Painel de Vagas" as UC02
+  usecase "UC03\nManter Agendamento" as UC03
+  usecase "UC04\nIniciar Sessão de Recarga" as UC04
+  usecase "UC05\nCalcular Previsão\nde Conclusão" as UC05 #2A9D8F
+  usecase "UC06\nEncerrar Sessão de Recarga" as UC06
+  usecase "UC07\nApurar Energia da Sessão" as UC07 #2A9D8F
+  usecase "UC08\nManter Veículo" as UC08
+  usecase "UC09\nConsultar Consumo do Mês" as UC09
+}
+
+MOR -- UC01
+MOR -- UC02
+MOR -- UC03
+MOR -- UC04
+MOR -- UC06
+MOR -- UC08
+MOR -- UC09
+
+UC03 ..> UC05 : <<include>>
+UC04 ..> UC05 : <<include>>
+UC06 ..> UC07 : <<include>>
 
 note bottom of UC04
-  Acionado quando o modelo
-  informado não consta do
-  catálogo. A previsão passa
-  a ser marcada como aproximada.
-end note
-
-note as N1
-  O Motorista é anônimo:
-  não possui cadastro nem
-  credenciais. Identifica-se
-  pela placa e pelo código
-  de sessão.
+  O ciclo do morador tem duas interações
+  separadas no tempo: do apartamento ele
+  consulta e agenda (UC02, UC03); na
+  garagem ele inicia (UC04) e, ao retirar
+  o veículo, encerra (UC06).
 end note
 
 @enduml
 
 
-@startuml CARREGAJA-CasoDeUso-OperadorCaixa
-title Operador de Caixa — ponto de pagamento
+' =====================================================================
+' 2. SÍNDICO
+' =====================================================================
+@startuml CARREGAJA-CasoDeUso-Sindico
+
+title CARREGAJA — Casos de Uso do Síndico
+
 left to right direction
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -60,41 +84,54 @@ skinparam usecase {
   BackgroundColor #F7F9F9
   BorderColor #264653
 }
-
-actor "Operador de Caixa" as OPC
-
-rectangle "CARREGAJA" {
-  usecase "UC16\nAutenticar Usuário" as UC16
-  usecase "UC05\nEncerrar Sessão de Recarga" as UC05
-  usecase "UC06\nLocalizar Sessão Ativa" as UC06
-  usecase "UC07\nApurar Valor da Sessão" as UC07
-  usecase "UC08\nConsultar Sessões Ativas" as UC08
+skinparam rectangle {
+  BorderColor #264653
 }
 
-OPC --> UC16
-OPC --> UC05
-OPC --> UC08
-UC05 ..> UC06 : <<include>>
-UC05 ..> UC07 : <<include>>
+actor "Síndico" as SIN
 
-note bottom of UC05
-  Único ponto de encerramento
-  de sessão do sistema.
-  O totem não encerra.
-end note
+rectangle "CARREGAJA" {
+  usecase "UC01\nAutenticar Usuário" as UC01
+  usecase "UC02\nConsultar Painel de Vagas" as UC02
+  usecase "UC07\nApurar Energia da Sessão" as UC07 #2A9D8F
+  usecase "UC11\nManter Vagas\ncom Carregador" as UC11
+  usecase "UC12\nDefinir Tarifa de Energia" as UC12
+  usecase "UC13\nManter Moradores" as UC13
+  usecase "UC14\nEncerrar Sessão Órfã" as UC14
+  usecase "UC15\nFechar Mês e Gerar Rateio" as UC15
+  usecase "UC16\nConsultar Histórico\nde Utilização" as UC16
+}
 
-note as N2
-  Perfil restrito: não altera
-  tarifa, não acessa relatórios
-  financeiros e não modifica o
-  mapa do estacionamento.
+SIN -- UC01
+SIN -- UC02
+SIN -- UC11
+SIN -- UC12
+SIN -- UC13
+SIN -- UC14
+SIN -- UC15
+SIN -- UC16
+
+UC14 ..> UC07 : <<include>>
+UC15 ..> UC07 : <<include>>
+
+note bottom of UC15
+  A carga de uso do síndico é concentrada:
+  a configuração (UC11 a UC13) ocorre na
+  implantação, o fechamento (UC15) é mensal
+  e o tratamento de exceções (UC14) é
+  eventual.
 end note
 
 @enduml
 
 
-@startuml CARREGAJA-CasoDeUso-Estabelecimento
-title Estabelecimento — gestão do estacionamento
+' =====================================================================
+' 3. TEMPO (ator temporal)
+' =====================================================================
+@startuml CARREGAJA-CasoDeUso-Tempo
+
+title CARREGAJA — Caso de Uso Disparado pelo Tempo
+
 left to right direction
 skinparam packageStyle rectangle
 skinparam shadowing false
@@ -104,78 +141,24 @@ skinparam usecase {
   BackgroundColor #F7F9F9
   BorderColor #264653
 }
-
-actor "Estabelecimento" as EST
-
-rectangle "CARREGAJA" {
-  usecase "UC16\nAutenticar Usuário" as UC16
-  usecase "UC10\nManter Vagas com Carregador" as UC10
-  usecase "UC11\nDefinir Tarifa de Ocupação" as UC11
-  usecase "UC12\nManter Operadores de Caixa" as UC12
-  usecase "UC01\nConsultar Painel de Vagas" as UC01
-  usecase "UC08\nConsultar Sessões Ativas" as UC08
-  usecase "UC09\nEncerrar Sessão Órfã" as UC09
-  usecase "UC13\nConsultar Relatórios de\nUtilização e Receita" as UC13
-  usecase "UC06\nLocalizar Sessão Ativa" as UC06
-  usecase "UC07\nApurar Valor da Sessão" as UC07
-}
-
-EST --> UC16
-EST --> UC10
-EST --> UC11
-EST --> UC12
-EST --> UC01
-EST --> UC08
-EST --> UC09
-EST --> UC13
-UC09 ..> UC06 : <<include>>
-UC09 ..> UC07 : <<include>>
-
-note bottom of UC09
-  Encerramento administrativo
-  de sessão aberta além do
-  limite máximo. Registra
-  justificativa e responsável.
-end note
-
-@enduml
-
-
-@startuml CARREGAJA-CasoDeUso-Administrador
-title Administrador do Sistema — operação do produto
-left to right direction
-skinparam packageStyle rectangle
-skinparam shadowing false
-skinparam ArrowColor #264653
-skinparam actorStyle awesome
-skinparam usecase {
-  BackgroundColor #F7F9F9
+skinparam rectangle {
   BorderColor #264653
 }
 
-actor "Administrador\ndo Sistema" as ADM
+actor "Tempo" as TMP #CDD6D6
 
 rectangle "CARREGAJA" {
-  usecase "UC16\nAutenticar Usuário" as UC16
-  usecase "UC14\nManter Catálogo de\nModelos de Veículo" as UC14
-  usecase "UC15\nManter Estabelecimentos\nAssinantes" as UC15
+  usecase "UC10\nExpirar Reserva\nNão Utilizada" as UC10
 }
 
-ADM --> UC16
-ADM --> UC14
-ADM --> UC15
+TMP -- UC10
 
-note bottom of UC14
-  Inclui os perfis genéricos
-  por porte de veículo, usados
-  quando o modelo do motorista
-  não está cadastrado (UC04).
-end note
-
-note as N3
-  Único ator com alcance sobre
-  todos os estabelecimentos
-  assinantes.
+note bottom of UC10
+  Único comportamento do sistema que não
+  parte de ação de usuário. Liberar a vaga
+  de quem reservou e não compareceu não pode
+  depender de alguém se lembrar de fazê-lo
+  (risco RI-05 do documento Visão).
 end note
 
 @enduml
