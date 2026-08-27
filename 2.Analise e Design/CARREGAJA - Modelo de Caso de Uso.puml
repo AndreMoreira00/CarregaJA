@@ -1,0 +1,109 @@
+@startuml CARREGAJA-ModeloCasoDeUso-Geral
+' =====================================================================
+' CARREGAJA - Modelo de Caso de Uso (visão geral)
+' Projeto: Sistema de Gerenciamento de Recarga de Veículos Elétricos
+'          em Estacionamentos
+' Versão do modelo: 1.0
+' Derivado de: 1.Requisitos/CARREGAJA - Visão.md (v1.1)
+' =====================================================================
+
+title CARREGAJA — Modelo de Caso de Uso
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #264653
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #F7F9F9
+  BorderColor #264653
+}
+skinparam rectangle {
+  BorderColor #264653
+}
+
+actor "Motorista" as MOT
+actor "Operador de Caixa" as OPC
+actor "Estabelecimento" as EST
+actor "Administrador\ndo Sistema" as ADM
+
+rectangle "CARREGAJA" {
+
+  ' ---------- Operação no totem ----------
+  usecase "UC01\nConsultar Painel de Vagas" as UC01
+  usecase "UC02\nIniciar Sessão de Recarga" as UC02
+  usecase "UC03\nCalcular Previsão\nde Conclusão" as UC03
+  usecase "UC04\nUtilizar Perfil Genérico\nde Veículo" as UC04
+
+  ' ---------- Operação no ponto de pagamento ----------
+  usecase "UC05\nEncerrar Sessão de Recarga" as UC05
+  usecase "UC06\nLocalizar Sessão Ativa" as UC06
+  usecase "UC07\nApurar Valor da Sessão" as UC07
+  usecase "UC08\nConsultar Sessões Ativas" as UC08
+
+  ' ---------- Gestão do estabelecimento ----------
+  usecase "UC09\nEncerrar Sessão Órfã" as UC09
+  usecase "UC10\nManter Vagas com Carregador" as UC10
+  usecase "UC11\nDefinir Tarifa de Ocupação" as UC11
+  usecase "UC12\nManter Operadores de Caixa" as UC12
+  usecase "UC13\nConsultar Relatórios de\nUtilização e Receita" as UC13
+
+  ' ---------- Administração do produto ----------
+  usecase "UC14\nManter Catálogo de\nModelos de Veículo" as UC14
+  usecase "UC15\nManter Estabelecimentos\nAssinantes" as UC15
+
+  ' ---------- Acesso ----------
+  usecase "UC16\nAutenticar Usuário" as UC16
+}
+
+' ===================== Associações =====================
+MOT --> UC01
+MOT --> UC02
+
+OPC --> UC05
+OPC --> UC08
+OPC --> UC16
+
+EST --> UC01
+EST --> UC08
+EST --> UC09
+EST --> UC10
+EST --> UC11
+EST --> UC12
+EST --> UC13
+EST --> UC16
+
+ADM --> UC14
+ADM --> UC15
+ADM --> UC16
+
+' ===================== Relacionamentos =====================
+UC02 ..> UC03 : <<include>>
+UC05 ..> UC06 : <<include>>
+UC05 ..> UC07 : <<include>>
+UC09 ..> UC06 : <<include>>
+UC09 ..> UC07 : <<include>>
+
+UC04 ..> UC02 : <<extend>>
+
+note bottom of UC03
+  Potência efetiva =
+  min(potência do carregador,
+      potência máxima do veículo)
+end note
+
+note bottom of UC07
+  Valor = tempo de ocupação
+  x tarifa/hora vigente no
+  início da sessão
+end note
+
+note right of UC16
+  Pré-condição de todos os
+  casos de uso do Operador
+  de Caixa, do Estabelecimento
+  e do Administrador.
+  O Motorista não se autentica.
+end note
+
+@enduml
