@@ -1,14 +1,15 @@
 # História de Usuário
 
-**CARREGAJA — Sistema de Agendamento e Rateio de Recarga de Veículos Elétricos em Condomínio**
+**CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 1.0
+Versão 2.0
 
 ## Histórico de Revisões
 
 | Data | Versão | Descrição | Autor |
 |---|---|---|---|
 | 27/08/2026 | 1.0 | Elaboração inicial. Dezesseis histórias, uma por caso de uso, com fluxo principal, fluxos alternativos e testes de aceitação. Derivado do Modelo de Caso de Uso v2.0 e do documento Visão v2.0. | Henrique de Almeida Marangoni Inacio |
+| 27/08/2026 | 2.0 | **Remoção do agendamento.** Removidas as histórias *Manter Agendamento* e *Expirar Reserva Não Utilizada*. Histórias **renumeradas para HU-01–HU-14**, acompanhando a renumeração dos casos de uso. Cenário refeito sem reserva: o morador consulta o painel e ocupa a vaga na chegada. Derivado do Modelo de Caso de Uso v3.0 e do documento Visão v3.0. | Henrique de Almeida Marangoni Inacio |
 
 > **Situação deste artefato.** Este documento **antecipa** a tarefa *Detalhar Requisitos*, que
 > pertence à fase de Elaboração — ver `.spinoff/METODO.md`. Foi produzido na Iniciação por
@@ -19,7 +20,7 @@ Versão 1.0
 
 ## 1. Como ler este documento
 
-Cada história corresponde a um caso de uso do **CARREGAJA - Modelo de Caso de Uso (v2.0)**, na
+Cada história corresponde a um caso de uso do **CARREGAJA - Modelo de Caso de Uso (v3.0)**, na
 proporção de um para um, e segue o `Template - Historia de Usuario` do SpinOff, acrescido de
 duas seções que o template não prevê — **fluxo principal** e **fluxos alternativos** — incluídas
 para tornar visível o que entra e o que sai a cada passo.
@@ -33,8 +34,29 @@ para tornar visível o que entra e o que sai a cada passo.
 | Testes de aceitação | Pré-condição e casos de teste com **entradas** e **resultado esperado** |
 
 Todos os exemplos usam o **mesmo cenário**, descrito na seção 2. Os números encadeiam: o que
-sai de uma história entra na seguinte, e os totais do fechamento (HU-15) somam as sessões
+sai de uma história entra na seguinte, e os totais do fechamento (HU-13) somam as sessões
 registradas nas histórias anteriores.
+
+### Correspondência com a versão 1.0
+
+| v2.0 | v1.0 | História |
+|---|---|---|
+| HU-01 | HU-01 | Autenticar Usuário |
+| HU-02 | HU-02 | Consultar Painel de Vagas |
+| — | ~~HU-03~~ | ~~Manter Agendamento~~ — **removida** |
+| HU-03 | HU-04 | Iniciar Sessão de Recarga |
+| HU-04 | HU-05 | Calcular Previsão de Conclusão |
+| HU-05 | HU-06 | Encerrar Sessão de Recarga |
+| HU-06 | HU-07 | Apurar Energia da Sessão |
+| HU-07 | HU-08 | Manter Veículo |
+| HU-08 | HU-09 | Consultar Consumo do Mês |
+| — | ~~HU-10~~ | ~~Expirar Reserva Não Utilizada~~ — **removida** |
+| HU-09 | HU-11 | Manter Vagas com Carregador |
+| HU-10 | HU-12 | Definir Tarifa de Energia |
+| HU-11 | HU-13 | Manter Moradores |
+| HU-12 | HU-14 | Encerrar Sessão Órfã |
+| HU-13 | HU-15 | Fechar Mês e Gerar Rateio |
+| HU-14 | HU-16 | Consultar Histórico de Utilização |
 
 ---
 
@@ -51,11 +73,9 @@ registradas nas histórias anteriores.
 
 | Parâmetro | Valor no cenário | Origem |
 |---|---|---|
-| Tarifa de energia | R$ 0,92 / kWh, vigente desde 01/09/2026 | Definida pela síndica (HU-12) |
+| Tarifa de energia | R$ 0,92 / kWh, vigente desde 01/09/2026 | Definida pela síndica (HU-10) |
 | Duração máxima de sessão | 6 horas | RE-11 do documento Visão |
-| Agendamentos futuros por morador | 1 | RE-12 |
-| Antecedência máxima de agendamento | 7 dias | RE-12 |
-| Tolerância de comparecimento | 15 minutos | **Valor de exemplo** — ainda não definido; ver seção 6 |
+| Agendamento | **Não existe** — uso por ordem de chegada | RE-12 |
 
 ### 2.2. As pessoas
 
@@ -78,7 +98,7 @@ valor da sessão   = energia estimada × tarifa vigente no início
 ```
 
 **Repare no `min` da energia estimada.** Ele aparece nos dois exemplos completos deste
-documento — a sessão de Marina (HU-06) e a sessão órfã de Rafael (HU-14) — e nos dois ele
+documento — a sessão de Marina (HU-05) e a sessão órfã de Rafael (HU-12) — e nos dois ele
 **é acionado**, ou seja, o teto pega. É o que impede que um veículo esquecido plugado acumule
 consumo indefinidamente.
 
@@ -86,17 +106,21 @@ consumo indefinidamente.
 
 | Quando | O que acontece | História |
 |---|---|---|
-| 01/09, manhã | Cláudia configura vagas, tarifa e moradores | HU-11, HU-12, HU-13 |
-| 01/09, tarde | Marina cadastra o Leaf | HU-08 |
-| 08/09, 14h20 | Marina consulta o painel e agenda a G-02 para 18h00–22h15 | HU-02, HU-03, HU-05 |
-| 08/09, 18h10 | Marina chega e inicia a sessão | HU-04 |
-| 08/09, 22h40 | Marina encerra — **28,0 kWh, R$ 25,76** | HU-06, HU-07 |
-| 09/09, 07h15 | Reserva de Rafael na G-01 expira por não comparecimento | HU-10 |
-| 09/09, 14h00 | Rafael inicia sessão na G-01 e esquece de encerrar | HU-04 |
+| 01/09, manhã | Cláudia configura vagas, tarifa e moradores | HU-09, HU-10, HU-11 |
+| 01/09, tarde | Marina cadastra o Leaf | HU-07 |
+| 08/09, 18h05 | Marina consulta o painel do apartamento e vê a G-02 livre | HU-02 |
+| 08/09, 18h10 | Marina desce, pluga o carro e registra o início | HU-03, HU-04 |
+| 08/09, 22h40 | Marina encerra — **28,0 kWh, R$ 25,76** | HU-05, HU-06 |
+| 09/09, 14h00 | Rafael inicia sessão na G-01 e esquece de encerrar | HU-03 |
 | 09/09, 20h00 | A sessão atinge 6 horas e é sinalizada como **excedida** | HU-02 |
-| 09/09, 21h00 | Cláudia confirma que o carro saiu e encerra — **48,0 kWh, R$ 44,16** | HU-14 |
-| 30/09 | Marina confere seu consumo do mês | HU-09 |
-| 01/10 | Cláudia fecha setembro — **157,0 kWh, R$ 144,44** | HU-15, HU-16 |
+| 09/09, 21h00 | Cláudia confirma que o carro saiu e encerra — **48,0 kWh, R$ 44,16** | HU-12 |
+| 30/09 | Marina confere seu consumo do mês | HU-08 |
+| 01/10 | Cláudia fecha setembro — **157,0 kWh, R$ 144,44** | HU-13, HU-14 |
+
+**O ciclo do morador se resolve em uma única ida à garagem.** Marina consulta o painel de casa
+às 18h05, vê que há vaga, desce e ocupa. Não há reserva antes nem confirmação depois — se a
+vaga tivesse sido ocupada nesses cinco minutos, ela teria descido à toa. É a consequência
+aceita da remoção do agendamento, registrada como risco RI-11 do documento Visão.
 
 ---
 
@@ -114,7 +138,7 @@ consumo indefinidamente.
 **Descrição da história**
 
 Como **morador**, eu quero **entrar no sistema com minhas credenciais**, de modo que **o que eu
-agendar e consumir seja registrado no meu apartamento**.
+consumir seja registrado no meu apartamento**.
 
 **Fluxo principal**
 
@@ -129,13 +153,13 @@ agendar e consumir seja registrado no meu apartamento**.
 - **4a. Credenciais inválidas.** O sistema recusa o acesso sem informar qual dos dois campos
   está incorreto, e mantém a tela de acesso.
 - **4b. Morador desativado.** O sistema recusa o acesso e orienta a procurar o síndico. Ocorre
-  quando o morador foi desativado em HU-13 por ter deixado o condomínio.
+  quando o morador foi desativado em HU-11 por ter deixado o condomínio.
 - **4c. Usuário acumula os perfis Morador e Síndico.** O sistema concede ambos, e a interface
   oferece as funções de gestão além das de morador.
 
 **Testes de aceitação**
 
-*Pré-condição:* o morador está cadastrado e ativo (HU-13).
+*Pré-condição:* o morador está cadastrado e ativo (HU-11).
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
@@ -159,42 +183,51 @@ agendar e consumir seja registrado no meu apartamento**.
 
 **Descrição da história**
 
-Como **morador**, eu quero **ver a situação de todas as vagas com carregador e a previsão de
-liberação das ocupadas**, de modo que **eu não desça à garagem à toa e saiba quando vale a pena
-descer**.
+Como **morador**, eu quero **ver quais vagas estão livres e a previsão de liberação das
+ocupadas**, de modo que **eu decida se desço agora ou mais tarde, em vez de descer à toa**.
+
+> **Esta história carrega sozinha a resposta ao problema da disponibilidade.** Removido o
+> agendamento, é a previsão exibida aqui que substitui a garantia de horário. Se ela for
+> imprecisa ou desatualizada, o morador volta ao grupo de mensagens — e o sistema perde a
+> função que justifica sua existência para quem não é o síndico.
 
 **Fluxo principal**
 
 1. O morador abre o painel.
-2. O sistema levanta, para cada vaga, a sessão em andamento e as reservas vigentes.
-3. O sistema classifica cada vaga em um dos cinco estados e calcula a previsão de liberação das
-   ocupadas.
-4. O sistema apresenta a lista de vagas com estado, previsão e — no caso das reservadas — o
-   horário reservado.
+2. O sistema levanta, para cada vaga, a sessão em andamento.
+3. O sistema classifica cada vaga em um dos quatro estados e calcula a previsão de liberação
+   das ocupadas.
+4. O sistema apresenta a lista de vagas com estado e previsão.
 
-**Os cinco estados**
+**Os quatro estados**
 
 | Estado | Quando aparece |
 |---|---|
-| **Livre** | Sem sessão ativa e sem reserva vigente |
-| **Reservada** | Há agendamento para a janela corrente ou futura |
+| **Livre** | Sem sessão ativa; pode ser ocupada por qualquer morador |
 | **Ocupada** | Há sessão em andamento; exibe a previsão de conclusão |
 | **Concluída, ainda ocupada** | A previsão passou e a sessão não foi encerrada |
 | **Excedida** | A sessão passou da duração máxima (6 h); permanece aberta |
 
+Os dois últimos são **derivados no momento da consulta**, a partir do tempo decorrido. Nenhum
+altera o estado da sessão — existem para informar.
+
 **Fluxos alternativos**
 
 - **4a. O usuário é o síndico.** O sistema acrescenta, a cada vaga, o apartamento e o morador da
-  sessão ou reserva, e destaca as sessões candidatas a órfãs (HU-14).
+  sessão, e destaca as sessões candidatas a órfãs (HU-12).
 - **4b. O usuário é morador.** O sistema **não identifica** quem ocupa cada vaga. Saber *quando*
   libera resolve o problema; saber *quem* está lá expõe o vizinho sem necessidade.
+- **4c. Nenhuma vaga livre.** O sistema apresenta a previsão de liberação mais próxima, para que
+  o morador saiba quando vale a pena tentar de novo.
 
-**Exemplo — 08/09/2026, 14h20, Marina abre o painel**
+**Exemplo — 08/09/2026, 18h05, Marina consulta do apartamento**
 
 | Vaga | Estado | O que o painel mostra |
 |---|---|---|
-| G-01 | Ocupada | Previsão de liberação: 16h05 |
-| G-02 | Livre | — |
+| G-01 | Ocupada | Previsão de liberação: 19h30 |
+| G-02 | **Livre** | — |
+
+Marina desce. Cinco minutos depois registra o início na G-02.
 
 **Exemplo — 09/09/2026, 20h00, o painel de Cláudia**
 
@@ -205,104 +238,28 @@ descer**.
 
 **Testes de aceitação**
 
-*Pré-condição:* usuário autenticado (HU-01); existem vagas cadastradas (HU-11).
+*Pré-condição:* usuário autenticado (HU-01); existem vagas cadastradas (HU-09).
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Vaga sem sessão nem reserva | G-02 sem registros | Estado **Livre** |
-| 02 | Vaga com sessão em andamento dentro do previsto | G-01, início 14h00, previsão 18h22, agora 16h00 | Estado **Ocupada**, previsão 18h22 |
+| 01 | Vaga sem sessão | G-02 sem registros | Estado **Livre** |
+| 02 | Vaga com sessão dentro do previsto | G-01, início 14h00, previsão 18h22, agora 16h00 | Estado **Ocupada**, previsão 18h22 |
 | 03 | Sessão além da previsão, dentro das 6 h | G-01, previsão 18h22, agora 19h00 | Estado **Concluída, ainda ocupada** |
 | 04 | Sessão além da duração máxima | G-01, início 14h00, agora 20h00 | Estado **Excedida**; sessão **permanece aberta** |
 | 05 | Painel do morador não identifica terceiros | Marina consulta com G-01 ocupada por Rafael | Estado e previsão exibidos; apartamento e nome **ausentes** |
 | 06 | Painel do síndico identifica | Cláudia consulta a mesma vaga | Estado, previsão, **apto 17 e nome exibidos** |
+| 07 | Nenhuma vaga livre | Ambas ocupadas, previsões 19h30 e 21h00 | Informa que não há vaga e destaca a liberação mais próxima: 19h30 |
 
 **Protótipo:** não há. Pendente — ver seção 6.
 
 ---
 
-### HU-03 — Manter Agendamento
+### HU-03 — Iniciar Sessão de Recarga
 
 | | |
 |---|---|
-| **Caso de uso** | UC03 — Manter Agendamento |
+| **Caso de uso** | UC03 — Iniciar Sessão de Recarga |
 | **Número da história** | HU-03 |
-| **Estimativa** | *a definir no Planning Poker* |
-| **Ator** | Morador |
-
-**Descrição da história**
-
-Como **morador**, eu quero **reservar uma vaga para uma janela de horário**, de modo que **eu
-tenha a garantia de encontrá-la disponível quando chegar**.
-
-**Fluxo principal**
-
-1. O morador escolhe a vaga, a data e os horários de início e fim.
-2. O morador informa o nível de bateria previsto para o momento da chegada.
-3. O sistema valida que a vaga está livre em toda a janela pedida.
-4. O sistema valida os limites de agendamento: nenhum outro agendamento futuro em aberto, e
-   início dentro dos próximos 7 dias.
-5. O sistema valida que a janela não excede a duração máxima de 6 horas.
-6. O sistema calcula a previsão de conclusão (HU-05) e **a exibe antes da confirmação**.
-7. O morador confirma.
-8. O sistema registra a reserva vinculada ao morador e ao apartamento, e a vaga passa a
-   **Reservada** no painel.
-
-**Fluxos alternativos**
-
-- **3a. Janela sobreposta.** Existe outra reserva ou uma sessão cuja previsão avança sobre a
-  janela. O sistema recusa e sugere o horário livre mais próximo.
-- **4a. Já existe agendamento em aberto.** O sistema recusa e informa qual é a reserva vigente.
-  O morador precisa usá-la, cancelá-la ou aguardar sua expiração.
-- **4b. Antecedência maior que 7 dias.** O sistema recusa e informa a data máxima aceita.
-- **5a. Janela maior que 6 horas.** O sistema recusa, porque reservar mais tempo do que uma
-  sessão pode durar bloquearia a vaga sem finalidade.
-- **6a. A previsão ultrapassa o fim da janela.** O sistema alerta que o tempo reservado não
-  cobre a recarga pretendida e oferece estender a janela, respeitado o limite de 6 horas.
-- **Cancelamento.** A qualquer momento antes do início, o morador cancela. A vaga é liberada
-  imediatamente e o morador recupera o direito de agendar.
-
-**Exemplo — 08/09/2026, 14h20, Marina agenda a G-02**
-
-| Entrada | Valor |
-|---|---|
-| Vaga | G-02 (7,4 kW) |
-| Janela pedida | 08/09, 18h00 às 22h15 |
-| Nível de bateria previsto | 30 % |
-| Veículo em cadastro | Nissan Leaf — 40 kWh, 6,6 kW |
-
-```
-potência efetiva = min(7,4 ; 6,6)      = 6,6 kW
-energia a repor  = 40 × (100% − 30%)   = 28,0 kWh
-tempo estimado   = 28,0 ÷ 6,6          = 4,24 h  →  4h15
-```
-
-**Saída:** previsão de conclusão **22h15** — a janela pedida cobre exatamente a recarga.
-Reserva confirmada. G-02 passa a **Reservada** no painel.
-
-**Testes de aceitação**
-
-*Pré-condição:* morador autenticado, com veículo cadastrado (HU-08) e sem agendamento em aberto.
-
-| Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
-|---|---|---|---|
-| 01 | Agendamento válido | G-02, 08/09 18h00–22h15, bateria 30 % | Reserva criada; previsão 22h15 exibida antes da confirmação |
-| 02 | Janela sobreposta a outra reserva | G-02, 08/09 20h00–23h00 (já reservada 18h–22h15) | Recusado, com sugestão do horário livre mais próximo |
-| 03 | Segundo agendamento em aberto | Marina, já com reserva vigente, tenta agendar outra | Recusado; sistema informa a reserva vigente |
-| 04 | Antecedência acima do limite | Agendar para 20/09 estando em 08/09 | Recusado; informa a data máxima (15/09) |
-| 05 | Janela maior que a duração máxima | G-01, 09/09 08h00–16h00 (8 h) | Recusado por exceder 6 horas |
-| 06 | Janela menor que a recarga pretendida | G-02, 18h00–20h00, bateria 30 % | Alerta de que a previsão (22h15) ultrapassa a janela; oferece estender |
-| 07 | Cancelamento libera a vaga e o direito | Marina cancela a reserva de 08/09 | G-02 volta a **Livre**; novo agendamento passa a ser aceito |
-
-**Protótipo:** não há. Pendente — ver seção 6.
-
----
-
-### HU-04 — Iniciar Sessão de Recarga
-
-| | |
-|---|---|
-| **Caso de uso** | UC04 — Iniciar Sessão de Recarga |
-| **Número da história** | HU-04 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Morador |
 
@@ -315,48 +272,49 @@ Como **morador**, eu quero **registrar o início da recarga ao plugar o veículo
 
 1. O morador pluga o veículo e abre o sistema na garagem.
 2. O morador seleciona a vaga que ocupou e informa o nível atual da bateria.
-3. O sistema valida que a vaga está disponível para ele: **livre**, ou **reservada por ele
-   próprio** na janela corrente.
+3. O sistema valida que a vaga existe e está **livre**.
 4. O sistema recupera os dados do veículo do cadastro — não são declarados a cada uso.
-5. O sistema calcula a previsão de conclusão (HU-05).
+5. O sistema calcula a previsão de conclusão (HU-04).
 6. O sistema registra a sessão com data, hora de início e potência efetiva apurada.
-7. Se havia reserva própria, ela é consumida pela sessão, e o morador recupera o direito de
-   agendar.
-8. A vaga passa a **Ocupada** no painel, com a previsão visível aos demais.
+7. A vaga passa a **Ocupada** no painel, com a previsão visível aos demais.
 
 **Fluxos alternativos**
 
-- **3a. Vaga reservada por outro morador.** O sistema recusa o início e informa até quando vale
-  a reserva.
-- **3b. Vaga já ocupada por sessão em andamento.** O sistema recusa e mostra a previsão de
-  liberação.
-- **3c. Vaga desativada.** O sistema recusa; a vaga não aceita novas sessões (HU-11).
-- **4a. Morador sem veículo cadastrado.** O sistema interrompe e encaminha para HU-08.
+- **3a. Vaga já ocupada.** Outro morador registrou o início antes. O sistema recusa e mostra a
+  previsão de liberação. **É a corrida pela vaga**, consequência aceita da ausência de
+  agendamento — risco RI-11 do documento Visão. A recusa é contabilizada como demanda reprimida
+  e aparece em HU-14.
+- **3b. Vaga desativada.** O sistema recusa; a vaga não aceita novas sessões (HU-09).
+- **4a. Morador sem veículo cadastrado.** O sistema interrompe e encaminha para HU-07.
+- **6a. Morador já tem sessão em andamento.** O sistema recusa: um morador ocupa uma vaga por
+  vez.
 
 **Sujeição à duração máxima.** A partir do horário registrado no passo 6, a sessão fica sujeita
 ao limite de 6 horas. Atingido o limite, ela é sinalizada como **excedida** no painel — mas
 **não é encerrada** pelo sistema.
 
-**Exemplo — 08/09/2026, 18h10, Marina chega à garagem**
+**Exemplo — 08/09/2026, 18h10, Marina registra o início**
 
 | Entrada | Valor |
 |---|---|
-| Vaga informada | G-02 |
+| Vaga informada | G-02 (7,4 kW) |
 | Nível de bateria | 30 % |
-| Situação da vaga | Reservada por ela própria, janela 18h00–22h15 |
-| Chegada | 18h10 — dentro da tolerância de 15 min |
+| Veículo em cadastro | Nissan Leaf — 40 kWh, 6,6 kW |
+| Situação da vaga | Livre |
 
-**Saída:** sessão aberta às 18h10, potência efetiva 6,6 kW, previsão de conclusão
-**22h25** (18h10 + 4h15). Reserva consumida. G-02 passa a **Ocupada**. A sessão será marcada
-como excedida às **00h10** se ainda estiver aberta.
+```
+potência efetiva = min(7,4 ; 6,6)      = 6,6 kW
+energia a repor  = 40 × (100% − 30%)   = 28,0 kWh
+tempo estimado   = 28,0 ÷ 6,6          = 4,24 h  →  4h15
+```
 
-> **Repare no atraso de 10 minutos.** Marina reservou até 22h15, mas chegou às 18h10 — e a
-> previsão foi para 22h25, **dez minutos além da janela que ela reservou**. É o problema da
-> seção 2.5 do documento Visão em miniatura: nada garante que a sessão caiba na reserva, porque
-> a reserva marca quando a vaga estará disponível, não quando será devolvida. Se houvesse outra
-> reserva a partir das 22h15, esses dez minutos seriam invasão. O sistema **não impede** — o que
-> ele faz é sinalizar, e é por isso que a duração máxima (RE-11) existe: para que a invasão
-> tenha um teto.
+**Saída:** sessão aberta às 18h10, previsão de conclusão **22h25**. G-02 passa a **Ocupada** e
+os demais moradores passam a ver essa previsão no painel. A sessão será marcada como excedida
+às **00h10** se ainda estiver aberta.
+
+**Repare que o nível de bateria só é pedido agora.** Na versão 1.0 deste documento, ele era
+pedido no agendamento — horas antes da chegada, quando ninguém pode sabê-lo. Perguntar na
+chegada é o que torna o dado confiável, e foi o motivo de o agendamento ter sido removido.
 
 **Testes de aceitação**
 
@@ -364,32 +322,33 @@ como excedida às **00h10** se ainda estiver aberta.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Início em vaga livre | G-01 livre, bateria 20 % | Sessão aberta; previsão calculada; vaga passa a Ocupada |
-| 02 | Início em vaga reservada pelo próprio morador | G-02 reservada por Marina, ela inicia 18h10 | Sessão aberta; reserva consumida; direito de agendar recuperado |
-| 03 | Início em vaga reservada por outro | G-02 reservada por Rafael, Marina tenta iniciar | Recusado; informa até quando vale a reserva |
-| 04 | Início em vaga já ocupada | G-01 com sessão em andamento | Recusado; exibe previsão de liberação |
+| 01 | Início em vaga livre | G-02 livre, bateria 30 % | Sessão aberta; previsão 22h25; vaga passa a Ocupada |
+| 02 | Início em vaga já ocupada | G-01 com sessão em andamento | Recusado; exibe previsão de liberação; recusa contabilizada |
+| 03 | Corrida pela vaga | Dois moradores registram início na G-02 quase ao mesmo tempo | O primeiro abre a sessão; o segundo é recusado |
+| 04 | Vaga desativada | G-02 desativada em HU-09 | Recusado |
 | 05 | Morador sem veículo cadastrado | Morador novo tenta iniciar | Interrompido; encaminhado ao cadastro de veículo |
-| 06 | Marcação do limite de duração | Sessão iniciada 18h10, consulta às 00h10 | Sessão marcada **Excedida** e **ainda aberta** |
+| 06 | Morador já com sessão aberta | Marina, com sessão na G-02, tenta iniciar na G-01 | Recusado |
+| 07 | Marcação do limite de duração | Sessão iniciada 18h10, consulta às 00h10 | Sessão marcada **Excedida** e **ainda aberta** |
 
 **Protótipo:** não há. Pendente — ver seção 6.
 
 ---
 
-### HU-05 — Calcular Previsão de Conclusão
+### HU-04 — Calcular Previsão de Conclusão
 
 | | |
 |---|---|
-| **Caso de uso** | UC05 — Calcular Previsão de Conclusão |
-| **Número da história** | HU-05 |
+| **Caso de uso** | UC04 — Calcular Previsão de Conclusão |
+| **Número da história** | HU-04 |
 | **Estimativa** | *a definir no Planning Poker* |
-| **Ator** | — (executado por inclusão a partir de HU-03 e HU-04) |
+| **Ator** | — (executado por inclusão a partir de HU-03) |
 
 > **História técnica.** Esta história **não passa integralmente no INVEST**: falha em
 > *Independente* e em *Avaliável*, porque nenhum ator a aciona diretamente e ela não entrega
-> valor isolado ao morador. Está registrada em separado por concentrar, junto com HU-07, a
+> valor isolado ao morador. Está registrada em separado por concentrar, junto com HU-06, a
 > regra de negócio central do sistema — o que a torna a primeira candidata à arquitetura
-> executável da Elaboração (risco RI-10 do documento Visão). Deve ser estimada e desenvolvida
-> **junto** com HU-03 e HU-04, nunca sozinha.
+> executável da Elaboração (risco RI-08 do documento Visão). Deve ser estimada e desenvolvida
+> **junto** com HU-03, nunca sozinha.
 
 **Descrição da história**
 
@@ -450,12 +409,12 @@ portanto não completa a recarga em uma única sessão.
 
 ---
 
-### HU-06 — Encerrar Sessão de Recarga
+### HU-05 — Encerrar Sessão de Recarga
 
 | | |
 |---|---|
-| **Caso de uso** | UC06 — Encerrar Sessão de Recarga |
-| **Número da história** | HU-06 |
+| **Caso de uso** | UC05 — Encerrar Sessão de Recarga |
+| **Número da história** | HU-05 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Morador |
 
@@ -469,7 +428,7 @@ de modo que **a vaga fique livre para os vizinhos e eu possa conferir o valor na
 1. O morador retira o veículo e abre sua sessão em andamento no sistema.
 2. O morador confirma o encerramento.
 3. O sistema registra a data e hora de encerramento.
-4. O sistema apura a energia e o valor da sessão (HU-07).
+4. O sistema apura a energia e o valor da sessão (HU-06).
 5. O sistema **exibe ao morador a duração, a energia estimada e o valor**, permitindo
    contestação imediata.
 6. A vaga passa a **Livre** no painel.
@@ -478,7 +437,7 @@ de modo que **a vaga fique livre para os vizinhos e eu possa conferir o valor na
 
 - **1a. O morador não tem sessão aberta.** O sistema informa que não há o que encerrar.
 - **2a. O morador tenta encerrar sessão de outro.** Não é oferecido: o morador só enxerga a
-  própria sessão. O encerramento de sessão alheia cabe apenas ao síndico, por HU-14.
+  própria sessão. O encerramento de sessão alheia cabe apenas ao síndico, por HU-12.
 - **4a. A energia estimada atinge o teto.** Quando a duração é maior do que a recarga precisava,
   a energia é limitada pela energia a repor. O sistema exibe o valor limitado, sem alarde — é
   o comportamento normal, não uma exceção.
@@ -522,19 +481,19 @@ neste sistema, ocupar a vaga depois de carregado não tem custo (risco RI-04 do 
 
 ---
 
-### HU-07 — Apurar Energia da Sessão
+### HU-06 — Apurar Energia da Sessão
 
 | | |
 |---|---|
-| **Caso de uso** | UC07 — Apurar Energia da Sessão |
-| **Número da história** | HU-07 |
+| **Caso de uso** | UC06 — Apurar Energia da Sessão |
+| **Número da história** | HU-06 |
 | **Estimativa** | *a definir no Planning Poker* |
-| **Ator** | — (executado por inclusão a partir de HU-06, HU-14 e HU-15) |
+| **Ator** | — (executado por inclusão a partir de HU-05, HU-12 e HU-13) |
 
-> **História técnica.** Como HU-05, **não passa integralmente no INVEST** — falha em
+> **História técnica.** Como HU-04, **não passa integralmente no INVEST** — falha em
 > *Independente* e *Avaliável*, por não ser acionada por ator nem entregar valor isolado.
 > Registrada em separado por ser o cálculo que produz o número que vai para a cota
-> condominial. Estimar e desenvolver **junto** com HU-06.
+> condominial. Estimar e desenvolver **junto** com HU-05.
 
 **Descrição da história**
 
@@ -570,7 +529,7 @@ começou.
 
 **Exemplo — as duas sessões do cenário, lado a lado**
 
-| | Marina (HU-06) | Rafael (HU-14) |
+| | Marina (HU-05) | Rafael (HU-12) |
 |---|---|---|
 | Potência efetiva | 6,6 kW | 11,0 kW |
 | Energia a repor | 28,0 kWh | 48,0 kWh |
@@ -600,12 +559,12 @@ consumido.
 
 ---
 
-### HU-08 — Manter Veículo
+### HU-07 — Manter Veículo
 
 | | |
 |---|---|
-| **Caso de uso** | UC08 — Manter Veículo |
-| **Número da história** | HU-08 |
+| **Caso de uso** | UC07 — Manter Veículo |
+| **Número da história** | HU-07 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Morador |
 
@@ -620,7 +579,7 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 2. Informa modelo, capacidade da bateria em kWh e potência máxima de recarga em kW.
 3. O sistema valida que os valores são positivos e plausíveis.
 4. O sistema registra o veículo vinculado ao morador.
-5. Os dados passam a alimentar HU-03, HU-04 e HU-05 sem nova digitação.
+5. Os dados passam a alimentar HU-03 e HU-04 sem nova digitação.
 
 **Por que cadastro único, e não declaração por sessão.** É esta decisão que sustenta a apuração
 por energia. Se as características fossem declaradas a cada uso, o morador poderia informar
@@ -661,12 +620,12 @@ e o nível de bateria** ao iniciar cada sessão.
 
 ---
 
-### HU-09 — Consultar Consumo do Mês
+### HU-08 — Consultar Consumo do Mês
 
 | | |
 |---|---|
-| **Caso de uso** | UC09 — Consultar Consumo do Mês |
-| **Número da história** | HU-09 |
+| **Caso de uso** | UC08 — Consultar Consumo do Mês |
+| **Número da história** | HU-08 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Morador |
 
@@ -686,9 +645,9 @@ quanto será lançado na minha cota antes de recebê-la**.
 
 - **2a. Nenhuma sessão no período.** O sistema informa que não há consumo registrado.
 - **2b. Consulta a período anterior já fechado.** O sistema apresenta o consolidado tal como
-  fechado em HU-15, sem recalcular.
+  fechado em HU-13, sem recalcular.
 - **3a. Sessão encerrada administrativamente.** A linha é marcada como tal, indicando que o
-  encerramento foi feito pelo síndico (HU-14) — é a informação que permite ao morador contestar.
+  encerramento foi feito pelo síndico (HU-12) — é a informação que permite ao morador contestar.
 
 **Exemplo — 30/09/2026, Marina consulta setembro**
 
@@ -714,77 +673,14 @@ quanto será lançado na minha cota antes de recebê-la**.
 
 ---
 
-## 4. História disparada pelo tempo
+## 4. Histórias do Síndico
 
-### HU-10 — Expirar Reserva Não Utilizada
-
-| | |
-|---|---|
-| **Caso de uso** | UC10 — Expirar Reserva Não Utilizada |
-| **Número da história** | HU-10 |
-| **Estimativa** | *a definir no Planning Poker* |
-| **Ator** | Tempo (ator temporal) |
-
-**Descrição da história**
-
-Como **morador que precisa de uma vaga**, eu quero **que a reserva de quem não apareceu seja
-liberada automaticamente**, de modo que **o agendamento não desperdice justamente o recurso que
-ele existe para organizar**.
-
-**Fluxo principal**
-
-1. Decorrida a tolerância de comparecimento contada do início da janela reservada, o sistema
-   verifica se há sessão iniciada para aquela reserva.
-2. Não havendo, o sistema marca a reserva como **expirada**.
-3. A vaga volta a **Livre** no painel.
-4. O morador que reservou recupera o direito de fazer um novo agendamento.
-5. A expiração fica registrada e visível ao morador e ao síndico (HU-16).
-
-**Por que não pode depender de gente.** Liberar a vaga de quem não compareceu é a única
-resposta ao risco RI-05 do documento Visão. Se dependesse de alguém lembrar de fazê-lo, a vaga
-ficaria bloqueada justamente nos momentos de maior disputa.
-
-**Fluxos alternativos**
-
-- **1a. Sessão iniciada dentro da tolerância.** Nada acontece; a reserva foi consumida em HU-04.
-- **1b. Reserva cancelada antes do início.** Nada a expirar — a vaga já foi liberada em HU-03.
-
-**Exemplo — 09/09/2026, 07h15, a reserva de Rafael expira**
-
-| Dado | Valor |
-|---|---|
-| Reserva | G-01, 09/09, 07h00 às 11h00, apto 17 |
-| Tolerância de comparecimento | 15 minutos |
-| Sessão iniciada até 07h15? | Não |
-
-**Saída:** reserva marcada como **expirada** às 07h15. G-01 volta a **Livre** e fica disponível
-para qualquer morador. Rafael recupera o direito de agendar — o que ele exercerá ao iniciar uma
-sessão avulsa às 14h00 do mesmo dia.
-
-**Testes de aceitação**
-
-*Pré-condição:* existe reserva cuja janela já iniciou.
-
-| Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
-|---|---|---|---|
-| 01 | Não comparecimento | Reserva 07h00–11h00, sem início até 07h15 | Reserva expirada; vaga **Livre**; direito de agendar devolvido |
-| 02 | Comparecimento dentro da tolerância | Reserva 18h00–22h15, início às 18h10 | Reserva **não** expira; é consumida pela sessão |
-| 03 | Comparecimento no limite exato | Reserva 07h00, início às 07h15 em ponto | Reserva **não** expira |
-| 04 | Reserva cancelada antes | Cancelada às 06h00 | Nada a expirar; vaga já estava livre |
-| 05 | Registro da expiração | Após o caso 01 | Expiração visível ao morador e no histórico (HU-16) |
-
-**Protótipo:** não se aplica — não tem interface própria.
-
----
-
-## 5. Histórias do Síndico
-
-### HU-11 — Manter Vagas com Carregador
+### HU-09 — Manter Vagas com Carregador
 
 | | |
 |---|---|
-| **Caso de uso** | UC11 — Manter Vagas com Carregador |
-| **Número da história** | HU-11 |
+| **Caso de uso** | UC09 — Manter Vagas com Carregador |
+| **Número da história** | HU-09 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -798,15 +694,15 @@ modo que **o sistema calcule previsões corretas e o painel reflita a garagem re
 1. O síndico acessa o cadastro de vagas.
 2. Informa o código de identificação da vaga e a potência do carregador em kW.
 3. O sistema valida que o código é único e a potência é positiva.
-4. O sistema registra a vaga, que passa a aparecer no painel (HU-02) e a aceitar agendamentos.
+4. O sistema registra a vaga, que passa a aparecer no painel (HU-02) e a aceitar sessões.
 
 **Fluxos alternativos**
 
 - **3a. Código duplicado.** O sistema recusa.
-- **4a. Desativação.** O síndico desativa uma vaga fora de operação. Ela deixa de aceitar novos
-  agendamentos e sessões, mas o histórico já apurado é preservado.
-- **4b. Remoção bloqueada.** Havendo sessão em andamento ou reserva futura, a vaga não pode ser
-  removida — apenas desativada.
+- **4a. Desativação.** O síndico desativa uma vaga fora de operação. Ela deixa de aceitar novas
+  sessões, mas o histórico já apurado é preservado.
+- **4b. Remoção bloqueada.** Havendo sessão em andamento, a vaga não pode ser removida — apenas
+  desativada.
 
 **Exemplo — 01/09/2026, Cláudia cadastra a garagem**
 
@@ -815,7 +711,7 @@ modo que **o sistema calcule previsões corretas e o painel reflita a garagem re
 | G-01 | 11,0 kW | Vaga registrada e disponível no painel |
 | G-02 | 7,4 kW | Vaga registrada e disponível no painel |
 
-Essas duas potências são o insumo que HU-05 usa para calcular a potência efetiva de cada
+Essas duas potências são o insumo que HU-04 usa para calcular a potência efetiva de cada
 sessão.
 
 **Testes de aceitação**
@@ -827,19 +723,19 @@ sessão.
 | 01 | Cadastro válido | G-01, 11,0 kW | Vaga registrada e visível no painel |
 | 02 | Código duplicado | G-01 novamente | Recusado |
 | 03 | Potência não positiva | G-03, 0 kW | Recusado |
-| 04 | Desativação preserva histórico | Desativar G-02 com sessões apuradas | Vaga some dos agendáveis; histórico mantido |
-| 05 | Remoção com reserva futura | Remover G-02 com reserva para amanhã | Recusado; oferece desativar |
+| 04 | Desativação preserva histórico | Desativar G-02 com sessões apuradas | Vaga não aceita novas sessões; histórico mantido |
+| 05 | Remoção com sessão em andamento | Remover G-02 ocupada | Recusado; oferece desativar |
 
 **Protótipo:** não há. Pendente — ver seção 6.
 
 ---
 
-### HU-12 — Definir Tarifa de Energia
+### HU-10 — Definir Tarifa de Energia
 
 | | |
 |---|---|
-| **Caso de uso** | UC12 — Definir Tarifa de Energia |
-| **Número da história** | HU-12 |
+| **Caso de uso** | UC10 — Definir Tarifa de Energia |
+| **Número da história** | HU-10 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -857,14 +753,14 @@ que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
    permanecem com a tarifa da época.
 
 **Por que manter o histórico.** A apuração de cada sessão usa a tarifa vigente no seu início
-(HU-07). Sobrescrever a tarifa anterior tornaria impossível recalcular ou justificar uma sessão
+(HU-06). Sobrescrever a tarifa anterior tornaria impossível recalcular ou justificar uma sessão
 passada — e o valor lançado na cota precisa ser explicável meses depois.
 
 **Fluxos alternativos**
 
 - **2a. Valor não positivo.** O sistema recusa.
 - **3a. Vigência retroativa.** O síndico tenta datar a vigência para trás, sobre um período já
-  fechado (HU-15). O sistema recusa: períodos fechados não aceitam alteração.
+  fechado (HU-13). O sistema recusa: períodos fechados não aceitam alteração.
 
 **Exemplo — 01/09/2026, Cláudia lança a tarifa de setembro**
 
@@ -891,12 +787,12 @@ passada — e o valor lançado na cota precisa ser explicável meses depois.
 
 ---
 
-### HU-13 — Manter Moradores
+### HU-11 — Manter Moradores
 
 | | |
 |---|---|
-| **Caso de uso** | UC13 — Manter Moradores |
-| **Número da história** | HU-13 |
+| **Caso de uso** | UC11 — Manter Moradores |
+| **Número da história** | HU-11 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -910,7 +806,7 @@ modo que **o consumo seja atribuído à unidade correta no rateio**.
 1. O síndico informa nome, e-mail e apartamento do morador.
 2. O sistema valida que o e-mail ainda não está em uso.
 3. O sistema registra o morador e cria suas credenciais de acesso (HU-01).
-4. O morador passa a poder agendar, iniciar sessões e ter consumo atribuído ao seu apartamento.
+4. O morador passa a poder iniciar sessões e ter consumo atribuído ao seu apartamento.
 
 **O vínculo com o apartamento é o que viabiliza o rateio.** A unidade de cobrança é a unidade
 autônoma, não a pessoa — é ao apartamento que a cota condominial se refere.
@@ -948,12 +844,12 @@ autônoma, não a pessoa — é ao apartamento que a cota condominial se refere.
 
 ---
 
-### HU-14 — Encerrar Sessão Órfã
+### HU-12 — Encerrar Sessão Órfã
 
 | | |
 |---|---|
-| **Caso de uso** | UC14 — Encerrar Sessão Órfã |
-| **Número da história** | HU-14 |
+| **Caso de uso** | UC12 — Encerrar Sessão Órfã |
+| **Número da história** | HU-12 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -968,7 +864,7 @@ retirado**, de modo que **a vaga seja liberada e o consumo do morador seja apura
    *Excedida*.
 2. **O síndico verifica fisicamente se o veículo ainda está na vaga.**
 3. Confirmando que o veículo saiu, aciona o encerramento administrativo.
-4. O sistema apura a energia e o valor (HU-07).
+4. O sistema apura a energia e o valor (HU-06).
 5. O sistema registra que o encerramento foi administrativo, com o síndico responsável e o
    horário.
 6. A vaga passa a **Livre** no painel.
@@ -1026,19 +922,19 @@ contestar o lançamento e a Cláudia sustentar a resposta.
 | 01 | Encerramento administrativo | Sessão 14h00–21h00, 11 kW, repor 48,0 kWh | 48,0 kWh; R$ 44,16; vaga liberada |
 | 02 | Registro do responsável | Após o caso 01 | Sessão marcada como administrativa, com Cláudia e o horário |
 | 03 | Teto impede apuração desproporcional | Mesmos dados do caso 01 | 48,0 kWh — **não** 77,0 kWh |
-| 04 | Visibilidade ao morador | Rafael consulta HU-09 | Linha sinalizada como encerramento administrativo |
+| 04 | Visibilidade ao morador | Rafael consulta HU-08 | Linha sinalizada como encerramento administrativo |
 | 05 | Morador não acessa esta função | Marina tenta encerrar sessão de Rafael | Função não disponível ao perfil Morador |
 
 **Protótipo:** não há. Pendente — ver seção 6.
 
 ---
 
-### HU-15 — Fechar Mês e Gerar Rateio
+### HU-13 — Fechar Mês e Gerar Rateio
 
 | | |
 |---|---|
-| **Caso de uso** | UC15 — Fechar Mês e Gerar Rateio |
-| **Número da história** | HU-15 |
+| **Caso de uso** | UC13 — Fechar Mês e Gerar Rateio |
+| **Número da história** | HU-13 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -1051,7 +947,7 @@ possa repassar à administradora os valores a lançar em cada cota condominial**
 
 1. O síndico seleciona o período a fechar.
 2. O sistema verifica que não há sessões em aberto no período.
-3. O sistema apura todas as sessões encerradas (HU-07) e agrupa por apartamento.
+3. O sistema apura todas as sessões encerradas (HU-06) e agrupa por apartamento.
 4. O sistema apresenta, por apartamento, a energia total estimada e o valor devido, mais o
    total geral do condomínio.
 5. O síndico confirma o fechamento.
@@ -1061,7 +957,7 @@ possa repassar à administradora os valores a lançar em cada cota condominial**
 **Fluxos alternativos**
 
 - **2a. Há sessões em aberto.** O sistema **impede** o fechamento e lista as pendências, que
-  devem ser resolvidas por HU-06 ou HU-14 antes de prosseguir.
+  devem ser resolvidas por HU-05 ou HU-12 antes de prosseguir.
 - **4a. Divergência com a conta de luz.** O total geral serve para o síndico comparar com o
   consumo medido na área comum. A diferença é esperada e não é erro do sistema — ver adiante.
 
@@ -1084,7 +980,7 @@ possa repassar à administradora os valores a lançar em cada cota condominial**
 Essa diferença **é esperada e não é defeito**. O sistema estima a energia que entra na bateria;
 a concessionária mede a energia que sai da rede, maior por causa das perdas de carga e da
 climatização da bateria. Os 21 kWh continuam rateados entre todos os condôminos pela cota
-ordinária. É o risco RI-07 do documento Visão, e a eliminação exige medição no carregador —
+ordinária. É o risco RI-05 do documento Visão, e a eliminação exige medição no carregador —
 fora do escopo deste projeto.
 
 **Testes de aceitação**
@@ -1104,33 +1000,35 @@ fora do escopo deste projeto.
 
 ---
 
-### HU-16 — Consultar Histórico de Utilização
+### HU-14 — Consultar Histórico de Utilização
 
 | | |
 |---|---|
-| **Caso de uso** | UC16 — Consultar Histórico de Utilização |
-| **Número da história** | HU-16 |
+| **Caso de uso** | UC14 — Consultar Histórico de Utilização |
+| **Número da história** | HU-14 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
 **Descrição da história**
 
-Como **síndico**, eu quero **consultar como as vagas foram utilizadas ao longo do tempo**, de
-modo que **eu possa levar dados à assembleia ao propor a ampliação da estrutura**.
+Como **síndico**, eu quero **consultar como as vagas foram utilizadas e quantas vezes faltou
+vaga**, de modo que **eu possa levar dados à assembleia ao propor a ampliação da estrutura**.
 
 **Fluxo principal**
 
 1. O síndico seleciona o período.
 2. O sistema apura as horas de ocupação por vaga, as faixas de horário de maior demanda, o
-   consumo por apartamento e os agendamentos expirados.
+   consumo por apartamento e as **tentativas de início recusadas por vaga ocupada**.
 3. O sistema apresenta o resultado consolidado.
+
+**A demanda reprimida ganhou peso na versão 2.0.** Sem agendamento, a recusa registrada em
+HU-03 é a **única medida** de que o condomínio dispõe sobre quantas vezes um morador desceu,
+tentou e não conseguiu. É o dado que sustenta a resposta ao risco RI-11 do documento Visão: se
+a disputa for frequente, a solução é ampliar a estrutura, não acrescentar regra de software.
 
 **Fluxos alternativos**
 
 - **2a. Período sem utilização.** O sistema informa a ausência de registros.
-- **3a. Distribuição das reservas.** O sistema evidencia a concentração de reservas por
-  apartamento, permitindo identificar padrão desproporcional — mitigação do risco RI-06 do
-  documento Visão.
 
 **Exemplo — 01/10/2026, Cláudia levanta setembro para a assembleia**
 
@@ -1140,8 +1038,8 @@ modo que **eu possa levar dados à assembleia ao propor a ampliação da estrutu
 | Horas de ocupação — G-02 | 41 h (5,7 % do mês) |
 | Faixa de maior demanda | 18h–22h, concentrando 68 % das sessões |
 | Apartamentos usuários | 2, de 96 |
-| Agendamentos expirados por não comparecimento | 3 |
-| Agendamentos recusados por vaga indisponível | 7 |
+| **Tentativas recusadas por vaga ocupada** | **7** |
+| Sessões encerradas administrativamente | 1 |
 
 **A leitura que interessa à assembleia:** a ocupação total é baixa, mas **concentrada em quatro
 horas do dia** — e foi nessa faixa que ocorreram as 7 recusas. O problema não é falta de vaga
@@ -1157,57 +1055,60 @@ número agregado de 8,6 % sugeriria, erradamente, que não há demanda reprimida
 | 01 | Ocupação por vaga | Setembro | G-01 com 62 h; G-02 com 41 h |
 | 02 | Faixa de maior demanda | Setembro | 18h–22h identificada como pico |
 | 03 | Consumo por apartamento | Setembro | Apto 17 com 81,0 kWh; apto 42 com 76,0 kWh |
-| 04 | Reservas expiradas | Setembro | 3 expirações listadas |
-| 05 | Concentração de reservas | Setembro | Distribuição por apartamento evidenciada |
+| 04 | Demanda reprimida | Setembro, 7 recusas registradas em HU-03 | 7 tentativas recusadas listadas |
+| 05 | Recusas cruzadas com a faixa horária | Setembro | Recusas concentradas em 18h–22h |
 | 06 | Período sem utilização | Julho | Informa ausência de registros |
 
 **Protótipo:** não há. Pendente — ver seção 6.
 
 ---
 
-## 6. Rastreabilidade e pendências
+## 5. Rastreabilidade
 
-### 6.1. História ↔ Caso de uso ↔ Necessidade
+### 5.1. História ↔ Caso de uso ↔ Necessidade
 
-| História | Caso de uso | Necessidade no Visão v2.0 |
+| História | Caso de uso | Necessidade no Visão v3.0 |
 |---|---|---|
 | HU-01 Autenticar Usuário | UC01 | RE-08 (uso identificado) |
-| HU-02 Consultar Painel de Vagas | UC02 | §2.2, §2.5, §2.7 |
-| HU-03 Manter Agendamento | UC03 | §2.2, §2.4, §2.6 |
-| HU-04 Iniciar Sessão de Recarga | UC04 | §2.1, §2.3 |
-| HU-05 Calcular Previsão de Conclusão | UC05 | §2.2, §2.3 |
-| HU-06 Encerrar Sessão de Recarga | UC06 | §2.1 |
-| HU-07 Apurar Energia da Sessão | UC07 | §2.1 |
-| HU-08 Manter Veículo | UC08 | §2.3 |
-| HU-09 Consultar Consumo do Mês | UC09 | §2.1 |
-| HU-10 Expirar Reserva Não Utilizada | UC10 | §2.4 |
-| HU-11 Manter Vagas com Carregador | UC11 | §2.2, §2.3 |
-| HU-12 Definir Tarifa de Energia | UC12 | §2.1 |
-| HU-13 Manter Moradores | UC13 | §2.1 |
-| HU-14 Encerrar Sessão Órfã | UC14 | §2.7 |
-| HU-15 Fechar Mês e Gerar Rateio | UC15 | §2.1 |
-| HU-16 Consultar Histórico de Utilização | UC16 | §2.6, §2.8 |
+| HU-02 Consultar Painel de Vagas | UC02 | §2.2, §2.3, §2.4, §2.5 |
+| HU-03 Iniciar Sessão de Recarga | UC03 | §2.1, §2.2, §2.3, §2.4 |
+| HU-04 Calcular Previsão de Conclusão | UC04 | §2.2, §2.3 |
+| HU-05 Encerrar Sessão de Recarga | UC05 | §2.1 |
+| HU-06 Apurar Energia da Sessão | UC06 | §2.1 |
+| HU-07 Manter Veículo | UC07 | §2.3 |
+| HU-08 Consultar Consumo do Mês | UC08 | §2.1 |
+| HU-09 Manter Vagas com Carregador | UC09 | §2.2, §2.3 |
+| HU-10 Definir Tarifa de Energia | UC10 | §2.1 |
+| HU-11 Manter Moradores | UC11 | §2.1 |
+| HU-12 Encerrar Sessão Órfã | UC12 | §2.5 |
+| HU-13 Fechar Mês e Gerar Rateio | UC13 | §2.1 |
+| HU-14 Consultar Histórico de Utilização | UC14 | §2.6 |
 
-### 6.2. Verificação INVEST
+### 5.2. Verificação INVEST
 
 | Critério | Situação |
 |---|---|
-| **I**ndependente | Atendido em 14 histórias. **HU-05 e HU-07 falham** — existem apenas por inclusão. |
+| **I**ndependente | Atendido em 12 histórias. **HU-04 e HU-06 falham** — existem apenas por inclusão. |
 | **N**egociável | Atendido. As descrições registram intenção, não solução de implementação. |
-| **A**valiável | Atendido em 14. **HU-05 e HU-07 falham** — não entregam valor isolado ao usuário. |
-| **E**stimável | Prejudicado enquanto HU-05 e HU-07 não forem estimadas junto com quem as inclui. |
-| **D**imensionada | A confirmar no Planning Poker. HU-03 é a candidata a desmembramento, por acumular criação, consulta e cancelamento. |
+| **A**valiável | Atendido em 12. **HU-04 e HU-06 falham** — não entregam valor isolado ao usuário. |
+| **E**stimável | Prejudicado enquanto HU-04 e HU-06 não forem estimadas junto com quem as inclui. |
+| **D**imensionada | A confirmar no Planning Poker. Com a remoção do agendamento, deixou de haver história acumulando criação, consulta e cancelamento — nenhuma candidata evidente a desmembramento. |
 | **T**estável | Atendido. Todas as histórias têm casos de teste com entradas e resultados esperados. |
 
-### 6.3. Pendências
+> **A remoção do agendamento melhorou a aderência ao INVEST.** Na versão 1.0, a história de
+> agendamento acumulava criar, consultar e cancelar, e falhava em *Dimensionada*; e havia duas
+> histórias a mais competindo por estimativa. O conjunto atual é menor e mais homogêneo.
+
+---
+
+## 6. Pendências
 
 | Pendência | Impacto |
 |---|---|
-| **Tolerância de comparecimento sem valor definido.** Os exemplos deste documento usam 15 minutos como ilustração. | Afeta HU-10 e o teste 03 de HU-10. Decidir antes do detalhamento. |
 | **Estimativas em aberto.** Nenhuma história foi estimada. | Atribuídas no Planning Poker, na Reunião de Planejamento do Projeto. |
 | **Protótipos não iniciados.** Nenhuma história referencia protótipo. | Item 10 do Checklist de Projeto, condicional. |
-| **Possível desmembramento de HU-03.** Criar, consultar e cancelar agendamento numa só história pode ficar grande demais. | Avaliar no Planning Poker, contra o critério *Dimensionada* do INVEST. |
 | **Artefato antecipado.** Este documento pertence à tarefa *Detalhar Requisitos*, da Elaboração. | Revisar ao entrar na fase, confrontando com o Modelo de Análise e Design então produzido. |
+| **Estabilidade do escopo.** O escopo mudou duas vezes: v2.0 e v3.0. | Risco RI-09 do Visão. Novas alterações passam por Requisição de Mudança. |
 
 ---
 
@@ -1215,8 +1116,8 @@ número agregado de 8,6 % sugeriria, erradamente, que não há demanda reprimida
 
 | Documento | Local |
 |---|---|
-| CARREGAJA - Visão (v2.0) | `1.Requisitos/` |
-| CARREGAJA - Modelo de Caso de Uso (v2.0) | `2.Analise e Design/` |
+| CARREGAJA - Visão (v3.0) | `1.Requisitos/` |
+| CARREGAJA - Modelo de Caso de Uso (v3.0) | `2.Analise e Design/` |
 | Template - Historia de Usuario | `.spinoff/templates/` |
 | Guia - INVEST | `.spinoff/GUIAS.md` |
 | Guia - Use Case e Histórias do Usuário | `.spinoff/guias/` |

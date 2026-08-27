@@ -108,12 +108,11 @@ Decisões de escopo já fechadas — não reabrir sem motivo:
 
 | Decisão | Definição |
 |---|---|
-| **Atores** | **Morador** · **Síndico** · *Tempo* (ator temporal, dispara só a expiração de reserva) |
+| **Atores** | **Morador** · **Síndico**. Só isso — o ator temporal saiu junto com o agendamento |
 | **Alcance** | **Um único condomínio.** Sem multiempresa, sem gestão de assinantes |
 | **Canal** | Aplicação **web no celular**. Sem totem, sem app nativo |
 | **Identificação** | Morador **cadastrado**, com login, vinculado a um **apartamento** — a unidade de rateio |
-| **Agendamento** | Reserva de vaga por janela de horário, com **tolerância de comparecimento**; não compareceu, a vaga é liberada |
-| **Limite de reserva** | **1 agendamento futuro em aberto por morador**, antecedência máxima de **7 dias** |
+| **Agendamento** | **NÃO EXISTE.** Uso por ordem de chegada: consulta o painel, ocupa vaga livre, registra o início |
 | **Duração da sessão** | Máximo de **6 horas** (parâmetro, não valor fixo). Atingido o limite o sistema **sinaliza como excedida e mantém a sessão aberta** — não encerra sozinho |
 | **Apuração** | Por **energia estimada** (kWh) × tarifa do kWh vigente no início da sessão |
 | **Cobrança** | Fora do sistema — o síndico fecha o mês e a administradora lança na cota condominial |

@@ -1,13 +1,12 @@
 ' =====================================================================
 ' CARREGAJA - Modelo de Caso de Uso (diagramas por ator)
-' Projeto: Sistema de Agendamento e Rateio de Recarga de Veículos
+' Projeto: Sistema de Controle e Rateio de Recarga de Veículos
 '          Elétricos em Condomínio
-' Versão do modelo: 2.0
-' Derivado de: 1.Requisitos/CARREGAJA - Visão.md (v2.0)
+' Versão do modelo: 3.0
+' Derivado de: 1.Requisitos/CARREGAJA - Visão.md (v3.0)
 '
-' Este arquivo contém três diagramas independentes, um por ator.
-' Cada @startuml gera uma imagem própria, nomeada pelo identificador
-' que segue a diretiva.
+' v3.0: dois diagramas. O diagrama do ator Tempo foi removido junto
+'       com o ator, que existia apenas para expirar reservas.
 ' =====================================================================
 
 
@@ -36,33 +35,32 @@ actor "Morador" as MOR
 rectangle "CARREGAJA" {
   usecase "UC01\nAutenticar Usuário" as UC01
   usecase "UC02\nConsultar Painel de Vagas" as UC02
-  usecase "UC03\nManter Agendamento" as UC03
-  usecase "UC04\nIniciar Sessão de Recarga" as UC04
-  usecase "UC05\nCalcular Previsão\nde Conclusão" as UC05 #2A9D8F
-  usecase "UC06\nEncerrar Sessão de Recarga" as UC06
-  usecase "UC07\nApurar Energia da Sessão" as UC07 #2A9D8F
-  usecase "UC08\nManter Veículo" as UC08
-  usecase "UC09\nConsultar Consumo do Mês" as UC09
+  usecase "UC03\nIniciar Sessão de Recarga" as UC03
+  usecase "UC04\nCalcular Previsão\nde Conclusão" as UC04 #2A9D8F
+  usecase "UC05\nEncerrar Sessão de Recarga" as UC05
+  usecase "UC06\nApurar Energia da Sessão" as UC06 #2A9D8F
+  usecase "UC07\nManter Veículo" as UC07
+  usecase "UC08\nConsultar Consumo do Mês" as UC08
 }
 
 MOR -- UC01
 MOR -- UC02
 MOR -- UC03
-MOR -- UC04
-MOR -- UC06
+MOR -- UC05
+MOR -- UC07
 MOR -- UC08
-MOR -- UC09
 
-UC03 ..> UC05 : <<include>>
-UC04 ..> UC05 : <<include>>
-UC06 ..> UC07 : <<include>>
+UC03 ..> UC04 : <<include>>
+UC05 ..> UC06 : <<include>>
 
-note bottom of UC04
-  O ciclo do morador tem duas interações
-  separadas no tempo: do apartamento ele
-  consulta e agenda (UC02, UC03); na
-  garagem ele inicia (UC04) e, ao retirar
-  o veículo, encerra (UC06).
+note bottom of UC03
+  O ciclo do morador se resolve em uma
+  única ida à garagem: consulta o painel
+  do apartamento (UC02), desce e inicia
+  (UC03) e, ao retirar o veículo,
+  encerra (UC05).
+  Não há reserva prévia — o uso é por
+  ordem de chegada (RE-12).
 end note
 
 @enduml
@@ -93,72 +91,33 @@ actor "Síndico" as SIN
 rectangle "CARREGAJA" {
   usecase "UC01\nAutenticar Usuário" as UC01
   usecase "UC02\nConsultar Painel de Vagas" as UC02
-  usecase "UC07\nApurar Energia da Sessão" as UC07 #2A9D8F
-  usecase "UC11\nManter Vagas\ncom Carregador" as UC11
-  usecase "UC12\nDefinir Tarifa de Energia" as UC12
-  usecase "UC13\nManter Moradores" as UC13
-  usecase "UC14\nEncerrar Sessão Órfã" as UC14
-  usecase "UC15\nFechar Mês e Gerar Rateio" as UC15
-  usecase "UC16\nConsultar Histórico\nde Utilização" as UC16
+  usecase "UC06\nApurar Energia da Sessão" as UC06 #2A9D8F
+  usecase "UC09\nManter Vagas\ncom Carregador" as UC09
+  usecase "UC10\nDefinir Tarifa de Energia" as UC10
+  usecase "UC11\nManter Moradores" as UC11
+  usecase "UC12\nEncerrar Sessão Órfã" as UC12
+  usecase "UC13\nFechar Mês e Gerar Rateio" as UC13
+  usecase "UC14\nConsultar Histórico\nde Utilização" as UC14
 }
 
 SIN -- UC01
 SIN -- UC02
+SIN -- UC09
+SIN -- UC10
 SIN -- UC11
 SIN -- UC12
 SIN -- UC13
 SIN -- UC14
-SIN -- UC15
-SIN -- UC16
 
-UC14 ..> UC07 : <<include>>
-UC15 ..> UC07 : <<include>>
+UC12 ..> UC06 : <<include>>
+UC13 ..> UC06 : <<include>>
 
-note bottom of UC15
+note bottom of UC13
   A carga de uso do síndico é concentrada:
-  a configuração (UC11 a UC13) ocorre na
-  implantação, o fechamento (UC15) é mensal
-  e o tratamento de exceções (UC14) é
+  a configuração (UC09 a UC11) ocorre na
+  implantação, o fechamento (UC13) é mensal
+  e o tratamento de exceções (UC12) é
   eventual.
-end note
-
-@enduml
-
-
-' =====================================================================
-' 3. TEMPO (ator temporal)
-' =====================================================================
-@startuml CARREGAJA-CasoDeUso-Tempo
-
-title CARREGAJA — Caso de Uso Disparado pelo Tempo
-
-left to right direction
-skinparam packageStyle rectangle
-skinparam shadowing false
-skinparam ArrowColor #264653
-skinparam actorStyle awesome
-skinparam usecase {
-  BackgroundColor #F7F9F9
-  BorderColor #264653
-}
-skinparam rectangle {
-  BorderColor #264653
-}
-
-actor "Tempo" as TMP #CDD6D6
-
-rectangle "CARREGAJA" {
-  usecase "UC10\nExpirar Reserva\nNão Utilizada" as UC10
-}
-
-TMP -- UC10
-
-note bottom of UC10
-  Único comportamento do sistema que não
-  parte de ação de usuário. Liberar a vaga
-  de quem reservou e não compareceu não pode
-  depender de alguém se lembrar de fazê-lo
-  (risco RI-05 do documento Visão).
 end note
 
 @enduml
