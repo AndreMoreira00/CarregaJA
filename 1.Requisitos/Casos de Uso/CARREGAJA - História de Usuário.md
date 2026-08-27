@@ -37,27 +37,6 @@ Todos os exemplos usam o **mesmo cenário**, descrito na seção 2. Os números 
 sai de uma história entra na seguinte, e os totais do fechamento (HU-13) somam as sessões
 registradas nas histórias anteriores.
 
-### Correspondência com a versão 1.0
-
-| v2.0 | v1.0 | História |
-|---|---|---|
-| HU-01 | HU-01 | Autenticar Usuário |
-| HU-02 | HU-02 | Consultar Painel de Vagas |
-| — | ~~HU-03~~ | ~~Manter Agendamento~~ — **removida** |
-| HU-03 | HU-04 | Iniciar Sessão de Recarga |
-| HU-04 | HU-05 | Calcular Previsão de Conclusão |
-| HU-05 | HU-06 | Encerrar Sessão de Recarga |
-| HU-06 | HU-07 | Apurar Energia da Sessão |
-| HU-07 | HU-08 | Manter Veículo |
-| HU-08 | HU-09 | Consultar Consumo do Mês |
-| — | ~~HU-10~~ | ~~Expirar Reserva Não Utilizada~~ — **removida** |
-| HU-09 | HU-11 | Manter Vagas com Carregador |
-| HU-10 | HU-12 | Definir Tarifa de Energia |
-| HU-11 | HU-13 | Manter Moradores |
-| HU-12 | HU-14 | Encerrar Sessão Órfã |
-| HU-13 | HU-15 | Fechar Mês e Gerar Rateio |
-| HU-14 | HU-16 | Consultar Histórico de Utilização |
-
 ---
 
 ## 2. Cenário usado nos exemplos

@@ -16,30 +16,6 @@ Versão 3.0
 > e em **Mermaid** (embutido neste documento). A transposição para o **Astah**, ferramenta
 > indicada pelo processo SpinOff, está pendente — ver a seção *Pendências* ao final.
 
-### Correspondência com a versão 2.0
-
-Os casos de uso foram renumerados. A tabela abaixo permite localizar, na v3.0, aquilo que foi
-discutido sob a numeração anterior.
-
-| v3.0 | v2.0 | Caso de uso |
-|---|---|---|
-| UC01 | UC01 | Autenticar Usuário |
-| UC02 | UC02 | Consultar Painel de Vagas |
-| — | ~~UC03~~ | ~~Manter Agendamento~~ — **removido** |
-| UC03 | UC04 | Iniciar Sessão de Recarga |
-| UC04 | UC05 | Calcular Previsão de Conclusão |
-| UC05 | UC06 | Encerrar Sessão de Recarga |
-| UC06 | UC07 | Apurar Energia da Sessão |
-| UC07 | UC08 | Manter Veículo |
-| UC08 | UC09 | Consultar Consumo do Mês |
-| — | ~~UC10~~ | ~~Expirar Reserva Não Utilizada~~ — **removido** |
-| UC09 | UC11 | Manter Vagas com Carregador |
-| UC10 | UC12 | Definir Tarifa de Energia |
-| UC11 | UC13 | Manter Moradores |
-| UC12 | UC14 | Encerrar Sessão Órfã |
-| UC13 | UC15 | Fechar Mês e Gerar Rateio |
-| UC14 | UC16 | Consultar Histórico de Utilização |
-
 ---
 
 ## 1. Atores

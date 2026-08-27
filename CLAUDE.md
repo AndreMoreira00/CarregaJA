@@ -1,6 +1,6 @@
 # CarregaJA
 
-Sistema de agendamento de vagas com carregador e rateio do consumo de energia em um condomínio
+Sistema de controle de vagas com carregador e rateio do consumo de energia em um condomínio
 residencial. Projeto da disciplina **Engenharia de Software 1**.
 
 O que a disciplina avalia é o **processo**: como cada etapa é executada, documentada e
@@ -46,9 +46,20 @@ professor avaliará apresentando o artefato **Checklist de Projeto** (aba `Ver-I
 
 | Pendência | Onde trava |
 |---|---|
-| `CARREGAJA - Visão.docx` ainda é a v1.1 | O `.md` é a fonte da verdade. **Pandoc já instalado** — regerar só depois que o escopo v2.0 estabilizar, para não converter duas vezes |
-| Tolerância de comparecimento (UC10) sem valor definido | Parâmetro de configuração; decidir antes de detalhar o caso de uso |
-| Aprovação do escopo reduzido pelo PO | Item 11 do Checklist — mais relevante agora, por alterar o produto acordado |
+| Aprovação do escopo pelo PO | Item 11 do Checklist. O produto mudou duas vezes desde a v1.1 — ver risco RI-09 do Visão |
+| Transposição dos diagramas para o Astah | Item 7 do Checklist (template atual) |
+| Protótipo das telas do morador | Item 10 do Checklist, condicional |
+| Planilha de PCP e Product Backlog | Tarefa *Reunião de Planejamento do Projeto*, ainda não iniciada |
+| LGPD não tratada | Decisão consciente de 27/08/2026. O sistema registra entrada e saída de moradores identificados; quando for tratar, é uma restrição em 4.2 e um risco — não reescrita |
+
+**Como regerar o `Visão.docx`** a partir do `.md`, usando o template oficial como referência de
+estilos (pandoc instalado em `%LOCALAPPDATA%\Pandoc`):
+
+```bash
+cp ".spinoff/templates/Template - Visão.dotx" /tmp/ref.docx
+pandoc --reference-doc=/tmp/ref.docx -f gfm -t docx \
+  -o "1.Requisitos/CARREGAJA - Visão.docx" "1.Requisitos/CARREGAJA - Visão.md"
+```
 
 **Diagramas.** Os `.puml` em `2.Analise e Design/` são a fonte; os `.png`/`.svg` são gerados.
 Depois de editar um `.puml`, regerar os dois formatos — os arquivos da v1.0, com os atores que
@@ -92,11 +103,11 @@ executa.
 
 ## Escopo do produto
 
-**CARREGAJA** — sistema de **agendamento e rateio** de recarga de veículos elétricos para **um
+**CARREGAJA** — sistema de **controle e rateio** de recarga de veículos elétricos para **um
 condomínio residencial específico**. Poucas vagas com carregador na área comum, muitos
 apartamentos disputando-as, e a energia saindo da conta de luz que todos pagam. O morador
-agenda pelo celular, registra a recarga ao chegar, e o síndico fecha o mês com o valor por
-apartamento.
+consulta o painel pelo celular, ocupa uma vaga livre ao chegar e registra a recarga; o síndico
+fecha o mês com o valor por apartamento.
 
 > **Houve redução de escopo em 27/08/2026 (Visão v2.0).** A v1.1 descrevia um SaaS B2B por
 > assinatura para estacionamentos comerciais, com totem, motorista anônimo e encerramento no
@@ -139,8 +150,9 @@ valor da sessão  = energia estimada × tarifa vigente no início
 > o condomínio, e é isso que o rateio devolve.
 
 > **Consequência aceita:** como a energia é limitada pela carga que faltava, **ocupar a vaga
-> depois de carregado não custa nada**. O instrumento de rotatividade passa a ser o
-> agendamento, não o preço. Ver risco RI-04 do Visão.
+> depois de carregado não custa nada**. Removido o agendamento, o **único** instrumento de
+> rotatividade que resta é a duração máxima de 6h e a sinalização no painel — não o preço. Ver
+> risco RI-04 do Visão.
 
 ## Onde cada artefato vai
 
