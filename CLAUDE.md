@@ -38,7 +38,7 @@ professor avaliará apresentando o artefato **Checklist de Projeto** (aba `Ver-I
 | Criar Repositório do Projeto | ✅ Concluída — estrutura oficial do `Estrutura-Projeto.zip` |
 | Definir o Escopo do Sistema | 🔄 Visão v2.0 e Modelo de Caso de Uso v2.0 escritos; falta aprovação do PO |
 | *Detalhar Requisitos* (Fase 2) | ⏩ **Antecipada.** História de Usuário v1.0 escrita na Iniciação, por decisão da equipe, para tornar o escopo verificável antes da aprovação. Estimativas em aberto |
-| Reunião de Planejamento do Projeto | ⬜ Pendente — Planilha de PCP |
+| Reunião de Planejamento do Projeto | 🔄 Planilha de PCP preenchida (todas as 7 abas: Equipe, Backlog do Produto com priorização VRDC, Planejamento, Plano de Entregas, Riscos e as duas de APF). Falta realizar a reunião e o Planning Poker — as estimativas em horas são preliminares |
 | Reunião de Revisão do Planejamento | ⬜ Pendente |
 | Reunião de Revisão do Sprint | ⬜ Pendente — preenche o Checklist |
 
@@ -49,7 +49,8 @@ professor avaliará apresentando o artefato **Checklist de Projeto** (aba `Ver-I
 | Aprovação do escopo pelo PO | Item 11 do Checklist. O produto mudou duas vezes desde a v1.1 — ver risco RI-09 do Visão |
 | Transposição dos diagramas para o Astah | Item 7 do Checklist (template atual) |
 | Protótipo das telas do morador | Item 10 do Checklist, condicional |
-| Planilha de PCP e Product Backlog | Tarefa *Reunião de Planejamento do Projeto*, ainda não iniciada |
+| Aprovação do planejamento pelo PO | Item 28 do Checklist. A Planilha de PCP existe em `6.Gerenciamento de Projeto/`, mas ainda não passou pela Reunião de Planejamento |
+| **RI-12 — esforço acima da capacidade** | O planejamento fecha em 728 h ajustadas contra 624 h de capacidade em 10 sprints (4 integrantes × 8 h/semana). Registrado na aba Riscos da PCP; falta incorporar ao Visão na próxima revisão |
 | LGPD não tratada | Decisão consciente de 27/08/2026. O sistema registra entrada e saída de moradores identificados; quando for tratar, é uma restrição em 4.2 e um risco — não reescrita |
 
 **Como regerar o `Visão.docx`** a partir do `.md`, usando o template oficial como referência de
