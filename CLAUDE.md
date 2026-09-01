@@ -36,22 +36,28 @@ professor avaliará apresentando o artefato **Checklist de Projeto** (aba `Ver-I
 | Tarefa da WBS | Situação |
 |---|---|
 | Criar Repositório do Projeto | ✅ Concluída — estrutura oficial do `Estrutura-Projeto.zip` |
-| Definir o Escopo do Sistema | 🔄 Visão v2.0 e Modelo de Caso de Uso v2.0 escritos; falta aprovação do PO |
-| *Detalhar Requisitos* (Fase 2) | ⏩ **Antecipada.** História de Usuário v1.0 escrita na Iniciação, por decisão da equipe, para tornar o escopo verificável antes da aprovação. Estimativas em aberto |
-| Reunião de Planejamento do Projeto | 🔄 Planilha de PCP preenchida (todas as 7 abas: Equipe, Backlog do Produto com priorização VRDC, Planejamento, Plano de Entregas, Riscos e as duas de APF). Falta realizar a reunião e o Planning Poker — as estimativas em horas são preliminares |
+| Definir o Escopo do Sistema | ✅ Visão v3.1 e Modelo de Caso de Uso v3.0, aprovados pelo PO |
+| *Detalhar Requisitos* (Fase 2) | ⏩ **Antecipada.** História de Usuário v3.0 escrita na Iniciação, por decisão da equipe, para tornar o escopo verificável antes da aprovação |
+| Reunião de Planejamento do Projeto | 🔄 PCP preenchida e totalizada nas 7 abas; planejamento aprovado pelo PO. Falta o Planning Poker — as estimativas em horas seguem preliminares |
 | Reunião de Revisão do Planejamento | ⬜ Pendente |
 | Reunião de Revisão do Sprint | ⬜ Pendente — preenche o Checklist |
 
-**Pendências abertas do escopo reduzido (27/08/2026):**
+**IAP atual: 96,2%** (25 `Sim` ÷ 26 itens contáveis). Único item não fechado é o 7.
+
+**Pendências abertas (31/08/2026):**
 
 | Pendência | Onde trava |
 |---|---|
-| Aprovação do escopo pelo PO | Item 11 do Checklist. O produto mudou duas vezes desde a v1.1 — ver risco RI-09 do Visão |
-| Transposição dos diagramas para o Astah | Item 7 do Checklist (template atual) |
-| Protótipo das telas do morador | Item 10 do Checklist, condicional |
-| Aprovação do planejamento pelo PO | Item 28 do Checklist. A Planilha de PCP existe em `6.Gerenciamento de Projeto/`, mas ainda não passou pela Reunião de Planejamento |
-| **RI-12 — esforço acima da capacidade** | O planejamento fecha em 728 h ajustadas contra 624 h de capacidade em 10 sprints (4 integrantes × 8 h/semana). Registrado na aba Riscos da PCP; falta incorporar ao Visão na próxima revisão |
+| Transposição do Modelo de Caso de Uso para o Astah | Item 7 do Checklist — é o **único** item que ainda não é `Sim`. O SpinOff prevê o `Template - Modelos Analise e Design.asta`; os diagramas estão em PlantUML |
+| Planning Poker | As estimativas da PCP são preliminares. Não trava item do Checklist, mas é entrada da Reunião de Planejamento |
+| Protótipo das telas do morador | Item 10 do Checklist, `NA` por ser condicional — saída de *Detalhar Requisitos*, na Elaboração |
+| Aprovação do PO sem Ata | Itens 11 e 28 estão `Sim` com base no aceite do PO, mas **não há Ata em `Atas/`**. Decisão consciente da equipe; é o ponto mais frágil numa arguição |
 | LGPD não tratada | Decisão consciente de 27/08/2026. O sistema registra entrada e saída de moradores identificados; quando for tratar, é uma restrição em 4.2 e um risco — não reescrita |
+
+> **RI-12 deixou de existir** em 31/08/2026. Ele registrava esforço acima da capacidade a
+> partir de 728 h, número que nenhuma aba produzia. Restaurada a totalização
+> (`Backlog_Produto!D42`), o esforço ajustado fecha em **537,6 h contra 624 h de capacidade** —
+> folga de 86,4 h, não déficit. A aba Riscos hoje espelha exatamente os onze riscos do Visão.
 
 **Como regerar o `Visão.docx`** a partir do `.md`, usando o template oficial como referência de
 estilos (pandoc instalado em `%LOCALAPPDATA%\Pandoc`):

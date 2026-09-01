@@ -2,110 +2,30 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 2.0
+Versão 3.0
 
-## Histórico de Revisões
+## Dados usados nos testes de aceitação
 
-| Data | Versão | Descrição | Autor |
-|---|---|---|---|
-| 27/08/2026 | 1.0 | Elaboração inicial. Dezesseis histórias, uma por caso de uso, com fluxo principal, fluxos alternativos e testes de aceitação. Derivado do Modelo de Caso de Uso v2.0 e do documento Visão v2.0. | Henrique de Almeida Marangoni Inacio |
-| 27/08/2026 | 2.0 | **Remoção do agendamento.** Removidas as histórias *Manter Agendamento* e *Expirar Reserva Não Utilizada*. Histórias **renumeradas para HU-01–HU-14**, acompanhando a renumeração dos casos de uso. Cenário refeito sem reserva: o morador consulta o painel e ocupa a vaga na chegada. Derivado do Modelo de Caso de Uso v3.0 e do documento Visão v3.0. | Henrique de Almeida Marangoni Inacio |
-
-> **Situação deste artefato.** Este documento **antecipa** a tarefa *Detalhar Requisitos*, que
-> pertence à fase de Elaboração — ver `.spinoff/METODO.md`. Foi produzido na Iniciação por
-> decisão da equipe, para tornar o escopo verificável antes da aprovação. As **estimativas
-> ficam em aberto**: são atribuídas no Planning Poker, na Reunião de Planejamento do Projeto.
-
----
-
-## 1. Como ler este documento
-
-Cada história corresponde a um caso de uso do **CARREGAJA - Modelo de Caso de Uso (v3.0)**, na
-proporção de um para um, e segue o `Template - Historia de Usuario` do SpinOff, acrescido de
-duas seções que o template não prevê — **fluxo principal** e **fluxos alternativos** — incluídas
-para tornar visível o que entra e o que sai a cada passo.
-
-| Seção | O que traz |
+| Elemento | Valor |
 |---|---|
-| Cabeçalho | Caso de uso correspondente, número, estimativa, ator |
-| Descrição | A história no formato *Como… eu quero… de modo que…* |
-| Fluxo principal | O caminho feliz, passo a passo, alternando ator e sistema |
-| Fluxos alternativos | Desvios e recusas, numerados a partir do passo em que divergem |
-| Testes de aceitação | Pré-condição e casos de teste com **entradas** e **resultado esperado** |
-
-Todos os exemplos usam o **mesmo cenário**, descrito na seção 2. Os números encadeiam: o que
-sai de uma história entra na seguinte, e os totais do fechamento (HU-13) somam as sessões
-registradas nas histórias anteriores.
-
----
-
-## 2. Cenário usado nos exemplos
-
-### 2.1. O condomínio
-
-**Residencial Aroeira** — 96 apartamentos, duas vagas com carregador na área comum.
-
-| Vaga | Potência do carregador |
-|---|---|
-| G-01 | 11,0 kW |
-| G-02 | 7,4 kW |
-
-| Parâmetro | Valor no cenário | Origem |
-|---|---|---|
-| Tarifa de energia | R$ 0,92 / kWh, vigente desde 01/09/2026 | Definida pela síndica (HU-10) |
-| Duração máxima de sessão | 6 horas | RE-11 do documento Visão |
-| Agendamento | **Não existe** — uso por ordem de chegada | RE-12 |
-
-### 2.2. As pessoas
-
-| Quem | Apartamento | Perfil | Veículo |
-|---|---|---|---|
-| Marina Duarte | 42 | Morador | Nissan Leaf — 40 kWh, potência máxima 6,6 kW |
-| Rafael Nunes | 17 | Morador | BYD Dolphin — 60 kWh, potência máxima 11,0 kW |
-| Cláudia Berto | 91 | Síndico (e moradora, sem veículo elétrico) | — |
-
-### 2.3. As fórmulas que os exemplos aplicam
+| Vaga G-01 | carregador de 11,0 kW |
+| Vaga G-02 | carregador de 7,4 kW |
+| Veículo do apto 42 | Nissan Leaf — 40 kWh, potência máxima 6,6 kW |
+| Veículo do apto 17 | BYD Dolphin — 60 kWh, potência máxima 11,0 kW |
+| Tarifa de energia | R$ 0,92 / kWh |
+| Duração máxima de sessão | 6 horas (RE-11 do Visão) |
 
 ```
-potência efetiva  = min(potência do carregador da vaga, potência máxima do veículo)
+potência efetiva  = min(potência do carregador, potência máxima do veículo)
 energia a repor   = capacidade da bateria × (100% − nível informado)
 tempo estimado    = energia a repor ÷ potência efetiva
-
-duração           = encerramento − início
 energia estimada  = min(potência efetiva × duração, energia a repor)
 valor da sessão   = energia estimada × tarifa vigente no início
 ```
 
-**Repare no `min` da energia estimada.** Ele aparece nos dois exemplos completos deste
-documento — a sessão de Marina (HU-05) e a sessão órfã de Rafael (HU-12) — e nos dois ele
-**é acionado**, ou seja, o teto pega. É o que impede que um veículo esquecido plugado acumule
-consumo indefinidamente.
-
-### 2.4. A linha do tempo
-
-| Quando | O que acontece | História |
-|---|---|---|
-| 01/09, manhã | Cláudia configura vagas, tarifa e moradores | HU-09, HU-10, HU-11 |
-| 01/09, tarde | Marina cadastra o Leaf | HU-07 |
-| 08/09, 18h05 | Marina consulta o painel do apartamento e vê a G-02 livre | HU-02 |
-| 08/09, 18h10 | Marina desce, pluga o carro e registra o início | HU-03, HU-04 |
-| 08/09, 22h40 | Marina encerra — **28,0 kWh, R$ 25,76** | HU-05, HU-06 |
-| 09/09, 14h00 | Rafael inicia sessão na G-01 e esquece de encerrar | HU-03 |
-| 09/09, 20h00 | A sessão atinge 6 horas e é sinalizada como **excedida** | HU-02 |
-| 09/09, 21h00 | Cláudia confirma que o carro saiu e encerra — **48,0 kWh, R$ 44,16** | HU-12 |
-| 30/09 | Marina confere seu consumo do mês | HU-08 |
-| 01/10 | Cláudia fecha setembro — **157,0 kWh, R$ 144,44** | HU-13, HU-14 |
-
-**O ciclo do morador se resolve em uma única ida à garagem.** Marina consulta o painel de casa
-às 18h05, vê que há vaga, desce e ocupa. Não há reserva antes nem confirmação depois — se a
-vaga tivesse sido ocupada nesses cinco minutos, ela teria descido à toa. É a consequência
-aceita da remoção do agendamento, registrada como risco RI-11 do documento Visão.
-
 ---
 
-## 3. Histórias do Morador
-
-### HU-01 — Autenticar Usuário
+## HU-01 — Autenticar Usuário
 
 | | |
 |---|---|
@@ -119,39 +39,22 @@ aceita da remoção do agendamento, registrada como risco RI-11 do documento Vis
 Como **morador**, eu quero **entrar no sistema com minhas credenciais**, de modo que **o que eu
 consumir seja registrado no meu apartamento**.
 
-**Fluxo principal**
-
-1. O morador acessa o endereço do sistema pelo celular.
-2. O sistema apresenta a tela de acesso.
-3. O morador informa e-mail e senha.
-4. O sistema valida as credenciais, identifica o apartamento vinculado e determina o perfil.
-5. O sistema apresenta o painel de vagas (HU-02) como tela inicial.
-
-**Fluxos alternativos**
-
-- **4a. Credenciais inválidas.** O sistema recusa o acesso sem informar qual dos dois campos
-  está incorreto, e mantém a tela de acesso.
-- **4b. Morador desativado.** O sistema recusa o acesso e orienta a procurar o síndico. Ocorre
-  quando o morador foi desativado em HU-11 por ter deixado o condomínio.
-- **4c. Usuário acumula os perfis Morador e Síndico.** O sistema concede ambos, e a interface
-  oferece as funções de gestão além das de morador.
-
 **Testes de aceitação**
 
 *Pré-condição:* o morador está cadastrado e ativo (HU-11).
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Acesso com credenciais válidas | `marina.duarte@…` / senha correta | Acesso concedido, perfil Morador, apartamento 42, painel exibido |
-| 02 | Acesso com senha incorreta | `marina.duarte@…` / senha errada | Acesso recusado, mensagem genérica sem indicar o campo errado |
-| 03 | Acesso de morador desativado | Credenciais de morador desativado | Acesso recusado, orientação a procurar o síndico |
-| 04 | Acesso da síndica, que também é moradora | `claudia.berto@…` / senha correta | Acesso concedido com os dois perfis |
+| 01 | Acesso com credenciais válidas | E-mail e senha corretos do apto 42 | Acesso concedido, perfil Morador, apartamento 42 |
+| 02 | Acesso com senha incorreta | E-mail correto, senha errada | Recusado, com mensagem genérica que não indica o campo errado |
+| 03 | Acesso de morador desativado | Credenciais de morador desativado em HU-11 | Recusado, com orientação a procurar o síndico |
+| 04 | Usuário com os dois perfis | Credenciais da síndica, que também é moradora | Acesso concedido com os perfis Morador e Síndico |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-02 — Consultar Painel de Vagas
+## HU-02 — Consultar Painel de Vagas
 
 | | |
 |---|---|
@@ -165,56 +68,6 @@ consumir seja registrado no meu apartamento**.
 Como **morador**, eu quero **ver quais vagas estão livres e a previsão de liberação das
 ocupadas**, de modo que **eu decida se desço agora ou mais tarde, em vez de descer à toa**.
 
-> **Esta história carrega sozinha a resposta ao problema da disponibilidade.** Removido o
-> agendamento, é a previsão exibida aqui que substitui a garantia de horário. Se ela for
-> imprecisa ou desatualizada, o morador volta ao grupo de mensagens — e o sistema perde a
-> função que justifica sua existência para quem não é o síndico.
-
-**Fluxo principal**
-
-1. O morador abre o painel.
-2. O sistema levanta, para cada vaga, a sessão em andamento.
-3. O sistema classifica cada vaga em um dos quatro estados e calcula a previsão de liberação
-   das ocupadas.
-4. O sistema apresenta a lista de vagas com estado e previsão.
-
-**Os quatro estados**
-
-| Estado | Quando aparece |
-|---|---|
-| **Livre** | Sem sessão ativa; pode ser ocupada por qualquer morador |
-| **Ocupada** | Há sessão em andamento; exibe a previsão de conclusão |
-| **Concluída, ainda ocupada** | A previsão passou e a sessão não foi encerrada |
-| **Excedida** | A sessão passou da duração máxima (6 h); permanece aberta |
-
-Os dois últimos são **derivados no momento da consulta**, a partir do tempo decorrido. Nenhum
-altera o estado da sessão — existem para informar.
-
-**Fluxos alternativos**
-
-- **4a. O usuário é o síndico.** O sistema acrescenta, a cada vaga, o apartamento e o morador da
-  sessão, e destaca as sessões candidatas a órfãs (HU-12).
-- **4b. O usuário é morador.** O sistema **não identifica** quem ocupa cada vaga. Saber *quando*
-  libera resolve o problema; saber *quem* está lá expõe o vizinho sem necessidade.
-- **4c. Nenhuma vaga livre.** O sistema apresenta a previsão de liberação mais próxima, para que
-  o morador saiba quando vale a pena tentar de novo.
-
-**Exemplo — 08/09/2026, 18h05, Marina consulta do apartamento**
-
-| Vaga | Estado | O que o painel mostra |
-|---|---|---|
-| G-01 | Ocupada | Previsão de liberação: 19h30 |
-| G-02 | **Livre** | — |
-
-Marina desce. Cinco minutos depois registra o início na G-02.
-
-**Exemplo — 09/09/2026, 20h00, o painel de Cláudia**
-
-| Vaga | Estado | O que o painel mostra |
-|---|---|---|
-| G-01 | **Excedida** | Apto 17 · início 14h00 · previsão era 18h22 · **6h00 de sessão** |
-| G-02 | Livre | — |
-
 **Testes de aceitação**
 
 *Pré-condição:* usuário autenticado (HU-01); existem vagas cadastradas (HU-09).
@@ -222,18 +75,18 @@ Marina desce. Cinco minutos depois registra o início na G-02.
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
 | 01 | Vaga sem sessão | G-02 sem registros | Estado **Livre** |
-| 02 | Vaga com sessão dentro do previsto | G-01, início 14h00, previsão 18h22, agora 16h00 | Estado **Ocupada**, previsão 18h22 |
-| 03 | Sessão além da previsão, dentro das 6 h | G-01, previsão 18h22, agora 19h00 | Estado **Concluída, ainda ocupada** |
-| 04 | Sessão além da duração máxima | G-01, início 14h00, agora 20h00 | Estado **Excedida**; sessão **permanece aberta** |
-| 05 | Painel do morador não identifica terceiros | Marina consulta com G-01 ocupada por Rafael | Estado e previsão exibidos; apartamento e nome **ausentes** |
-| 06 | Painel do síndico identifica | Cláudia consulta a mesma vaga | Estado, previsão, **apto 17 e nome exibidos** |
-| 07 | Nenhuma vaga livre | Ambas ocupadas, previsões 19h30 e 21h00 | Informa que não há vaga e destaca a liberação mais próxima: 19h30 |
+| 02 | Vaga com sessão dentro do previsto | G-01, início 14h00, previsão 18h22, consulta às 16h00 | Estado **Ocupada**, previsão 18h22 |
+| 03 | Sessão além da previsão, dentro das 6 h | G-01, previsão 18h22, consulta às 19h00 | Estado **Concluída, ainda ocupada** |
+| 04 | Sessão além da duração máxima | G-01, início 14h00, consulta às 20h00 | Estado **Excedida**; a sessão permanece aberta |
+| 05 | Morador não vê identificação alheia | Morador do apto 42 consulta G-01, ocupada pelo apto 17 | Estado e previsão exibidos; apartamento e nome ausentes |
+| 06 | Síndico vê a identificação | Síndica consulta a mesma vaga | Estado, previsão, apartamento 17 e nome exibidos |
+| 07 | Nenhuma vaga livre | G-01 e G-02 ocupadas, previsões 19h30 e 21h00 | Informa ausência de vaga e destaca a liberação mais próxima: 19h30 |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-03 — Iniciar Sessão de Recarga
+## HU-03 — Iniciar Sessão de Recarga
 
 | | |
 |---|---|
@@ -247,73 +100,25 @@ Marina desce. Cinco minutos depois registra o início na G-02.
 Como **morador**, eu quero **registrar o início da recarga ao plugar o veículo**, de modo que
 **o consumo seja lançado no meu apartamento e os vizinhos saibam quando a vaga será liberada**.
 
-**Fluxo principal**
-
-1. O morador pluga o veículo e abre o sistema na garagem.
-2. O morador seleciona a vaga que ocupou e informa o nível atual da bateria.
-3. O sistema valida que a vaga existe e está **livre**.
-4. O sistema recupera os dados do veículo do cadastro — não são declarados a cada uso.
-5. O sistema calcula a previsão de conclusão (HU-04).
-6. O sistema registra a sessão com data, hora de início e potência efetiva apurada.
-7. A vaga passa a **Ocupada** no painel, com a previsão visível aos demais.
-
-**Fluxos alternativos**
-
-- **3a. Vaga já ocupada.** Outro morador registrou o início antes. O sistema recusa e mostra a
-  previsão de liberação. **É a corrida pela vaga**, consequência aceita da ausência de
-  agendamento — risco RI-11 do documento Visão. A recusa é contabilizada como demanda reprimida
-  e aparece em HU-14.
-- **3b. Vaga desativada.** O sistema recusa; a vaga não aceita novas sessões (HU-09).
-- **4a. Morador sem veículo cadastrado.** O sistema interrompe e encaminha para HU-07.
-- **6a. Morador já tem sessão em andamento.** O sistema recusa: um morador ocupa uma vaga por
-  vez.
-
-**Sujeição à duração máxima.** A partir do horário registrado no passo 6, a sessão fica sujeita
-ao limite de 6 horas. Atingido o limite, ela é sinalizada como **excedida** no painel — mas
-**não é encerrada** pelo sistema.
-
-**Exemplo — 08/09/2026, 18h10, Marina registra o início**
-
-| Entrada | Valor |
-|---|---|
-| Vaga informada | G-02 (7,4 kW) |
-| Nível de bateria | 30 % |
-| Veículo em cadastro | Nissan Leaf — 40 kWh, 6,6 kW |
-| Situação da vaga | Livre |
-
-```
-potência efetiva = min(7,4 ; 6,6)      = 6,6 kW
-energia a repor  = 40 × (100% − 30%)   = 28,0 kWh
-tempo estimado   = 28,0 ÷ 6,6          = 4,24 h  →  4h15
-```
-
-**Saída:** sessão aberta às 18h10, previsão de conclusão **22h25**. G-02 passa a **Ocupada** e
-os demais moradores passam a ver essa previsão no painel. A sessão será marcada como excedida
-às **00h10** se ainda estiver aberta.
-
-**Repare que o nível de bateria só é pedido agora.** Na versão 1.0 deste documento, ele era
-pedido no agendamento — horas antes da chegada, quando ninguém pode sabê-lo. Perguntar na
-chegada é o que torna o dado confiável, e foi o motivo de o agendamento ter sido removido.
-
 **Testes de aceitação**
 
-*Pré-condição:* morador autenticado, com veículo cadastrado.
+*Pré-condição:* morador autenticado, com veículo cadastrado (HU-07).
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Início em vaga livre | G-02 livre, bateria 30 % | Sessão aberta; previsão 22h25; vaga passa a Ocupada |
-| 02 | Início em vaga já ocupada | G-01 com sessão em andamento | Recusado; exibe previsão de liberação; recusa contabilizada |
+| 01 | Início em vaga livre | G-02 livre, Leaf, bateria 30 %, às 18h10 | Sessão aberta; potência efetiva 6,6 kW; previsão 22h25; vaga passa a Ocupada |
+| 02 | Início em vaga já ocupada | G-01 com sessão em andamento | Recusado, exibindo a previsão de liberação; recusa contabilizada para HU-14 |
 | 03 | Corrida pela vaga | Dois moradores registram início na G-02 quase ao mesmo tempo | O primeiro abre a sessão; o segundo é recusado |
 | 04 | Vaga desativada | G-02 desativada em HU-09 | Recusado |
-| 05 | Morador sem veículo cadastrado | Morador novo tenta iniciar | Interrompido; encaminhado ao cadastro de veículo |
-| 06 | Morador já com sessão aberta | Marina, com sessão na G-02, tenta iniciar na G-01 | Recusado |
-| 07 | Marcação do limite de duração | Sessão iniciada 18h10, consulta às 00h10 | Sessão marcada **Excedida** e **ainda aberta** |
+| 05 | Morador sem veículo cadastrado | Morador recém-cadastrado tenta iniciar | Interrompido, com encaminhamento ao cadastro de veículo |
+| 06 | Morador já com sessão aberta | Morador com sessão na G-02 tenta iniciar na G-01 | Recusado |
+| 07 | Marcação da duração máxima | Sessão iniciada às 18h10, consulta às 00h10 | Sessão marcada **Excedida** e ainda aberta |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-04 — Calcular Previsão de Conclusão
+## HU-04 — Calcular Previsão de Conclusão
 
 | | |
 |---|---|
@@ -322,55 +127,11 @@ chegada é o que torna o dado confiável, e foi o motivo de o agendamento ter si
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | — (executado por inclusão a partir de HU-03) |
 
-> **História técnica.** Esta história **não passa integralmente no INVEST**: falha em
-> *Independente* e em *Avaliável*, porque nenhum ator a aciona diretamente e ela não entrega
-> valor isolado ao morador. Está registrada em separado por concentrar, junto com HU-06, a
-> regra de negócio central do sistema — o que a torna a primeira candidata à arquitetura
-> executável da Elaboração (risco RI-08 do documento Visão). Deve ser estimada e desenvolvida
-> **junto** com HU-03, nunca sozinha.
-
 **Descrição da história**
 
 Como **morador**, eu quero **que o sistema calcule quando minha recarga termina a partir das
 características reais do meu veículo**, de modo que **a previsão que eu vejo, e que meus
 vizinhos veem no painel, seja confiável**.
-
-**Fluxo principal**
-
-1. O sistema recebe a vaga, o veículo e o nível de bateria.
-2. Calcula a **potência efetiva**: o menor valor entre a potência do carregador e a potência
-   máxima que o veículo aceita.
-3. Calcula a **energia a repor**: a capacidade da bateria multiplicada pelo percentual que
-   falta.
-4. Divide a energia a repor pela potência efetiva, obtendo o tempo estimado.
-5. Devolve o horário previsto de conclusão.
-
-**Por que a potência efetiva é o coração disto.** Um carregador de 22 kW não recarrega mais
-rápido um veículo que aceita no máximo 6,6 kW. É esta regra que justifica o cadastro de veículo
-existir — sem ela, toda previsão exibida no painel estaria errada para a maioria dos carros.
-
-**Fluxos alternativos**
-
-- **2a. Carregador mais lento que o veículo.** A potência efetiva é a do carregador. Ocorre com
-  o BYD Dolphin (11 kW) na vaga G-02 (7,4 kW).
-- **2b. Veículo mais lento que o carregador.** A potência efetiva é a do veículo. É o caso do
-  Nissan Leaf (6,6 kW) na G-02 (7,4 kW).
-- **3a. Bateria já em 100 %.** Energia a repor igual a zero; o sistema informa que não há
-  recarga a fazer.
-
-**Exemplo — os dois veículos do cenário, nas duas vagas**
-
-| Veículo | Vaga | Pot. carregador | Pot. máx. veículo | **Pot. efetiva** | Bateria | Energia a repor | **Tempo** |
-|---|---|---|---|---|---|---|---|
-| Leaf (40 kWh) | G-02 | 7,4 kW | 6,6 kW | **6,6 kW** | 30 % | 28,0 kWh | **4h15** |
-| Leaf (40 kWh) | G-01 | 11,0 kW | 6,6 kW | **6,6 kW** | 30 % | 28,0 kWh | **4h15** |
-| Dolphin (60 kWh) | G-01 | 11,0 kW | 11,0 kW | **11,0 kW** | 20 % | 48,0 kWh | **4h22** |
-| Dolphin (60 kWh) | G-02 | 7,4 kW | 11,0 kW | **7,4 kW** | 20 % | 48,0 kWh | **6h29** |
-
-As duas primeiras linhas mostram o ponto: **trocar o Leaf para o carregador mais potente não
-adianta nada** — o gargalo é o carro. A última linha mostra o inverso, e um efeito colateral
-relevante: o Dolphin na vaga lenta precisa de 6h29, **acima da duração máxima de 6 horas**, e
-portanto não completa a recarga em uma única sessão.
 
 **Testes de aceitação**
 
@@ -378,17 +139,17 @@ portanto não completa a recarga em uma única sessão.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Veículo limita a potência | Leaf 6,6 kW na G-02 de 7,4 kW, bateria 30 % | Pot. efetiva 6,6 kW; 28,0 kWh; 4h15 |
-| 02 | Carregador limita a potência | Dolphin 11 kW na G-02 de 7,4 kW, bateria 20 % | Pot. efetiva 7,4 kW; 48,0 kWh; 6h29 |
-| 03 | Potências iguais | Dolphin 11 kW na G-01 de 11 kW, bateria 20 % | Pot. efetiva 11,0 kW; 48,0 kWh; 4h22 |
-| 04 | Carregador maior não acelera veículo lento | Leaf na G-01 (11 kW) contra Leaf na G-02 (7,4 kW) | **Mesmo tempo** nos dois casos: 4h15 |
-| 05 | Bateria cheia | Leaf, bateria 100 % | Energia a repor 0 kWh; informa que não há recarga a fazer |
+| 01 | Veículo limita a potência | Leaf (6,6 kW) na G-02 (7,4 kW), bateria 30 % | Potência efetiva 6,6 kW; 28,0 kWh a repor; 4h15 |
+| 02 | Carregador limita a potência | Dolphin (11 kW) na G-02 (7,4 kW), bateria 20 % | Potência efetiva 7,4 kW; 48,0 kWh a repor; 6h29 |
+| 03 | Potências iguais | Dolphin (11 kW) na G-01 (11 kW), bateria 20 % | Potência efetiva 11,0 kW; 48,0 kWh a repor; 4h22 |
+| 04 | Carregador maior não acelera veículo lento | Leaf na G-01 (11 kW) comparado ao Leaf na G-02 (7,4 kW) | Mesmo tempo nos dois casos: 4h15 |
+| 05 | Bateria cheia | Leaf, bateria 100 % | 0 kWh a repor; informa que não há recarga a fazer |
 
-**Protótipo:** não se aplica — não tem interface própria.
+**Tem protótipo?** Não se aplica — não possui interface própria.
 
 ---
 
-### HU-05 — Encerrar Sessão de Recarga
+## HU-05 — Encerrar Sessão de Recarga
 
 | | |
 |---|---|
@@ -402,65 +163,23 @@ portanto não completa a recarga em uma única sessão.
 Como **morador**, eu quero **encerrar minha sessão ao retirar o veículo e ver quanto consumi**,
 de modo que **a vaga fique livre para os vizinhos e eu possa conferir o valor na hora**.
 
-**Fluxo principal**
-
-1. O morador retira o veículo e abre sua sessão em andamento no sistema.
-2. O morador confirma o encerramento.
-3. O sistema registra a data e hora de encerramento.
-4. O sistema apura a energia e o valor da sessão (HU-06).
-5. O sistema **exibe ao morador a duração, a energia estimada e o valor**, permitindo
-   contestação imediata.
-6. A vaga passa a **Livre** no painel.
-
-**Fluxos alternativos**
-
-- **1a. O morador não tem sessão aberta.** O sistema informa que não há o que encerrar.
-- **2a. O morador tenta encerrar sessão de outro.** Não é oferecido: o morador só enxerga a
-  própria sessão. O encerramento de sessão alheia cabe apenas ao síndico, por HU-12.
-- **4a. A energia estimada atinge o teto.** Quando a duração é maior do que a recarga precisava,
-  a energia é limitada pela energia a repor. O sistema exibe o valor limitado, sem alarde — é
-  o comportamento normal, não uma exceção.
-
-**Exemplo — 08/09/2026, 22h40, Marina retira o Leaf**
-
-| Dado da sessão | Valor |
-|---|---|
-| Início | 08/09, 18h10 |
-| Encerramento | 08/09, 22h40 |
-| Potência efetiva registrada | 6,6 kW |
-| Energia a repor no início | 28,0 kWh |
-| Tarifa vigente no início | R$ 0,92 / kWh |
-
-```
-duração          = 22h40 − 18h10                = 4,50 h
-energia bruta    = 6,6 × 4,50                   = 29,7 kWh
-energia estimada = min(29,7 ; 28,0)             = 28,0 kWh   ← teto aplicado
-valor da sessão  = 28,0 × 0,92                  = R$ 25,76
-```
-
-**Saída na tela de Marina:** *4h30 de sessão · 28,0 kWh · R$ 25,76*. G-02 volta a **Livre**.
-
-Marina ficou 15 minutos a mais do que a recarga precisava. Esses 15 minutos **não foram
-cobrados**, porque o teto limitou a energia à carga que faltava — e é exatamente por isso que,
-neste sistema, ocupar a vaga depois de carregado não tem custo (risco RI-04 do Visão).
-
 **Testes de aceitação**
 
 *Pré-condição:* o morador tem sessão em andamento.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Encerramento com teto acionado | Início 18h10, fim 22h40, 6,6 kW, repor 28,0 kWh | 28,0 kWh e R$ 25,76 exibidos; vaga liberada |
-| 02 | Encerramento antes de completar a carga | Início 18h10, fim 20h10, 6,6 kW, repor 28,0 kWh | `min(13,2 ; 28,0)` = 13,2 kWh; R$ 12,14 |
+| 01 | Encerramento com teto de energia acionado | Início 18h10, fim 22h40, 6,6 kW, 28,0 kWh a repor | 28,0 kWh e R$ 25,76; vaga liberada |
+| 02 | Encerramento antes de completar a carga | Início 18h10, fim 20h10, 6,6 kW, 28,0 kWh a repor | 13,2 kWh e R$ 12,14 |
 | 03 | Valor apresentado ao morador na hora | Qualquer encerramento | Duração, energia e valor exibidos na própria tela |
-| 04 | Sem sessão aberta | Morador sem sessão aciona encerrar | Informado que não há sessão a encerrar |
-| 05 | Tarifa alterada durante a sessão | Início com R$ 0,92; tarifa muda para R$ 1,05 às 20h | Apurado com **R$ 0,92**, a vigente no início |
+| 04 | Sem sessão aberta | Morador sem sessão aciona o encerramento | Informado que não há sessão a encerrar |
+| 05 | Tarifa alterada durante a sessão | Início com R$ 0,92; tarifa passa a R$ 1,05 às 20h | Apurado a R$ 0,92, a vigente no início |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-06 — Apurar Energia da Sessão
+## HU-06 — Apurar Energia da Sessão
 
 | | |
 |---|---|
@@ -469,58 +188,11 @@ neste sistema, ocupar a vaga depois de carregado não tem custo (risco RI-04 do 
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | — (executado por inclusão a partir de HU-05, HU-12 e HU-13) |
 
-> **História técnica.** Como HU-04, **não passa integralmente no INVEST** — falha em
-> *Independente* e *Avaliável*, por não ser acionada por ator nem entregar valor isolado.
-> Registrada em separado por ser o cálculo que produz o número que vai para a cota
-> condominial. Estimar e desenvolver **junto** com HU-05.
-
 **Descrição da história**
 
 Como **síndico**, eu quero **que a energia de cada sessão seja apurada por uma regra fixa e
 auditável**, de modo que **o valor lançado na cota do condômino possa ser explicado e
 contestado**.
-
-**Fluxo principal**
-
-1. O sistema recebe a sessão encerrada, com início, encerramento e potência efetiva.
-2. Calcula a duração.
-3. Multiplica a potência efetiva pela duração, obtendo a energia bruta.
-4. **Limita** o resultado à energia que faltava na bateria no início da sessão.
-5. Multiplica pela tarifa **vigente no início** da sessão.
-6. Devolve energia estimada e valor.
-
-**As duas decisões de cálculo que merecem registro**
-
-**O teto pela energia a repor (passo 4).** Sem ele, um veículo esquecido plugado acumularia
-consumo indefinidamente, e uma sessão órfã produziria um valor arbitrariamente alto. Com ele, a
-apuração converge para a carga que era fisicamente possível.
-
-**A tarifa do início, não a atual (passo 5).** Uma alteração de tarifa durante a ocupação não
-altera o valor de uma sessão já em curso — o morador é cobrado pela regra que valia quando
-começou.
-
-**Fluxos alternativos**
-
-- **4a. Duração menor que o necessário.** A energia bruta é menor que a energia a repor; o teto
-  não é acionado e vale a energia bruta.
-- **4b. Duração maior que o necessário.** O teto é acionado. É o caso das duas sessões completas
-  deste documento.
-
-**Exemplo — as duas sessões do cenário, lado a lado**
-
-| | Marina (HU-05) | Rafael (HU-12) |
-|---|---|---|
-| Potência efetiva | 6,6 kW | 11,0 kW |
-| Energia a repor | 28,0 kWh | 48,0 kWh |
-| Duração | 4,50 h | 7,00 h |
-| Energia bruta | 29,7 kWh | 77,0 kWh |
-| **Energia estimada** | **28,0 kWh** *(teto)* | **48,0 kWh** *(teto)* |
-| Tarifa | R$ 0,92 | R$ 0,92 |
-| **Valor** | **R$ 25,76** | **R$ 44,16** |
-
-A coluna de Rafael mostra o teto fazendo o trabalho pesado: sem ele, sete horas de sessão órfã
-teriam gerado 77,0 kWh e **R$ 70,84** — quase R$ 27 a mais do que o carro poderia ter
-consumido.
 
 **Testes de aceitação**
 
@@ -528,17 +200,17 @@ consumido.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Teto não acionado | 6,6 kW, 2,00 h, repor 28,0 kWh | 13,2 kWh; R$ 12,14 |
-| 02 | Teto acionado | 6,6 kW, 4,50 h, repor 28,0 kWh | **28,0 kWh**; R$ 25,76 |
-| 03 | Teto acionado em sessão órfã longa | 11,0 kW, 7,00 h, repor 48,0 kWh | **48,0 kWh**; R$ 44,16 — não 77,0 kWh |
-| 04 | Tarifa vigente no início | Início 08/09 (R$ 0,92); tarifa vira R$ 1,05 em 09/09; encerra 09/09 | Apurado a R$ 0,92 |
+| 01 | Teto de energia não acionado | 6,6 kW, 2,00 h, 28,0 kWh a repor | 13,2 kWh; R$ 12,14 |
+| 02 | Teto de energia acionado | 6,6 kW, 4,50 h, 28,0 kWh a repor | 28,0 kWh — não 29,7 kWh; R$ 25,76 |
+| 03 | Teto acionado em sessão órfã longa | 11,0 kW, 7,00 h, 48,0 kWh a repor | 48,0 kWh — não 77,0 kWh; R$ 44,16 |
+| 04 | Tarifa vigente no início | Início em 08/09 a R$ 0,92; tarifa muda em 09/09; encerra em 09/09 | Apurado a R$ 0,92 |
 | 05 | Duração nula | Início e encerramento no mesmo minuto | 0,0 kWh; R$ 0,00 |
 
-**Protótipo:** não se aplica — não tem interface própria.
+**Tem protótipo?** Não se aplica — não possui interface própria.
 
 ---
 
-### HU-07 — Manter Veículo
+## HU-07 — Manter Veículo
 
 | | |
 |---|---|
@@ -552,54 +224,23 @@ consumido.
 Como **morador**, eu quero **cadastrar meu veículo uma única vez**, de modo que **eu não precise
 declarar as características a cada recarga e as previsões saiam corretas**.
 
-**Fluxo principal**
-
-1. O morador acessa seu cadastro de veículo.
-2. Informa modelo, capacidade da bateria em kWh e potência máxima de recarga em kW.
-3. O sistema valida que os valores são positivos e plausíveis.
-4. O sistema registra o veículo vinculado ao morador.
-5. Os dados passam a alimentar HU-03 e HU-04 sem nova digitação.
-
-**Por que cadastro único, e não declaração por sessão.** É esta decisão que sustenta a apuração
-por energia. Se as características fossem declaradas a cada uso, o morador poderia informar
-valores menores para pagar menos. Cadastrando uma vez, sob vista do síndico, o dado deixa de
-ser manipulável sessão a sessão — mitigação do risco RI-01 do documento Visão.
-
-**Fluxos alternativos**
-
-- **3a. Valores implausíveis.** O sistema recusa capacidade ou potência fora de faixas
-  razoáveis, ou valores não positivos.
-- **4a. Alteração de veículo.** O morador trocou de carro. O sistema atualiza o cadastro; as
-  sessões já apuradas **não são recalculadas**, pois guardam a potência efetiva vigente à época.
-
-**Exemplo — 01/09/2026, Marina cadastra o Leaf**
-
-| Entrada | Valor |
-|---|---|
-| Modelo | Nissan Leaf |
-| Capacidade da bateria | 40 kWh |
-| Potência máxima de recarga | 6,6 kW |
-
-**Saída:** veículo vinculado ao apartamento 42. A partir daqui, Marina informa apenas **a vaga
-e o nível de bateria** ao iniciar cada sessão.
-
 **Testes de aceitação**
 
 *Pré-condição:* morador autenticado.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Cadastro válido | Nissan Leaf, 40 kWh, 6,6 kW | Veículo registrado no apto 42 |
-| 02 | Capacidade não positiva | Modelo X, 0 kWh, 7 kW | Recusado |
-| 03 | Potência não positiva | Modelo X, 40 kWh, −2 kW | Recusado |
-| 04 | Reuso sem redigitação | Iniciar sessão após o cadastro | Sistema pede apenas vaga e nível de bateria |
-| 05 | Troca de veículo não altera o passado | Trocar para 60 kWh após sessões apuradas | Sessões anteriores mantêm os valores originais |
+| 01 | Cadastro válido | Nissan Leaf, 40 kWh, 6,6 kW | Veículo registrado e vinculado ao apartamento |
+| 02 | Capacidade não positiva | Modelo qualquer, 0 kWh, 7 kW | Recusado |
+| 03 | Potência não positiva | Modelo qualquer, 40 kWh, −2 kW | Recusado |
+| 04 | Reuso sem redigitação | Iniciar sessão após o cadastro | O sistema pede apenas a vaga e o nível de bateria |
+| 05 | Troca de veículo não altera o passado | Alterar para 60 kWh após sessões já apuradas | As sessões anteriores mantêm os valores originais |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-08 — Consultar Consumo do Mês
+## HU-08 — Consultar Consumo do Mês
 
 | | |
 |---|---|
@@ -613,48 +254,22 @@ e o nível de bateria** ao iniciar cada sessão.
 Como **morador**, eu quero **acompanhar meu consumo acumulado no mês**, de modo que **eu saiba
 quanto será lançado na minha cota antes de recebê-la**.
 
-**Fluxo principal**
-
-1. O morador acessa seu consumo.
-2. O sistema recupera as sessões encerradas do morador no período corrente.
-3. O sistema apresenta cada sessão com data, vaga, duração, energia estimada e valor.
-4. O sistema apresenta o total acumulado do período.
-
-**Fluxos alternativos**
-
-- **2a. Nenhuma sessão no período.** O sistema informa que não há consumo registrado.
-- **2b. Consulta a período anterior já fechado.** O sistema apresenta o consolidado tal como
-  fechado em HU-13, sem recalcular.
-- **3a. Sessão encerrada administrativamente.** A linha é marcada como tal, indicando que o
-  encerramento foi feito pelo síndico (HU-12) — é a informação que permite ao morador contestar.
-
-**Exemplo — 30/09/2026, Marina consulta setembro**
-
-| Data | Vaga | Duração | Energia | Valor | Observação |
-|---|---|---|---|---|---|
-| 08/09 | G-02 | 4h30 | 28,0 kWh | R$ 25,76 | — |
-| 16/09 | G-02 | 3h50 | 24,5 kWh | R$ 22,54 | — |
-| 24/09 | G-01 | 3h40 | 23,5 kWh | R$ 21,62 | — |
-| | | | **76,0 kWh** | **R$ 69,92** | Total de setembro |
-
 **Testes de aceitação**
 
 *Pré-condição:* morador autenticado.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Consumo do período corrente | Marina, setembro, 3 sessões | 76,0 kWh e R$ 69,92 no total |
-| 02 | Período sem sessões | Rafael, agosto | Informa ausência de consumo registrado |
-| 03 | Sessão encerrada pelo síndico é sinalizada | Rafael, setembro, sessão de 09/09 | Linha marcada como encerramento administrativo |
-| 04 | Morador não vê consumo alheio | Marina consulta | Apenas sessões do apto 42 |
+| 01 | Consumo do período corrente | Apto 42, setembro, sessões de 28,0 + 24,5 + 23,5 kWh | Total de 76,0 kWh e R$ 69,92 |
+| 02 | Período sem sessões | Apto 17, agosto | Informa ausência de consumo registrado |
+| 03 | Sessão encerrada pelo síndico é sinalizada | Apto 17, setembro, sessão encerrada em HU-12 | Linha marcada como encerramento administrativo |
+| 04 | Morador não vê consumo alheio | Morador do apto 42 consulta | Apenas as sessões do apartamento 42 |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-## 4. Histórias do Síndico
-
-### HU-09 — Manter Vagas com Carregador
+## HU-09 — Manter Vagas com Carregador
 
 | | |
 |---|---|
@@ -668,31 +283,6 @@ quanto será lançado na minha cota antes de recebê-la**.
 Como **síndico**, eu quero **cadastrar as vagas com carregador e a potência de cada uma**, de
 modo que **o sistema calcule previsões corretas e o painel reflita a garagem real**.
 
-**Fluxo principal**
-
-1. O síndico acessa o cadastro de vagas.
-2. Informa o código de identificação da vaga e a potência do carregador em kW.
-3. O sistema valida que o código é único e a potência é positiva.
-4. O sistema registra a vaga, que passa a aparecer no painel (HU-02) e a aceitar sessões.
-
-**Fluxos alternativos**
-
-- **3a. Código duplicado.** O sistema recusa.
-- **4a. Desativação.** O síndico desativa uma vaga fora de operação. Ela deixa de aceitar novas
-  sessões, mas o histórico já apurado é preservado.
-- **4b. Remoção bloqueada.** Havendo sessão em andamento, a vaga não pode ser removida — apenas
-  desativada.
-
-**Exemplo — 01/09/2026, Cláudia cadastra a garagem**
-
-| Código | Potência | Saída |
-|---|---|---|
-| G-01 | 11,0 kW | Vaga registrada e disponível no painel |
-| G-02 | 7,4 kW | Vaga registrada e disponível no painel |
-
-Essas duas potências são o insumo que HU-04 usa para calcular a potência efetiva de cada
-sessão.
-
 **Testes de aceitação**
 
 *Pré-condição:* síndico autenticado.
@@ -702,14 +292,14 @@ sessão.
 | 01 | Cadastro válido | G-01, 11,0 kW | Vaga registrada e visível no painel |
 | 02 | Código duplicado | G-01 novamente | Recusado |
 | 03 | Potência não positiva | G-03, 0 kW | Recusado |
-| 04 | Desativação preserva histórico | Desativar G-02 com sessões apuradas | Vaga não aceita novas sessões; histórico mantido |
-| 05 | Remoção com sessão em andamento | Remover G-02 ocupada | Recusado; oferece desativar |
+| 04 | Desativação preserva histórico | Desativar G-02, que tem sessões apuradas | Vaga não aceita novas sessões; histórico mantido |
+| 05 | Remoção com sessão em andamento | Remover G-02 ocupada | Recusado, com oferta de desativar |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-10 — Definir Tarifa de Energia
+## HU-10 — Definir Tarifa de Energia
 
 | | |
 |---|---|
@@ -723,33 +313,6 @@ sessão.
 Como **síndico**, eu quero **definir o valor por quilowatt-hora aplicado no rateio**, de modo
 que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
 
-**Fluxo principal**
-
-1. O síndico informa o novo valor por kWh e a data de início de vigência.
-2. O sistema valida que o valor é positivo.
-3. O sistema registra a tarifa **sem apagar a anterior**, mantendo o histórico de vigências.
-4. Sessões iniciadas a partir da nova vigência passam a usar o novo valor; as anteriores
-   permanecem com a tarifa da época.
-
-**Por que manter o histórico.** A apuração de cada sessão usa a tarifa vigente no seu início
-(HU-06). Sobrescrever a tarifa anterior tornaria impossível recalcular ou justificar uma sessão
-passada — e o valor lançado na cota precisa ser explicável meses depois.
-
-**Fluxos alternativos**
-
-- **2a. Valor não positivo.** O sistema recusa.
-- **3a. Vigência retroativa.** O síndico tenta datar a vigência para trás, sobre um período já
-  fechado (HU-13). O sistema recusa: períodos fechados não aceitam alteração.
-
-**Exemplo — 01/09/2026, Cláudia lança a tarifa de setembro**
-
-| Entrada | Valor |
-|---|---|
-| Tarifa | R$ 0,92 / kWh |
-| Vigência a partir de | 01/09/2026 |
-
-**Saída:** tarifa registrada. Todas as sessões deste documento são apuradas por ela.
-
 **Testes de aceitação**
 
 *Pré-condição:* síndico autenticado.
@@ -758,15 +321,15 @@ passada — e o valor lançado na cota precisa ser explicável meses depois.
 |---|---|---|---|
 | 01 | Definição válida | R$ 0,92 a partir de 01/09 | Tarifa registrada e vigente |
 | 02 | Valor não positivo | R$ 0,00 | Recusado |
-| 03 | Histórico preservado | Lançar R$ 1,05 a partir de 01/10 | Ambas as vigências consultáveis |
-| 04 | Sessão antiga não é afetada | Sessão de 08/09 após a mudança de outubro | Continua apurada a R$ 0,92 |
-| 05 | Retroatividade sobre período fechado | Vigência 01/09 com setembro já fechado | Recusado |
+| 03 | Histórico de vigências preservado | Lançar R$ 1,05 a partir de 01/10 | Ambas as vigências permanecem consultáveis |
+| 04 | Sessão antiga não é afetada | Sessão de 08/09, após a mudança de outubro | Continua apurada a R$ 0,92 |
+| 05 | Retroatividade sobre período fechado | Vigência em 01/09 com setembro já fechado | Recusado |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-11 — Manter Moradores
+## HU-11 — Manter Moradores
 
 | | |
 |---|---|
@@ -780,50 +343,23 @@ passada — e o valor lançado na cota precisa ser explicável meses depois.
 Como **síndico**, eu quero **cadastrar os moradores e vinculá-los aos seus apartamentos**, de
 modo que **o consumo seja atribuído à unidade correta no rateio**.
 
-**Fluxo principal**
-
-1. O síndico informa nome, e-mail e apartamento do morador.
-2. O sistema valida que o e-mail ainda não está em uso.
-3. O sistema registra o morador e cria suas credenciais de acesso (HU-01).
-4. O morador passa a poder iniciar sessões e ter consumo atribuído ao seu apartamento.
-
-**O vínculo com o apartamento é o que viabiliza o rateio.** A unidade de cobrança é a unidade
-autônoma, não a pessoa — é ao apartamento que a cota condominial se refere.
-
-**Fluxos alternativos**
-
-- **2a. E-mail já cadastrado.** O sistema recusa.
-- **4a. Desativação.** Morador que deixou o condomínio é desativado: o acesso é revogado e o
-  histórico preservado.
-- **4b. Remoção bloqueada.** Havendo sessões no período ainda não fechado, o morador não pode
-  ser removido — apenas desativado.
-- **4c. Mais de um morador no mesmo apartamento.** Aceito. O consumo de todos soma no
-  apartamento.
-
-**Exemplo — 01/09/2026, Cláudia cadastra os moradores**
-
-| Nome | Apartamento | Saída |
-|---|---|---|
-| Marina Duarte | 42 | Morador ativo, credenciais criadas |
-| Rafael Nunes | 17 | Morador ativo, credenciais criadas |
-
 **Testes de aceitação**
 
 *Pré-condição:* síndico autenticado.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Cadastro válido | Marina Duarte, apto 42 | Morador ativo com acesso |
-| 02 | E-mail duplicado | Mesmo e-mail de Marina | Recusado |
-| 03 | Dois moradores no mesmo apartamento | Segundo morador no apto 42 | Aceito; consumo soma no apto 42 |
-| 04 | Desativação revoga acesso | Desativar Rafael | Acesso negado em HU-01; histórico mantido |
-| 05 | Remoção com sessões em aberto no período | Remover Rafael em setembro não fechado | Recusado; oferece desativar |
+| 01 | Cadastro válido | Nome, e-mail e apartamento 42 | Morador ativo, com credenciais criadas |
+| 02 | E-mail duplicado | E-mail já cadastrado | Recusado |
+| 03 | Dois moradores no mesmo apartamento | Segundo morador no apartamento 42 | Aceito; o consumo dos dois soma no apartamento |
+| 04 | Desativação revoga o acesso | Desativar morador do apto 17 | Acesso negado em HU-01; histórico mantido |
+| 05 | Remoção com sessões no período aberto | Remover morador com sessões em setembro não fechado | Recusado, com oferta de desativar |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-12 — Encerrar Sessão Órfã
+## HU-12 — Encerrar Sessão Órfã
 
 | | |
 |---|---|
@@ -837,78 +373,27 @@ autônoma, não a pessoa — é ao apartamento que a cota condominial se refere.
 Como **síndico**, eu quero **encerrar administrativamente uma sessão cujo veículo já foi
 retirado**, de modo que **a vaga seja liberada e o consumo do morador seja apurado**.
 
-**Fluxo principal**
-
-1. O síndico identifica no painel (HU-02) uma sessão marcada como *Concluída, ainda ocupada* ou
-   *Excedida*.
-2. **O síndico verifica fisicamente se o veículo ainda está na vaga.**
-3. Confirmando que o veículo saiu, aciona o encerramento administrativo.
-4. O sistema apura a energia e o valor (HU-06).
-5. O sistema registra que o encerramento foi administrativo, com o síndico responsável e o
-   horário.
-6. A vaga passa a **Livre** no painel.
-
-**Sessão órfã e sessão excedida não são a mesma coisa**
-
-| | Órfã | Excedida |
-|---|---|---|
-| O que é | O veículo já saiu sem encerramento | A sessão passou de 6 horas |
-| O veículo está na vaga? | Não | Provavelmente sim |
-| Tratamento | Encerrar por aqui | Falar com o morador |
-| Encerrar resolve? | Sim | **Não** — liberaria no painel uma vaga fisicamente ocupada |
-
-**O sistema não distingue as duas**, porque não detecta a presença do veículo (restrição RE-05
-do Visão). Por isso o passo 2 é ato humano, e é a parte mais importante deste fluxo.
-
-**Fluxos alternativos**
-
-- **2a. O veículo ainda está na vaga.** O síndico **não** encerra. Trata a situação junto ao
-  morador; a sessão segue aberta e sinalizada.
-- **4a. O teto de energia é acionado.** É o caso típico das órfãs, em que a duração registrada
-  supera em muito o tempo de recarga real.
-
-**Exemplo — 09/09/2026, 21h00, Cláudia trata a sessão de Rafael**
-
-| Dado da sessão | Valor |
-|---|---|
-| Início | 09/09, 14h00 (G-01) |
-| Previsão de conclusão | 18h22 |
-| Marcada como excedida em | 20h00 |
-| Verificação física às 21h00 | **Vaga vazia — o veículo saiu** |
-| Potência efetiva | 11,0 kW |
-| Energia a repor no início | 48,0 kWh |
-
-```
-duração          = 21h00 − 14h00                = 7,00 h
-energia bruta    = 11,0 × 7,00                  = 77,0 kWh
-energia estimada = min(77,0 ; 48,0)             = 48,0 kWh   ← teto aplicado
-valor da sessão  = 48,0 × 0,92                  = R$ 44,16
-```
-
-**Saída:** sessão encerrada às 21h00, marcada como **encerramento administrativo por Cláudia
-Berto**. Apto 17 recebe 48,0 kWh e R$ 44,16. G-01 volta a **Livre**.
-
-Sem o teto, Rafael teria sido cobrado por 77,0 kWh — **R$ 70,84** — mais do que seu carro
-poderia ter armazenado. O registro do encerramento administrativo é o que permite a ele
-contestar o lançamento e a Cláudia sustentar a resposta.
+> **O sistema não distingue sessão órfã de sessão excedida**, porque não detecta a presença do
+> veículo (RE-05 do Visão). A verificação física é ato humano, e é pré-condição desta história.
 
 **Testes de aceitação**
 
-*Pré-condição:* existe sessão em andamento além da previsão de conclusão.
+*Pré-condição:* existe sessão em andamento além da previsão de conclusão, e o síndico **confirmou
+fisicamente** que o veículo já não está na vaga.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Encerramento administrativo | Sessão 14h00–21h00, 11 kW, repor 48,0 kWh | 48,0 kWh; R$ 44,16; vaga liberada |
-| 02 | Registro do responsável | Após o caso 01 | Sessão marcada como administrativa, com Cláudia e o horário |
-| 03 | Teto impede apuração desproporcional | Mesmos dados do caso 01 | 48,0 kWh — **não** 77,0 kWh |
-| 04 | Visibilidade ao morador | Rafael consulta HU-08 | Linha sinalizada como encerramento administrativo |
-| 05 | Morador não acessa esta função | Marina tenta encerrar sessão de Rafael | Função não disponível ao perfil Morador |
+| 01 | Encerramento administrativo | Sessão de 14h00 a 21h00, 11,0 kW, 48,0 kWh a repor | 48,0 kWh e R$ 44,16; vaga liberada |
+| 02 | Registro do responsável | Após o caso 01 | Sessão marcada como administrativa, com o síndico e o horário |
+| 03 | Teto impede apuração desproporcional | Mesmos dados do caso 01 | 48,0 kWh — não os 77,0 kWh da energia bruta |
+| 04 | Visibilidade ao morador | Morador consulta HU-08 | Linha sinalizada como encerramento administrativo |
+| 05 | Morador não acessa a função | Morador tenta encerrar sessão de terceiro | Função indisponível ao perfil Morador |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-13 — Fechar Mês e Gerar Rateio
+## HU-13 — Fechar Mês e Gerar Rateio
 
 | | |
 |---|---|
@@ -922,64 +407,24 @@ contestar o lançamento e a Cláudia sustentar a resposta.
 Como **síndico**, eu quero **consolidar o consumo do mês por apartamento**, de modo que **eu
 possa repassar à administradora os valores a lançar em cada cota condominial**.
 
-**Fluxo principal**
-
-1. O síndico seleciona o período a fechar.
-2. O sistema verifica que não há sessões em aberto no período.
-3. O sistema apura todas as sessões encerradas (HU-06) e agrupa por apartamento.
-4. O sistema apresenta, por apartamento, a energia total estimada e o valor devido, mais o
-   total geral do condomínio.
-5. O síndico confirma o fechamento.
-6. O período passa a não aceitar novas sessões nem alterações, e o resultado fica disponível
-   para exportação.
-
-**Fluxos alternativos**
-
-- **2a. Há sessões em aberto.** O sistema **impede** o fechamento e lista as pendências, que
-  devem ser resolvidas por HU-05 ou HU-12 antes de prosseguir.
-- **4a. Divergência com a conta de luz.** O total geral serve para o síndico comparar com o
-  consumo medido na área comum. A diferença é esperada e não é erro do sistema — ver adiante.
-
-**Exemplo — 01/10/2026, Cláudia fecha setembro**
-
-| Apartamento | Sessões | Energia estimada | Valor |
-|---|---|---|---|
-| 17 — Rafael Nunes | 2 | 81,0 kWh | R$ 74,52 |
-| 42 — Marina Duarte | 3 | 76,0 kWh | R$ 69,92 |
-| **Total do condomínio** | **5** | **157,0 kWh** | **R$ 144,44** |
-
-**A conferência que o síndico faz em seguida**
-
-| | |
-|---|---|
-| Total apurado pelo sistema | 157,0 kWh |
-| Medido na área comum, atribuível aos carregadores | 178,0 kWh |
-| **Diferença não apurada** | **21,0 kWh — 11,8 %** |
-
-Essa diferença **é esperada e não é defeito**. O sistema estima a energia que entra na bateria;
-a concessionária mede a energia que sai da rede, maior por causa das perdas de carga e da
-climatização da bateria. Os 21 kWh continuam rateados entre todos os condôminos pela cota
-ordinária. É o risco RI-05 do documento Visão, e a eliminação exige medição no carregador —
-fora do escopo deste projeto.
-
 **Testes de aceitação**
 
 *Pré-condição:* síndico autenticado; existem sessões encerradas no período.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Fechamento válido | Setembro, 5 sessões encerradas | 157,0 kWh e R$ 144,44 no total; por apartamento conforme a tabela |
-| 02 | Agrupamento por apartamento | Duas sessões do apto 17 | 81,0 kWh e R$ 74,52 numa única linha |
-| 03 | Sessão em aberto impede o fechamento | Sessão de 09/09 ainda aberta | Fechamento recusado; sessão listada como pendência |
-| 04 | Período fechado não aceita alteração | Tentar registrar sessão em setembro após o fechamento | Recusado |
+| 01 | Fechamento válido | Setembro, com 5 sessões encerradas | Total de 157,0 kWh e R$ 144,44 |
+| 02 | Agrupamento por apartamento | Duas sessões do apto 17, de 48,0 e 33,0 kWh | Linha única com 81,0 kWh e R$ 74,52 |
+| 03 | Sessão em aberto impede o fechamento | Uma sessão do período ainda aberta | Fechamento recusado; a sessão é listada como pendência |
+| 04 | Período fechado não aceita alteração | Registrar sessão em setembro após o fechamento | Recusado |
 | 05 | Exportação do resultado | Após o caso 01 | Resultado exportável para repasse à administradora |
-| 06 | Total geral disponível para conferência | Após o caso 01 | 157,0 kWh apresentado como total do condomínio |
+| 06 | Total geral para conferência | Após o caso 01 | 157,0 kWh apresentado como total do condomínio |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-### HU-14 — Consultar Histórico de Utilização
+## HU-14 — Consultar Histórico de Utilização
 
 | | |
 |---|---|
@@ -993,58 +438,24 @@ fora do escopo deste projeto.
 Como **síndico**, eu quero **consultar como as vagas foram utilizadas e quantas vezes faltou
 vaga**, de modo que **eu possa levar dados à assembleia ao propor a ampliação da estrutura**.
 
-**Fluxo principal**
-
-1. O síndico seleciona o período.
-2. O sistema apura as horas de ocupação por vaga, as faixas de horário de maior demanda, o
-   consumo por apartamento e as **tentativas de início recusadas por vaga ocupada**.
-3. O sistema apresenta o resultado consolidado.
-
-**A demanda reprimida ganhou peso na versão 2.0.** Sem agendamento, a recusa registrada em
-HU-03 é a **única medida** de que o condomínio dispõe sobre quantas vezes um morador desceu,
-tentou e não conseguiu. É o dado que sustenta a resposta ao risco RI-11 do documento Visão: se
-a disputa for frequente, a solução é ampliar a estrutura, não acrescentar regra de software.
-
-**Fluxos alternativos**
-
-- **2a. Período sem utilização.** O sistema informa a ausência de registros.
-
-**Exemplo — 01/10/2026, Cláudia levanta setembro para a assembleia**
-
-| Indicador | Setembro/2026 |
-|---|---|
-| Horas de ocupação — G-01 | 62 h (8,6 % do mês) |
-| Horas de ocupação — G-02 | 41 h (5,7 % do mês) |
-| Faixa de maior demanda | 18h–22h, concentrando 68 % das sessões |
-| Apartamentos usuários | 2, de 96 |
-| **Tentativas recusadas por vaga ocupada** | **7** |
-| Sessões encerradas administrativamente | 1 |
-
-**A leitura que interessa à assembleia:** a ocupação total é baixa, mas **concentrada em quatro
-horas do dia** — e foi nessa faixa que ocorreram as 7 recusas. O problema não é falta de vaga
-ao longo do dia; é falta de vaga no horário em que todos chegam em casa. Sem esse recorte, o
-número agregado de 8,6 % sugeriria, erradamente, que não há demanda reprimida.
-
 **Testes de aceitação**
 
 *Pré-condição:* síndico autenticado; existem sessões no período.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Ocupação por vaga | Setembro | G-01 com 62 h; G-02 com 41 h |
-| 02 | Faixa de maior demanda | Setembro | 18h–22h identificada como pico |
+| 01 | Ocupação por vaga | Setembro | Horas de ocupação de cada vaga, com o percentual do período |
+| 02 | Faixa de maior demanda | Setembro | Faixa horária de pico identificada |
 | 03 | Consumo por apartamento | Setembro | Apto 17 com 81,0 kWh; apto 42 com 76,0 kWh |
-| 04 | Demanda reprimida | Setembro, 7 recusas registradas em HU-03 | 7 tentativas recusadas listadas |
-| 05 | Recusas cruzadas com a faixa horária | Setembro | Recusas concentradas em 18h–22h |
+| 04 | Demanda reprimida | Setembro, com 7 recusas registradas em HU-03 | 7 tentativas recusadas por vaga ocupada |
+| 05 | Recusas cruzadas com a faixa horária | Setembro | Recusas distribuídas por faixa de horário |
 | 06 | Período sem utilização | Julho | Informa ausência de registros |
 
-**Protótipo:** não há. Pendente — ver seção 6.
+**Tem protótipo?** Não.
 
 ---
 
-## 5. Rastreabilidade
-
-### 5.1. História ↔ Caso de uso ↔ Necessidade
+## Rastreabilidade
 
 | História | Caso de uso | Necessidade no Visão v3.0 |
 |---|---|---|
@@ -1062,42 +473,3 @@ número agregado de 8,6 % sugeriria, erradamente, que não há demanda reprimida
 | HU-12 Encerrar Sessão Órfã | UC12 | §2.5 |
 | HU-13 Fechar Mês e Gerar Rateio | UC13 | §2.1 |
 | HU-14 Consultar Histórico de Utilização | UC14 | §2.6 |
-
-### 5.2. Verificação INVEST
-
-| Critério | Situação |
-|---|---|
-| **I**ndependente | Atendido em 12 histórias. **HU-04 e HU-06 falham** — existem apenas por inclusão. |
-| **N**egociável | Atendido. As descrições registram intenção, não solução de implementação. |
-| **A**valiável | Atendido em 12. **HU-04 e HU-06 falham** — não entregam valor isolado ao usuário. |
-| **E**stimável | Prejudicado enquanto HU-04 e HU-06 não forem estimadas junto com quem as inclui. |
-| **D**imensionada | A confirmar no Planning Poker. Com a remoção do agendamento, deixou de haver história acumulando criação, consulta e cancelamento — nenhuma candidata evidente a desmembramento. |
-| **T**estável | Atendido. Todas as histórias têm casos de teste com entradas e resultados esperados. |
-
-> **A remoção do agendamento melhorou a aderência ao INVEST.** Na versão 1.0, a história de
-> agendamento acumulava criar, consultar e cancelar, e falhava em *Dimensionada*; e havia duas
-> histórias a mais competindo por estimativa. O conjunto atual é menor e mais homogêneo.
-
----
-
-## 6. Pendências
-
-| Pendência | Impacto |
-|---|---|
-| **Estimativas em aberto.** Nenhuma história foi estimada. | Atribuídas no Planning Poker, na Reunião de Planejamento do Projeto. |
-| **Protótipos não iniciados.** Nenhuma história referencia protótipo. | Item 10 do Checklist de Projeto, condicional. |
-| **Artefato antecipado.** Este documento pertence à tarefa *Detalhar Requisitos*, da Elaboração. | Revisar ao entrar na fase, confrontando com o Modelo de Análise e Design então produzido. |
-| **Estabilidade do escopo.** O escopo mudou duas vezes: v2.0 e v3.0. | Risco RI-09 do Visão. Novas alterações passam por Requisição de Mudança. |
-
----
-
-## 7. Referências
-
-| Documento | Local |
-|---|---|
-| CARREGAJA - Visão (v3.0) | `1.Requisitos/` |
-| CARREGAJA - Modelo de Caso de Uso (v3.0) | `2.Analise e Design/` |
-| Template - Historia de Usuario | `.spinoff/templates/` |
-| Guia - INVEST | `.spinoff/GUIAS.md` |
-| Guia - Use Case e Histórias do Usuário | `.spinoff/guias/` |
-| SpinOff — tarefa *Detalhar Requisitos* | `.spinoff/METODO.md` |

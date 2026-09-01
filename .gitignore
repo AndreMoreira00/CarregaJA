@@ -1,0 +1,21 @@
+# Arquivos temporários do Microsoft Office
+# O Word e o Excel criam estes arquivos de lock enquanto um documento está aberto
+# e os apagam ao fechar. Como os artefatos do projeto são .docx e .xlsx, eles
+# aparecem com frequência — versioná-los polui o histórico e gera conflito em PR.
+~$*
+*.tmp
+
+# Arquivos de recuperação e backup do Office
+*.asd
+*.wbk
+*.xlk
+*.bak
+
+# Sistema operacional
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Astah — arquivos de backup gerados ao salvar
+*.asta.bak
+*.jude.bak
