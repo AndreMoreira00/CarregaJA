@@ -25,23 +25,6 @@ aplicação web pelo celular. Ele permite consultar quais vagas estão livres e 
 serão liberadas, registrar a recarga realizada e apurar mensalmente quanto cada apartamento
 consumiu.
 
-> **Redução de escopo em relação à versão 1.1.** A versão anterior descrevia um SaaS por
-> assinatura para estacionamentos comerciais, com quatro perfis, totem, motorista anônimo e
-> encerramento no ponto de pagamento. Aquele escopo era incompatível com o prazo e a capacidade
-> disponíveis (RE-13 e RE-14). O domínio do condomínio preserva o mesmo núcleo técnico — a
-> previsão de conclusão a partir das características do veículo — em um recorte executável no
-> semestre.
-
-**Por que não há agendamento.** O mecanismo existiu na versão 2.0 e foi removido na 3.0; o
-motivo fica registrado para que não seja reintroduzido sem tratar o que o inviabilizou. Agendar
-exigia o nível da bateria no momento de reservar — dado que ninguém sabe horas antes de chegar.
-Reservar sempre o pior caso, seis horas, corrigia isso mas fragmentava: quem precisava de quatro
-prendia seis, e as duas restantes ficavam encravadas entre reservas. Antecipar a reserva
-seguinte para ocupar o buraco deslocaria a próxima, e a próxima, em cascata. A equipe optou por
-remover o mecanismo em vez de acumular regras para contorná-lo. O uso passa a ser por ordem de
-chegada, e o painel com a previsão de liberação é o que permite ao morador decidir quando descer
-— menos do que uma garantia de horário, perda registrada no risco RI-11.
-
 ### 1.2. Objetivo do Sistema
 
 Dar visibilidade ao uso compartilhado das vagas com carregador e individualizar o custo da
