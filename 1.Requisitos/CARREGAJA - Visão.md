@@ -4,16 +4,6 @@
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-## Histórico de Revisões
-
-| Data | Versão | Descrição | Autor |
-|---|---|---|---|
-| 19/08/2026 | 1.0 | Elaboração inicial do documento. Seções 1 a 6. | Henrique de Almeida Marangoni Inacio |
-| 19/08/2026 | 1.1 | Encerramento da sessão transferido do totem para o ponto de pagamento do estabelecimento. Inclusão do perfil Operador de Caixa. Nova seção 4.4 com as limitações decorrentes da ausência de integração com hardware. Revisão dos riscos. | Henrique de Almeida Marangoni Inacio |
-| 27/08/2026 | 2.0 | **Redução de escopo.** O produto deixa de ser um SaaS por assinatura para estacionamentos comerciais e passa a ser um sistema para um condomínio residencial específico. Eliminados os perfis Estabelecimento, Operador de Caixa e Administrador do Sistema, o totem, o uso anônimo e o ponto de pagamento. Incluído o agendamento de vagas. A apuração passa de tempo de ocupação para energia estimada rateada na conta do condômino. Seções 1 a 6 reescritas. | Henrique de Almeida Marangoni Inacio |
-| 27/08/2026 | 3.0 | **Remoção do agendamento.** O uso passa a ser exclusivamente por ordem de chegada. Eliminados o agendamento, a reserva, a tolerância de comparecimento e o ator temporal. A duração máxima de sessão passa a ser o único instrumento de rotatividade. Incluído o risco da disputa não mediada. | Henrique de Almeida Marangoni Inacio |
-| 31/08/2026 | 3.1 | **Revisão editorial.** Condensação do texto sem alteração de escopo: nenhuma restrição, risco ou necessidade foi incluída, removida ou renumerada. | Henrique de Almeida Marangoni Inacio |
-
 ## 1. Introdução
 
 ### 1.1. Resumo do Negócio
