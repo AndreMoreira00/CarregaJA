@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 3.0
+Versão 3.1
 
 ## Histórico de Revisões
 
@@ -11,10 +11,13 @@ Versão 3.0
 | 19/08/2026 | 1.0 | Elaboração inicial. Quatro atores, dezesseis casos de uso, matriz de permissões. Derivado do documento Visão v1.1. | Henrique de Almeida Marangoni Inacio |
 | 27/08/2026 | 2.0 | **Reescrita integral por redução de escopo.** Dois atores mais o ator temporal, dezesseis casos de uso. Eliminados os perfis Estabelecimento, Operador de Caixa e Administrador do Sistema, o totem, o catálogo compartilhado de modelos e a gestão de assinantes. Incluídos o agendamento de vagas e o fechamento mensal com rateio. Derivado do documento Visão v2.0. | Henrique de Almeida Marangoni Inacio |
 | 27/08/2026 | 3.0 | **Remoção do agendamento.** Removidos os casos de uso *Manter Agendamento* e *Expirar Reserva Não Utilizada*, e com este o ator **Tempo**, que não tinha outro caso de uso. Removido o estado *Reservada* do painel. Casos de uso **renumerados para UC01–UC14**, sem lacunas. Derivado do documento Visão v3.0. | Henrique de Almeida Marangoni Inacio |
+| 31/08/2026 | 3.1 | **Transposição para o Astah.** O modelo passa a ser mantido em `CARREGAJA - Modelo de Caso de Uso.asta`, que se torna a fonte da verdade. Os dois atores, os catorze casos de uso e as quatro relações `<<include>>` foram conferidos contra este documento; os nomes receberam a numeração UC01–UC14 para amarrar o diagrama à Visão, ao Backlog e às Histórias de Usuário. Os `.puml` e as imagens deles geradas saíram do versionamento. Nenhum ator, caso de uso ou relação foi incluído ou removido. | Matheus Ribeiro Andrade · Henrique de Almeida Marangoni Inacio |
 
-> **Situação deste artefato.** Os diagramas estão em **PlantUML** (`.puml`, fonte versionável)
-> e em **Mermaid** (embutido neste documento). A transposição para o **Astah**, ferramenta
-> indicada pelo processo SpinOff, está pendente — ver a seção *Pendências* ao final.
+> **Situação deste artefato.** O modelo está no **Astah**, ferramenta indicada pelo processo
+> SpinOff, em `CARREGAJA - Modelo de Caso de Uso.asta` — é a fonte da verdade e o único
+> diagrama versionado. Os diagramas em **Mermaid** embutidos neste documento são ilustração de
+> leitura, não a fonte. Os `.puml` que serviram antes da transposição continuam no disco, fora
+> do versionamento.
 
 ---
 
@@ -469,9 +472,11 @@ documento Visão v3.0.
 
 | Pendência | Impacto |
 |---|---|
-| **Transposição para o Astah.** O SpinOff indica o Astah para modelagem UML e fornece o `Template - Modelos Analise e Design.asta`. Os diagramas aqui estão em PlantUML e Mermaid. | O item 7 do Checklist de Projeto pergunta se o artefato foi criado com o template atual — só será plenamente atendido após a transposição. |
-| **Aprovação do escopo pelo Product Owner.** O escopo mudou duas vezes desde a v1.1. | Item 11 do Checklist de Projeto. Ver risco RI-09 do Visão. |
-| **Protótipo das telas do morador.** Não iniciado. | Item 10 do Checklist de Projeto (condicional: *"caso tenha sido criado"*). |
+| **Protótipo das telas do morador.** Não iniciado. Pelo SpinOff é saída da tarefa *Detalhar Requisitos*, da fase de Elaboração. | Item 10 do Checklist de Projeto, condicional: *"caso tenha sido criado"*. |
+
+> A transposição para o Astah e a aprovação do escopo pelo Product Owner, antes listadas aqui,
+> foram concluídas em 31/08/2026 — ver o histórico de revisões e os itens 7 e 11 do Checklist
+> de Projeto.
 
 ---
 
@@ -479,9 +484,9 @@ documento Visão v3.0.
 
 | Documento | Local |
 |---|---|
-| CARREGAJA - Visão (v3.0) | `1.Requisitos/` |
-| CARREGAJA - História de Usuário (v2.0) | `1.Requisitos/Casos de Uso/` |
-| Diagrama geral em PlantUML | `2.Analise e Design/CARREGAJA - Modelo de Caso de Uso.puml` |
-| Diagramas por ator em PlantUML | `2.Analise e Design/CARREGAJA - Modelo de Caso de Uso - por ator.puml` |
+| CARREGAJA - Visão (v3.1) | `1.Requisitos/` |
+| CARREGAJA - História de Usuário (v3.0) | `1.Requisitos/Casos de Uso/` |
+| Modelo no Astah (fonte da verdade) | `2.Analise e Design/CARREGAJA - Modelo de Caso de Uso.asta` |
+| Template - Modelos Analise e Design | `.spinoff/templates/` |
 | Guia - Use Case e Histórias do Usuário | `.spinoff/guias/` |
 | SpinOff — tarefa *Definir o Escopo do Sistema* | `.spinoff/METODO.md` |

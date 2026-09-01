@@ -36,19 +36,18 @@ professor avaliará apresentando o artefato **Checklist de Projeto** (aba `Ver-I
 | Tarefa da WBS | Situação |
 |---|---|
 | Criar Repositório do Projeto | ✅ Concluída — estrutura oficial do `Estrutura-Projeto.zip` |
-| Definir o Escopo do Sistema | ✅ Visão v3.1 e Modelo de Caso de Uso v3.0, aprovados pelo PO |
+| Definir o Escopo do Sistema | ✅ Visão v3.1 e Modelo de Caso de Uso v3.1, aprovados pelo PO. Modelo no Astah |
 | *Detalhar Requisitos* (Fase 2) | ⏩ **Antecipada.** História de Usuário v3.0 escrita na Iniciação, por decisão da equipe, para tornar o escopo verificável antes da aprovação |
 | Reunião de Planejamento do Projeto | 🔄 PCP preenchida e totalizada nas 7 abas; planejamento aprovado pelo PO. Falta o Planning Poker — as estimativas em horas seguem preliminares |
 | Reunião de Revisão do Planejamento | ⬜ Pendente |
 | Reunião de Revisão do Sprint | ⬜ Pendente — preenche o Checklist |
 
-**IAP atual: 96,2%** (25 `Sim` ÷ 26 itens contáveis). Único item não fechado é o 7.
+**IAP atual: 100%** (26 `Sim` ÷ 26 itens contáveis, 3 `NA`). Nenhum `Parcialmente`.
 
 **Pendências abertas (31/08/2026):**
 
 | Pendência | Onde trava |
 |---|---|
-| Transposição do Modelo de Caso de Uso para o Astah | Item 7 do Checklist — é o **único** item que ainda não é `Sim`. O SpinOff prevê o `Template - Modelos Analise e Design.asta`; os diagramas estão em PlantUML |
 | Planning Poker | As estimativas da PCP são preliminares. Não trava item do Checklist, mas é entrada da Reunião de Planejamento |
 | Protótipo das telas do morador | Item 10 do Checklist, `NA` por ser condicional — saída de *Detalhar Requisitos*, na Elaboração |
 | Aprovação do PO sem Ata | Itens 11 e 28 estão `Sim` com base no aceite do PO, mas **não há Ata em `Atas/`**. Decisão consciente da equipe; é o ponto mais frágil numa arguição |
@@ -68,14 +67,37 @@ pandoc --reference-doc=/tmp/ref.docx -f gfm -t docx \
   -o "1.Requisitos/CARREGAJA - Visão.docx" "1.Requisitos/CARREGAJA - Visão.md"
 ```
 
-**Diagramas.** Os `.puml` em `2.Analise e Design/` são a fonte; os `.png`/`.svg` são gerados.
-Depois de editar um `.puml`, regerar os dois formatos — os arquivos da v1.0, com os atores que
-deixaram de existir, já foram removidos:
+**Diagramas.** A fonte é o **`CARREGAJA - Modelo de Caso de Uso.asta`**, aberto no Astah — é o
+formato que o SpinOff prevê e o único versionado. Os `.puml` e as imagens deles geradas
+serviram enquanto o modelo não estava no Astah; continuam no disco, mas o `.gitignore` os
+mantém fora do repositório para não duplicar a fonte da verdade.
+
+**Editar o modelo por programa.** A API oficial do Astah está instalada junto com a
+ferramenta e permite ler e alterar o `.asta` sem abrir a interface — foi assim que os casos de
+uso ganharam a numeração UC01–UC14 e o diagrama foi reposicionado:
 
 ```bash
-java -jar plantuml.jar -charset UTF-8 -tpng "CARREGAJA - Modelo de Caso de Uso.puml" "CARREGAJA - Modelo de Caso de Uso - por ator.puml"
-java -jar plantuml.jar -charset UTF-8 -tsvg "CARREGAJA - Modelo de Caso de Uso.puml" "CARREGAJA - Modelo de Caso de Uso - por ator.puml"
+CP='C:/Program Files/astah-UML/astah-uml.jar;C:/Program Files/astah-UML/astah-api.jar'
+javac -encoding UTF-8 -cp "$CP" Programa.java
+java -cp ".;$CP" Programa "CARREGAJA - Modelo de Caso de Uso.asta"
 ```
+
+Exemplos de uso da API ficam em `C:\Program Files\astah-UML\api\sample`. Editar sempre dentro
+de `TransactionManager.beginTransaction()` / `endTransaction()`, e chamar `save()` no
+`ProjectAccessor`.
+
+**Exportar imagem do diagrama** usa o `JudeCommandRunner`, que exige **Java 25+** — o Java do
+sistema não serve, é preciso o JRE que vem com o Astah:
+
+```bash
+"C:/Program Files/astah-UML/jre/bin/java" -cp "C:/Program Files/astah-UML/astah-uml.jar" \
+  com.change_vision.jude.cmdline.JudeCommandRunner \
+  -image all -f "CARREGAJA - Modelo de Caso de Uso.asta" -t png -o saida/
+```
+
+> **Atenção:** o Astah cria um `.asta.lock` e mantém o modelo em memória. Se o arquivo estiver
+> aberto na interface, salvar por lá sobrescreve qualquer alteração feita pela API. Feche o
+> Astah antes de editar por programa.
 
 > Manter esta seção atualizada conforme o projeto avança.
 
