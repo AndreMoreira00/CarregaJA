@@ -63,9 +63,23 @@ estilos (pandoc instalado em `%LOCALAPPDATA%\Pandoc`):
 
 ```bash
 cp ".spinoff/templates/Template - Visão.dotx" /tmp/ref.docx
-pandoc --reference-doc=/tmp/ref.docx -f gfm -t docx \
+cat > /tmp/br.lua <<'LUA'
+function RawInline(el)
+  if el.format:match('html') and el.text:match('^%s*<%s*[Bb][Rr]%s*/?%s*>%s*$') then
+    return pandoc.LineBreak()
+  end
+end
+LUA
+pandoc --reference-doc=/tmp/ref.docx --lua-filter=/tmp/br.lua -f gfm -t docx \
   -o "1.Requisitos/CARREGAJA - Visão.docx" "1.Requisitos/CARREGAJA - Visão.md"
 ```
+
+> **O filtro Lua não é opcional.** As células de "Necessidades (Escopo)" separam as
+> histórias de usuário com `<br>`. O leitor `gfm` entrega isso como HTML bruto e o escritor
+> `docx` descarta HTML bruto **em silêncio** — sem o filtro as três histórias saem emendadas
+> num parágrafo corrido, e o arquivo continua com tamanho plausível, o que esconde o defeito.
+> Conferir depois de gerar: `<w:br` precisa aparecer no `word/document.xml` uma vez por `<br>`
+> do `.md`.
 
 **Diagramas.** A fonte é o **`CARREGAJA - Modelo de Caso de Uso.asta`**, aberto no Astah — é o
 formato que o SpinOff prevê e o único versionado. Os `.puml` e as imagens deles geradas
