@@ -22,10 +22,9 @@ Desktop.ini
 *.asta.lock
 
 # Diagramas: o artefato oficial é o .asta do Astah, previsto pelo SpinOff.
-# Os .puml e as imagens deles geradas serviram enquanto o modelo não estava
-# no Astah; seguem úteis localmente, mas versioná-los duplicaria a fonte da
-# verdade e abriria espaço para os dois divergirem.
-2.Analise e Design/*.puml
-2.Analise e Design/*.png
-2.Analise e Design/*.svg
+# Os .puml, as imagens deles geradas e o .md do modelo serviram enquanto o
+# modelo não estava no Astah. Seguem úteis como contexto de trabalho, mas
+# versioná-los duplicaria a fonte da verdade e abriria espaço para divergirem.
+# Ficam em _contexto/, ao lado do .asta, fora do repositório.
+2.Analise e Design/_contexto/
 plantuml.jar

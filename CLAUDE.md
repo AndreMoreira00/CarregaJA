@@ -82,9 +82,12 @@ pandoc --reference-doc=/tmp/ref.docx --lua-filter=/tmp/br.lua -f gfm -t docx \
 > do `.md`.
 
 **Diagramas.** A fonte é o **`CARREGAJA - Modelo de Caso de Uso.asta`**, aberto no Astah — é o
-formato que o SpinOff prevê e o único versionado. Os `.puml` e as imagens deles geradas
-serviram enquanto o modelo não estava no Astah; continuam no disco, mas o `.gitignore` os
-mantém fora do repositório para não duplicar a fonte da verdade.
+formato que o SpinOff prevê, e o **único arquivo versionado** de `2.Analise e Design/`. Os
+`.puml`, as imagens geradas deles e o `.md` do modelo serviram enquanto o modelo não estava no
+Astah. Foram para **`2.Analise e Design/_contexto/`**, que o `.gitignore` mantém fora do
+repositório: seguem úteis para consulta, sem duplicar a fonte da verdade nem abrir espaço para
+as duas divergirem. Ao responder sobre o modelo, vale ler o `.asta` pela API — o que está em
+`_contexto/` é histórico e pode estar defasado.
 
 **Editar o modelo por programa.** A API oficial do Astah está instalada junto com a
 ferramenta e permite ler e alterar o `.asta` sem abrir a interface — foi assim que os casos de
