@@ -72,14 +72,24 @@ git submodule update --init --recursive
 
 ## Diagramas
 
-Os diagramas UML têm fonte em PlantUML (`.puml`) e imagens geradas (`.png`, `.svg`). Após
-editar um `.puml`, regerar os dois formatos:
+O Modelo de Caso de Uso é mantido no **Astah**, em
+[2.Analise e Design/](2.Analise%20e%20Design/):
+
+```
+CARREGAJA - Modelo de Caso de Uso.asta
+```
+
+É o formato previsto pelo processo SpinOff e o único versionado. Para vê-lo, abra o arquivo no
+Astah — ou exporte a imagem por linha de comando, usando o JRE que acompanha a ferramenta:
 
 ```bash
-cd "2.Analise e Design"
-java -jar plantuml.jar -charset UTF-8 -tpng *.puml
-java -jar plantuml.jar -charset UTF-8 -tsvg *.puml
+"C:/Program Files/astah-UML/jre/bin/java" -cp "C:/Program Files/astah-UML/astah-uml.jar" \
+  com.change_vision.jude.cmdline.JudeCommandRunner \
+  -image all -f "CARREGAJA - Modelo de Caso de Uso.asta" -t png -o saida/
 ```
+
+O modelo tem dois atores, os catorze casos de uso UC01 a UC14 e as relações `<<include>>` que
+ligam UC03 a UC04 e UC05, UC12 e UC13 a UC06.
 
 ## Equipe
 

@@ -4,16 +4,6 @@
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-## Histórico de Revisões
-
-| Data | Versão | Descrição | Autor |
-|---|---|---|---|
-| 19/08/2026 | 1.0 | Elaboração inicial do documento. Seções 1 a 6. | Henrique de Almeida Marangoni Inacio |
-| 19/08/2026 | 1.1 | Encerramento da sessão transferido do totem para o ponto de pagamento do estabelecimento. Inclusão do perfil Operador de Caixa. Nova seção 4.4 com as limitações decorrentes da ausência de integração com hardware. Revisão dos riscos. | Henrique de Almeida Marangoni Inacio |
-| 27/08/2026 | 2.0 | **Redução de escopo.** O produto deixa de ser um SaaS por assinatura para estacionamentos comerciais e passa a ser um sistema para um condomínio residencial específico. Eliminados os perfis Estabelecimento, Operador de Caixa e Administrador do Sistema, o totem, o uso anônimo e o ponto de pagamento. Incluído o agendamento de vagas. A apuração passa de tempo de ocupação para energia estimada rateada na conta do condômino. Seções 1 a 6 reescritas. | Henrique de Almeida Marangoni Inacio |
-| 27/08/2026 | 3.0 | **Remoção do agendamento.** O uso passa a ser exclusivamente por ordem de chegada. Eliminados o agendamento, a reserva, a tolerância de comparecimento e o ator temporal. A duração máxima de sessão passa a ser o único instrumento de rotatividade. Incluído o risco da disputa não mediada. | Henrique de Almeida Marangoni Inacio |
-| 31/08/2026 | 3.1 | **Revisão editorial.** Condensação do texto sem alteração de escopo: nenhuma restrição, risco ou necessidade foi incluída, removida ou renumerada. | Henrique de Almeida Marangoni Inacio |
-
 ## 1. Introdução
 
 ### 1.1. Resumo do Negócio
@@ -34,23 +24,6 @@ O CARREGAJA é um sistema destinado a **um condomínio específico**, usado pelo
 aplicação web pelo celular. Ele permite consultar quais vagas estão livres e quando as ocupadas
 serão liberadas, registrar a recarga realizada e apurar mensalmente quanto cada apartamento
 consumiu.
-
-> **Redução de escopo em relação à versão 1.1.** A versão anterior descrevia um SaaS por
-> assinatura para estacionamentos comerciais, com quatro perfis, totem, motorista anônimo e
-> encerramento no ponto de pagamento. Aquele escopo era incompatível com o prazo e a capacidade
-> disponíveis (RE-13 e RE-14). O domínio do condomínio preserva o mesmo núcleo técnico — a
-> previsão de conclusão a partir das características do veículo — em um recorte executável no
-> semestre.
-
-**Por que não há agendamento.** O mecanismo existiu na versão 2.0 e foi removido na 3.0; o
-motivo fica registrado para que não seja reintroduzido sem tratar o que o inviabilizou. Agendar
-exigia o nível da bateria no momento de reservar — dado que ninguém sabe horas antes de chegar.
-Reservar sempre o pior caso, seis horas, corrigia isso mas fragmentava: quem precisava de quatro
-prendia seis, e as duas restantes ficavam encravadas entre reservas. Antecipar a reserva
-seguinte para ocupar o buraco deslocaria a próxima, e a próxima, em cascata. A equipe optou por
-remover o mecanismo em vez de acumular regras para contorná-lo. O uso passa a ser por ordem de
-chegada, e o painel com a previsão de liberação é o que permite ao morador decidir quando descer
-— menos do que uma garantia de horário, perda registrada no risco RI-11.
 
 ### 1.2. Objetivo do Sistema
 

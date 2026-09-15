@@ -16,6 +16,15 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Astah — arquivos de backup gerados ao salvar
+# Astah — backup gerado ao salvar e lock de arquivo aberto
 *.asta.bak
 *.jude.bak
+*.asta.lock
+
+# Diagramas: o artefato oficial é o .asta do Astah, previsto pelo SpinOff.
+# Os .puml, as imagens deles geradas e o .md do modelo serviram enquanto o
+# modelo não estava no Astah. Seguem úteis como contexto de trabalho, mas
+# versioná-los duplicaria a fonte da verdade e abriria espaço para divergirem.
+# Ficam em _contexto/, ao lado do .asta, fora do repositório.
+2.Analise e Design/_contexto/
+plantuml.jar
