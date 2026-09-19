@@ -28,3 +28,9 @@ Desktop.ini
 # Ficam em _contexto/, ao lado do .asta, fora do repositório.
 2.Analise e Design/_contexto/
 plantuml.jar
+
+# SpinOff — método, guias e templates do professor (http://arum.tec.br/SpinOff/)
+# É material de referência para trabalhar, não artefato entregue pela equipe. Versioná-lo
+# somava 3,7 MB de PDF e .dotx que nenhum documento do projeto referencia, e misturava
+# material de terceiro com a entrega. A pasta continua no disco de quem trabalha aqui.
+.spinoff/

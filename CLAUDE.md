@@ -9,15 +9,18 @@ evidenciada. O código é meio, não fim.
 ## O processo é o SpinOff
 
 Todo o trabalho segue o método **SpinOff** (<http://arum.tec.br/SpinOff/index.htm>), criado
-pelo professor da disciplina. O método está espelhado em [.spinoff/](.spinoff/):
+pelo professor da disciplina. O método está espelhado em `.spinoff/`, **fora do
+repositório** — a pasta existe só na máquina de quem trabalha no projeto, mantida pelo
+`.gitignore`. É material do professor, não entrega da equipe, e versioná-la enchia o
+repositório com 3,7 MB que nenhum artefato do projeto referencia:
 
-- **[.spinoff/METODO.md](.spinoff/METODO.md)** — fases, marcos, WBS, tarefas com passos,
+- **`.spinoff/METODO.md`** — fases, marcos, WBS, tarefas com passos,
   papéis, artefatos, convenções. **Leia antes de propor qualquer artefato ou etapa.**
-- **[.spinoff/GUIAS.md](.spinoff/GUIAS.md)** — texto integral dos guias (FURPS+, INVEST, VRDC,
+- **`.spinoff/GUIAS.md`** — texto integral dos guias (FURPS+, INVEST, VRDC,
   Políticas de GC, Entrevista, Workshop de Requisitos, Abordagens de Teste)
-- **[.spinoff/templates/](.spinoff/templates/)** — templates oficiais. Sempre partir deles,
+- **`.spinoff/templates/`** — templates oficiais. Sempre partir deles,
   nunca inventar formato de documento
-- **[.spinoff/guias/](.spinoff/guias/)** — guias em PDF
+- **`.spinoff/guias/`** — guias em PDF
 
 ### Ciclo de vida
 
@@ -236,11 +239,14 @@ compatibilidade, minor = novas funcionalidades, patch = correções e melhorias.
 
 | Branch | Criado a partir de |
 |---|---|
-| `master` | — (produção, recebe as tags) |
-| `develop` | `master` (junção de features prontas) |
-| `release` | `master` (correções finais pré-produção) |
+| `main` | — (produção, recebe as tags) |
+| `develop` | `main` (junção de features prontas) |
+| `release` | `main` (correções finais pré-produção) |
 | `feature` | `develop` |
 | `hotfix` | `develop` |
+
+> A branch de produção chama-se **`main`**, não `master`: é o nome que o repositório usa
+> desde o primeiro commit e o padrão do GitHub. Onde o SpinOff escreve `master`, leia `main`.
 
 Nome do branch: `<numero-da-issue>-<tipo>-<descrição resumida>` — ex.: `156-feature-cadastro-vaga`.
 **O branch deve ser criado a partir da issue no GitHub**, para o número sair automático.
@@ -269,4 +275,5 @@ impacto, atualiza a Planilha de PCP e pede aprovação do cliente.
 - O código vive no submódulo `3.Implementacao/CarregaJA_Implementacao`
   (<https://github.com/AndreMoreira00/CarregaJA_Implementacao>) — inicializar com
   `git submodule update --init --recursive`
-- `.spinoff/` é referência, não entrega: não misturar com os artefatos do projeto
+- `.spinoff/` é referência local, não entrega: não é versionado e não se mistura com os
+  artefatos do projeto. Quem clonar o repositório não recebe a pasta — copiar à parte
