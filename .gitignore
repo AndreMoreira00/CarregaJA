@@ -35,8 +35,4 @@ plantuml.jar
 # material de terceiro com a entrega. A pasta continua no disco de quem trabalha aqui.
 .spinoff/
 
-# CLAUDE.md — instruções do agente de IA para trabalhar neste repositório
-# É ferramenta de quem usa o Claude Code, não artefato do projeto nem documentação
-# da equipe: o README já cobre o que os outros precisam saber. Fica fora do
-# versionamento para não virar entrega a ser revisada em PR.
 CLAUDE.md
