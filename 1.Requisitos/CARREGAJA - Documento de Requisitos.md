@@ -1,6 +1,6 @@
 # Documento de Requisitos
 
-**Versão 1.0**
+**Versão 1.1**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -9,6 +9,7 @@
 | Data | Versão | Descrição | Autor |
 |---|---|---|---|
 | 26/09/2026 | 1.0 | Criação do documento a partir do detalhamento retirado do Visão v3.1, conforme a apresentação da Iniciação. Inclui requisitos funcionais, regras de negócio e a classificação FURPS+ das restrições. | Henrique de Almeida Marangoni Inacio |
+| 26/09/2026 | 1.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -213,7 +214,7 @@ para deixar explícito que a limitação é conhecida e foi aceita conscientemen
 | RI-05 | **Divergência entre o total apurado e a conta de luz da área comum.** | Rateio contestável em assembleia; perda de confiança no sistema. | **Mitigar.** A apuração é estimativa e assim deve ser apresentada. O fechamento exibe o total do período, que o síndico compara com a conta e ajusta proporcionalmente, se a assembleia deliberar. Eliminar a divergência exige medição (seção 7). |
 | RI-06 | **Indisponibilidade dos integrantes da equipe** pela conciliação com as demais disciplinas do semestre. | Atraso nas entregas planejadas; prazo comprometido (RE-13). | **Mitigar.** Entregas incrementais por sprint, revisão do planejamento antes de cada sprint e acompanhamento diário do quadro de tarefas. |
 | RI-07 | **Ausência de cliente real para validar os requisitos** (RE-16). | Requisitos validados apenas internamente; premissas incorretas sobre o domínio podem passar despercebidas. | **Mitigar.** Registro explícito das premissas assumidas; validação do escopo e do planejamento pelo Product Owner; revisão dos requisitos a cada sprint. |
-| RI-08 | **Complexidade subestimada do cálculo de previsão e de apuração**: potência efetiva e limite de energia mais complexos que o previsto. | Retrabalho na Elaboração; atraso na definição da arquitetura. | **Mitigar.** Previsão de conclusão e apuração são atacadas primeiro na Elaboração, como arquitetura executável, por concentrarem o maior risco técnico do projeto. |
+| RI-08 | **Complexidade subestimada do cálculo de previsão e de apuração**: potência efetiva e limite de energia mais complexos que o previsto. | Retrabalho na Construção; atraso nas entregas de sessão e de rateio. | **Mitigar.** A arquitetura é testada com o UC05 (Manter Veículo) na Elaboração. Previsão de conclusão e apuração entram no sprint 5, o primeiro da Construção, isoladas num serviço coberto por testes de unidade, por concentrarem o maior risco técnico do projeto. |
 | RI-09 | **Nova mudança de escopo**: o escopo já foi alterado nas versões 2.0 e 3.0 do Visão, e os casos de uso foram revistos na apresentação da Iniciação. | Retrabalho nos artefatos de requisitos e de análise; consumo de um prazo já restrito (RE-13). | **Mitigar.** As alterações decorreram de defeitos achados em revisão, e não de mudança de opinião. Toda alteração passa por issue no GitHub, com análise de impacto do Product Owner. |
 | RI-10 | **Limite de duração inadequado ao parque de carregadores**: 6 horas não bastam para carregadores de 3,7 kW, em que a carga completa passa de 11 horas. | Recarga dividida em várias sessões; percepção de que o sistema atrapalha em vez de organizar. | **Mitigar.** O limite é parâmetro de configuração, e não valor fixo no código: o síndico o ajusta se o parque exigir. As 6 horas são o padrão inicial, dimensionado para 7,4 kW e 11 kW. |
 | RI-11 | **Disputa não mediada pelo sistema**: sem agendamento (RE-12), dois moradores podem descer ao ver a mesma vaga livre, e quem perde a corrida desce à toa. | Conflito entre vizinhos; volta à combinação informal que o sistema pretendia substituir; morador com rotina menos flexível sistematicamente preterido. | **Aceitar, com mitigação parcial.** O painel evita a maior parte das descidas inúteis, mas não a corrida pela vaga recém-liberada. A demanda reprimida é medida (UC12) e levada à assembleia: havendo disputa frequente, a resposta é **ampliar a estrutura**, e não acrescentar regra de software. Fila poderá ser avaliada em versão futura. |
