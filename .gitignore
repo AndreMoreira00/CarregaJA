@@ -36,3 +36,7 @@ plantuml.jar
 .spinoff/
 
 CLAUDE.md
+
+# Scripts de trabalho: geração dos .docx a partir dos .md e edição do .asta pela API do Astah.
+# Servem para produzir os artefatos, não são artefato; ficam no disco de quem trabalha aqui.
+_ferramentas/
