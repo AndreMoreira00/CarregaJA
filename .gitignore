@@ -1,0 +1,42 @@
+# Arquivos temporários do Microsoft Office
+# O Word e o Excel criam estes arquivos de lock enquanto um documento está aberto
+# e os apagam ao fechar. Como os artefatos do projeto são .docx e .xlsx, eles
+# aparecem com frequência — versioná-los polui o histórico e gera conflito em PR.
+~$*
+*.tmp
+
+# Arquivos de recuperação e backup do Office
+*.asd
+*.wbk
+*.xlk
+*.bak
+
+# Sistema operacional
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Astah — backup gerado ao salvar e lock de arquivo aberto
+*.asta.bak
+*.jude.bak
+*.asta.lock
+
+# Diagramas: o artefato oficial é o .asta do Astah, previsto pelo SpinOff.
+# Os .puml, as imagens deles geradas e o .md do modelo serviram enquanto o
+# modelo não estava no Astah. Seguem úteis como contexto de trabalho, mas
+# versioná-los duplicaria a fonte da verdade e abriria espaço para divergirem.
+# Ficam em _contexto/, ao lado do .asta, fora do repositório.
+2.Analise e Design/_contexto/
+plantuml.jar
+
+# SpinOff — método, guias e templates do professor (http://arum.tec.br/SpinOff/)
+# É material de referência para trabalhar, não artefato entregue pela equipe. Versioná-lo
+# somava 3,7 MB de PDF e .dotx que nenhum documento do projeto referencia, e misturava
+# material de terceiro com a entrega. A pasta continua no disco de quem trabalha aqui.
+.spinoff/
+
+CLAUDE.md
+
+# Scripts de trabalho: geração dos .docx a partir dos .md e edição do .asta pela API do Astah.
+# Servem para produzir os artefatos, não são artefato; ficam no disco de quem trabalha aqui.
+_ferramentas/

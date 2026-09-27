@@ -45,20 +45,24 @@ apuração de energia.
 
 **O que o sistema não faz:** não se integra ao hardware dos carregadores, não processa
 pagamento, não agenda nem reserva vagas — o uso é por ordem de chegada. Os motivos estão
-registrados nas restrições e riscos do documento Visão.
+registrados nas restrições e riscos do Documento de Requisitos.
 
 ## Documentação
 
 | Artefato | Onde |
 |---|---|
 | Visão | [1.Requisitos/](1.Requisitos/) |
+| Documento de Requisitos | [1.Requisitos/](1.Requisitos/) |
 | História de Usuário | [1.Requisitos/Casos de Uso/](1.Requisitos/Casos%20de%20Uso/) |
-| Modelo de Caso de Uso | [2.Analise e Design/](2.Analise%20e%20Design/) |
+| Modelo de Casos de Uso e Modelo de Objetos | [2.Analise e Design/](2.Analise%20e%20Design/) |
 | Código fonte | submódulo em [3.Implementacao/](3.Implementacao/) |
 
-A **Visão** é o ponto de partida: descreve o problema, o escopo, as restrições e os riscos. A
-**História de Usuário** detalha cada caso de uso com fluxos e testes de aceitação, usando um
-cenário único que atravessa todas as histórias.
+A **Visão** é o ponto de partida: a visão geral do problema, dos usuários, das restrições e dos
+riscos. O **Documento de Requisitos** detalha o que o Visão resume: requisitos funcionais,
+regras de negócio, a justificativa de cada restrição e a análise completa dos riscos. Como o
+SpinOff não o prevê, ele tem template próprio na mesma pasta. A **História de Usuário** detalha
+cada caso de uso com testes de aceitação, usando um cenário único que atravessa todas as
+histórias.
 
 ## Como clonar
 
@@ -72,14 +76,27 @@ git submodule update --init --recursive
 
 ## Diagramas
 
-Os diagramas UML têm fonte em PlantUML (`.puml`) e imagens geradas (`.png`, `.svg`). Após
-editar um `.puml`, regerar os dois formatos:
+Os modelos são mantidos no **Astah**, em um único arquivo em
+[2.Analise e Design/](2.Analise%20e%20Design/), com a mesma organização do template do
+SpinOff:
+
+```
+CARREGAJA - Modelos de Análise e Design.asta
+```
+
+É o formato previsto pelo processo SpinOff e o único versionado. Para vê-lo, abra o arquivo no
+Astah — ou exporte a imagem por linha de comando, usando o JRE que acompanha a ferramenta:
 
 ```bash
-cd "2.Analise e Design"
-java -jar plantuml.jar -charset UTF-8 -tpng *.puml
-java -jar plantuml.jar -charset UTF-8 -tsvg *.puml
+"C:/Program Files/astah-UML/jre/bin/java" -cp "C:/Program Files/astah-UML/astah-uml.jar" \
+  com.change_vision.jude.cmdline.JudeCommandRunner \
+  -image all -f "CARREGAJA - Modelos de Análise e Design.asta" -t png -o saida/
 ```
+
+| Pacote | Diagrama | Conteúdo |
+|---|---|---|
+| `1.Analise` | Modelo de Casos de Uso | Dois atores, os doze casos de uso UC01 a UC12, cada um com descrição, e as relações `<<include>>` que ligam UC03, UC10 e UC11 a UC04 |
+| `2.Design` | Modelo de Objetos | As entidades do domínio, com atributos, associações e multiplicidades |
 
 ## Equipe
 
