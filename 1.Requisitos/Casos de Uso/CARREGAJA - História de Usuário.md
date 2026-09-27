@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 3.0
+Versão 4.0
 
 ## Dados usados nos testes de aceitação
 
@@ -41,13 +41,13 @@ consumir seja registrado no meu apartamento**.
 
 **Testes de aceitação**
 
-*Pré-condição:* o morador está cadastrado e ativo (HU-11).
+*Pré-condição:* o morador está cadastrado e ativo (HU-09).
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
 | 01 | Acesso com credenciais válidas | E-mail e senha corretos do apto 42 | Acesso concedido, perfil Morador, apartamento 42 |
 | 02 | Acesso com senha incorreta | E-mail correto, senha errada | Recusado, com mensagem genérica que não indica o campo errado |
-| 03 | Acesso de morador desativado | Credenciais de morador desativado em HU-11 | Recusado, com orientação a procurar o síndico |
+| 03 | Acesso de morador desativado | Credenciais de morador desativado em HU-09 | Recusado, com orientação a procurar o síndico |
 | 04 | Usuário com os dois perfis | Credenciais da síndica, que também é moradora | Acesso concedido com os perfis Morador e Síndico |
 
 **Tem protótipo?** Não.
@@ -70,7 +70,7 @@ ocupadas**, de modo que **eu decida se desço agora ou mais tarde, em vez de des
 
 **Testes de aceitação**
 
-*Pré-condição:* usuário autenticado (HU-01); existem vagas cadastradas (HU-09).
+*Pré-condição:* usuário autenticado (HU-01); existem vagas cadastradas (HU-07).
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
@@ -86,107 +86,63 @@ ocupadas**, de modo que **eu decida se desço agora ou mais tarde, em vez de des
 
 ---
 
-## HU-03 — Iniciar Sessão de Recarga
+## HU-03 — Manter Sessão de Recarga
 
 | | |
 |---|---|
-| **Caso de uso** | UC03 — Iniciar Sessão de Recarga |
+| **Caso de uso** | UC03 — Manter Sessão de Recarga |
 | **Número da história** | HU-03 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Morador |
 
 **Descrição da história**
 
-Como **morador**, eu quero **registrar o início da recarga ao plugar o veículo**, de modo que
-**o consumo seja lançado no meu apartamento e os vizinhos saibam quando a vaga será liberada**.
+Como **morador**, eu quero **registrar o início da recarga ao plugar o veículo e o encerramento ao
+retirá-lo**, de modo que **o consumo seja lançado no meu apartamento e os vizinhos saibam quando a
+vaga será liberada**.
+
+> **Esta história une as antigas HU-03 (Iniciar), HU-04 (Calcular Previsão de Conclusão) e HU-05
+> (Encerrar).** A previsão deixou de ser caso de uso próprio e passou a ser calculada no início da
+> sessão; os testes de aceitação das três foram preservados: 01 a 07 tratam do início,
+> 08 a 12 da previsão e 13 a 17 do encerramento.
 
 **Testes de aceitação**
 
-*Pré-condição:* morador autenticado, com veículo cadastrado (HU-07).
+*Pré-condição:* morador autenticado, com veículo cadastrado (HU-05); nos testes de encerramento,
+com sessão em andamento.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
 | 01 | Início em vaga livre | G-02 livre, Leaf, bateria 30 %, às 18h10 | Sessão aberta; potência efetiva 6,6 kW; previsão 22h25; vaga passa a Ocupada |
-| 02 | Início em vaga já ocupada | G-01 com sessão em andamento | Recusado, exibindo a previsão de liberação; recusa contabilizada para HU-14 |
+| 02 | Início em vaga já ocupada | G-01 com sessão em andamento | Recusado, exibindo a previsão de liberação; recusa contabilizada para HU-12 |
 | 03 | Corrida pela vaga | Dois moradores registram início na G-02 quase ao mesmo tempo | O primeiro abre a sessão; o segundo é recusado |
-| 04 | Vaga desativada | G-02 desativada em HU-09 | Recusado |
+| 04 | Vaga desativada | G-02 desativada em HU-07 | Recusado |
 | 05 | Morador sem veículo cadastrado | Morador recém-cadastrado tenta iniciar | Interrompido, com encaminhamento ao cadastro de veículo |
 | 06 | Morador já com sessão aberta | Morador com sessão na G-02 tenta iniciar na G-01 | Recusado |
 | 07 | Marcação da duração máxima | Sessão iniciada às 18h10, consulta às 00h10 | Sessão marcada **Excedida** e ainda aberta |
+| 08 | Veículo limita a potência | Leaf (6,6 kW) na G-02 (7,4 kW), bateria 30 % | Potência efetiva 6,6 kW; 28,0 kWh a repor; 4h15 |
+| 09 | Carregador limita a potência | Dolphin (11 kW) na G-02 (7,4 kW), bateria 20 % | Potência efetiva 7,4 kW; 48,0 kWh a repor; 6h29 |
+| 10 | Potências iguais | Dolphin (11 kW) na G-01 (11 kW), bateria 20 % | Potência efetiva 11,0 kW; 48,0 kWh a repor; 4h22 |
+| 11 | Carregador maior não acelera veículo lento | Leaf na G-01 (11 kW) comparado ao Leaf na G-02 (7,4 kW) | Mesmo tempo nos dois casos: 4h15 |
+| 12 | Bateria cheia | Leaf, bateria 100 % | 0 kWh a repor; informa que não há recarga a fazer |
+| 13 | Encerramento com teto de energia acionado | Início 18h10, fim 22h40, 6,6 kW, 28,0 kWh a repor | 28,0 kWh e R$ 25,76; vaga liberada |
+| 14 | Encerramento antes de completar a carga | Início 18h10, fim 20h10, 6,6 kW, 28,0 kWh a repor | 13,2 kWh e R$ 12,14 |
+| 15 | Valor apresentado ao morador na hora | Qualquer encerramento | Duração, energia e valor exibidos na própria tela |
+| 16 | Sem sessão aberta | Morador sem sessão aciona o encerramento | Informado que não há sessão a encerrar |
+| 17 | Tarifa alterada durante a sessão | Início com R$ 0,92; tarifa passa a R$ 1,05 às 20h | Apurado a R$ 0,92, a vigente no início |
 
 **Tem protótipo?** Não.
 
 ---
 
-## HU-04 — Calcular Previsão de Conclusão
+## HU-04 — Apurar Energia da Sessão
 
 | | |
 |---|---|
-| **Caso de uso** | UC04 — Calcular Previsão de Conclusão |
+| **Caso de uso** | UC04 — Apurar Energia da Sessão |
 | **Número da história** | HU-04 |
 | **Estimativa** | *a definir no Planning Poker* |
-| **Ator** | — (executado por inclusão a partir de HU-03) |
-
-**Descrição da história**
-
-Como **morador**, eu quero **que o sistema calcule quando minha recarga termina a partir das
-características reais do meu veículo**, de modo que **a previsão que eu vejo, e que meus
-vizinhos veem no painel, seja confiável**.
-
-**Testes de aceitação**
-
-*Pré-condição:* veículo cadastrado e vaga com potência definida.
-
-| Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
-|---|---|---|---|
-| 01 | Veículo limita a potência | Leaf (6,6 kW) na G-02 (7,4 kW), bateria 30 % | Potência efetiva 6,6 kW; 28,0 kWh a repor; 4h15 |
-| 02 | Carregador limita a potência | Dolphin (11 kW) na G-02 (7,4 kW), bateria 20 % | Potência efetiva 7,4 kW; 48,0 kWh a repor; 6h29 |
-| 03 | Potências iguais | Dolphin (11 kW) na G-01 (11 kW), bateria 20 % | Potência efetiva 11,0 kW; 48,0 kWh a repor; 4h22 |
-| 04 | Carregador maior não acelera veículo lento | Leaf na G-01 (11 kW) comparado ao Leaf na G-02 (7,4 kW) | Mesmo tempo nos dois casos: 4h15 |
-| 05 | Bateria cheia | Leaf, bateria 100 % | 0 kWh a repor; informa que não há recarga a fazer |
-
-**Tem protótipo?** Não se aplica — não possui interface própria.
-
----
-
-## HU-05 — Encerrar Sessão de Recarga
-
-| | |
-|---|---|
-| **Caso de uso** | UC05 — Encerrar Sessão de Recarga |
-| **Número da história** | HU-05 |
-| **Estimativa** | *a definir no Planning Poker* |
-| **Ator** | Morador |
-
-**Descrição da história**
-
-Como **morador**, eu quero **encerrar minha sessão ao retirar o veículo e ver quanto consumi**,
-de modo que **a vaga fique livre para os vizinhos e eu possa conferir o valor na hora**.
-
-**Testes de aceitação**
-
-*Pré-condição:* o morador tem sessão em andamento.
-
-| Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
-|---|---|---|---|
-| 01 | Encerramento com teto de energia acionado | Início 18h10, fim 22h40, 6,6 kW, 28,0 kWh a repor | 28,0 kWh e R$ 25,76; vaga liberada |
-| 02 | Encerramento antes de completar a carga | Início 18h10, fim 20h10, 6,6 kW, 28,0 kWh a repor | 13,2 kWh e R$ 12,14 |
-| 03 | Valor apresentado ao morador na hora | Qualquer encerramento | Duração, energia e valor exibidos na própria tela |
-| 04 | Sem sessão aberta | Morador sem sessão aciona o encerramento | Informado que não há sessão a encerrar |
-| 05 | Tarifa alterada durante a sessão | Início com R$ 0,92; tarifa passa a R$ 1,05 às 20h | Apurado a R$ 0,92, a vigente no início |
-
-**Tem protótipo?** Não.
-
----
-
-## HU-06 — Apurar Energia da Sessão
-
-| | |
-|---|---|
-| **Caso de uso** | UC06 — Apurar Energia da Sessão |
-| **Número da história** | HU-06 |
-| **Estimativa** | *a definir no Planning Poker* |
-| **Ator** | — (executado por inclusão a partir de HU-05, HU-12 e HU-13) |
+| **Ator** | — (executado por inclusão a partir de HU-03, HU-10 e HU-11) |
 
 **Descrição da história**
 
@@ -210,12 +166,12 @@ contestado**.
 
 ---
 
-## HU-07 — Manter Veículo
+## HU-05 — Manter Veículo
 
 | | |
 |---|---|
-| **Caso de uso** | UC07 — Manter Veículo |
-| **Número da história** | HU-07 |
+| **Caso de uso** | UC05 — Manter Veículo |
+| **Número da história** | HU-05 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Morador |
 
@@ -240,12 +196,12 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 ---
 
-## HU-08 — Consultar Consumo do Mês
+## HU-06 — Consultar Consumo do Mês
 
 | | |
 |---|---|
-| **Caso de uso** | UC08 — Consultar Consumo do Mês |
-| **Número da história** | HU-08 |
+| **Caso de uso** | UC06 — Consultar Consumo do Mês |
+| **Número da história** | HU-06 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Morador |
 
@@ -262,19 +218,19 @@ quanto será lançado na minha cota antes de recebê-la**.
 |---|---|---|---|
 | 01 | Consumo do período corrente | Apto 42, setembro, sessões de 28,0 + 24,5 + 23,5 kWh | Total de 76,0 kWh e R$ 69,92 |
 | 02 | Período sem sessões | Apto 17, agosto | Informa ausência de consumo registrado |
-| 03 | Sessão encerrada pelo síndico é sinalizada | Apto 17, setembro, sessão encerrada em HU-12 | Linha marcada como encerramento administrativo |
+| 03 | Sessão encerrada pelo síndico é sinalizada | Apto 17, setembro, sessão encerrada em HU-10 | Linha marcada como encerramento administrativo |
 | 04 | Morador não vê consumo alheio | Morador do apto 42 consulta | Apenas as sessões do apartamento 42 |
 
 **Tem protótipo?** Não.
 
 ---
 
-## HU-09 — Manter Vagas com Carregador
+## HU-07 — Manter Vagas com Carregador
 
 | | |
 |---|---|
-| **Caso de uso** | UC09 — Manter Vagas com Carregador |
-| **Número da história** | HU-09 |
+| **Caso de uso** | UC07 — Manter Vagas com Carregador |
+| **Número da história** | HU-07 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -299,12 +255,12 @@ modo que **o sistema calcule previsões corretas e o painel reflita a garagem re
 
 ---
 
-## HU-10 — Definir Tarifa de Energia
+## HU-08 — Definir Tarifa de Energia
 
 | | |
 |---|---|
-| **Caso de uso** | UC10 — Definir Tarifa de Energia |
-| **Número da história** | HU-10 |
+| **Caso de uso** | UC08 — Definir Tarifa de Energia |
+| **Número da história** | HU-08 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -329,12 +285,12 @@ que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
 
 ---
 
-## HU-11 — Manter Moradores
+## HU-09 — Manter Moradores
 
 | | |
 |---|---|
-| **Caso de uso** | UC11 — Manter Moradores |
-| **Número da história** | HU-11 |
+| **Caso de uso** | UC09 — Manter Moradores |
+| **Número da história** | HU-09 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -359,12 +315,12 @@ modo que **o consumo seja atribuído à unidade correta no rateio**.
 
 ---
 
-## HU-12 — Encerrar Sessão Órfã
+## HU-10 — Encerrar Sessão Órfã
 
 | | |
 |---|---|
-| **Caso de uso** | UC12 — Encerrar Sessão Órfã |
-| **Número da história** | HU-12 |
+| **Caso de uso** | UC10 — Encerrar Sessão Órfã |
+| **Número da história** | HU-10 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -386,19 +342,19 @@ fisicamente** que o veículo já não está na vaga.
 | 01 | Encerramento administrativo | Sessão de 14h00 a 21h00, 11,0 kW, 48,0 kWh a repor | 48,0 kWh e R$ 44,16; vaga liberada |
 | 02 | Registro do responsável | Após o caso 01 | Sessão marcada como administrativa, com o síndico e o horário |
 | 03 | Teto impede apuração desproporcional | Mesmos dados do caso 01 | 48,0 kWh — não os 77,0 kWh da energia bruta |
-| 04 | Visibilidade ao morador | Morador consulta HU-08 | Linha sinalizada como encerramento administrativo |
+| 04 | Visibilidade ao morador | Morador consulta HU-06 | Linha sinalizada como encerramento administrativo |
 | 05 | Morador não acessa a função | Morador tenta encerrar sessão de terceiro | Função indisponível ao perfil Morador |
 
 **Tem protótipo?** Não.
 
 ---
 
-## HU-13 — Fechar Mês e Gerar Rateio
+## HU-11 — Fechar Mês e Gerar Rateio
 
 | | |
 |---|---|
-| **Caso de uso** | UC13 — Fechar Mês e Gerar Rateio |
-| **Número da história** | HU-13 |
+| **Caso de uso** | UC11 — Fechar Mês e Gerar Rateio |
+| **Número da história** | HU-11 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -424,12 +380,12 @@ possa repassar à administradora os valores a lançar em cada cota condominial**
 
 ---
 
-## HU-14 — Consultar Histórico de Utilização
+## HU-12 — Consultar Histórico de Utilização
 
 | | |
 |---|---|
-| **Caso de uso** | UC14 — Consultar Histórico de Utilização |
-| **Número da história** | HU-14 |
+| **Caso de uso** | UC12 — Consultar Histórico de Utilização |
+| **Número da história** | HU-12 |
 | **Estimativa** | *a definir no Planning Poker* |
 | **Ator** | Síndico |
 
@@ -457,19 +413,17 @@ vaga**, de modo que **eu possa levar dados à assembleia ao propor a ampliação
 
 ## Rastreabilidade
 
-| História | Caso de uso | Necessidade no Visão v3.0 |
-|---|---|---|
-| HU-01 Autenticar Usuário | UC01 | RE-08 (uso identificado) |
-| HU-02 Consultar Painel de Vagas | UC02 | §2.2, §2.3, §2.4, §2.5 |
-| HU-03 Iniciar Sessão de Recarga | UC03 | §2.1, §2.2, §2.3, §2.4 |
-| HU-04 Calcular Previsão de Conclusão | UC04 | §2.2, §2.3 |
-| HU-05 Encerrar Sessão de Recarga | UC05 | §2.1 |
-| HU-06 Apurar Energia da Sessão | UC06 | §2.1 |
-| HU-07 Manter Veículo | UC07 | §2.3 |
-| HU-08 Consultar Consumo do Mês | UC08 | §2.1 |
-| HU-09 Manter Vagas com Carregador | UC09 | §2.2, §2.3 |
-| HU-10 Definir Tarifa de Energia | UC10 | §2.1 |
-| HU-11 Manter Moradores | UC11 | §2.1 |
-| HU-12 Encerrar Sessão Órfã | UC12 | §2.5 |
-| HU-13 Fechar Mês e Gerar Rateio | UC13 | §2.1 |
-| HU-14 Consultar Histórico de Utilização | UC14 | §2.6 |
+| História | Caso de uso | Necessidade no Visão v4.0 | Requisitos no Documento de Requisitos |
+|---|---|---|---|
+| HU-01 Autenticar Usuário | UC01 | RE-08 (uso identificado) | RF-01 |
+| HU-02 Consultar Painel de Vagas | UC02 | §2.2, §2.3 | RF-02, RF-03, RF-08 |
+| HU-03 Manter Sessão de Recarga | UC03 | §2.1, §2.2, §2.3 | RF-04 a RF-08 |
+| HU-04 Apurar Energia da Sessão | UC04 | §2.1 | RF-09 |
+| HU-05 Manter Veículo | UC05 | §2.2 | RF-10 |
+| HU-06 Consultar Consumo do Mês | UC06 | §2.1 | RF-11 |
+| HU-07 Manter Vagas com Carregador | UC07 | §2.2 | RF-12 |
+| HU-08 Definir Tarifa de Energia | UC08 | §2.1 | RF-13 |
+| HU-09 Manter Moradores | UC09 | §2.1, RE-08 | RF-14 |
+| HU-10 Encerrar Sessão Órfã | UC10 | §2.3 | RF-15 |
+| HU-11 Fechar Mês e Gerar Rateio | UC11 | §2.1 | RF-16 |
+| HU-12 Consultar Histórico de Utilização | UC12 | §2.4 | RF-17 |
