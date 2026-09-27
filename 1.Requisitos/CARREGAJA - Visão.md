@@ -1,6 +1,6 @@
 # Visão
 
-**Versão 4.0**
+**Versão 4.1**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -13,6 +13,7 @@
 | 27/08/2026 | 3.0 | Remoção do agendamento: o uso passa a ser por ordem de chegada. | Henrique de Almeida Marangoni Inacio |
 | 31/08/2026 | 3.1 | Revisão geral e condensação do texto. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 4.0 | Documento reduzido a uma visão geral, conforme a apresentação da Iniciação. O detalhamento de problemas, restrições, riscos e limitações passou para o Documento de Requisitos. Seções 2 a 6 reescritas. | Henrique de Almeida Marangoni Inacio |
+| 26/09/2026 | 4.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -145,7 +146,7 @@ Owner representa o cliente (RE-16).
 | RI-05 | Total apurado diferente da conta de luz da área comum. | Apuração apresentada como estimativa; ajuste proporcional, se a assembleia decidir. |
 | RI-06 | Indisponibilidade da equipe por conta das outras disciplinas. | Entregas por sprint e revisão do planejamento antes de cada sprint. |
 | RI-07 | Requisitos validados só internamente (RE-16). | Premissas registradas e validação pelo Product Owner. |
-| RI-08 | Cálculo de previsão e de apuração mais complexo que o esperado. | Atacado primeiro, na arquitetura executável da Elaboração. |
+| RI-08 | Cálculo de previsão e de apuração mais complexo que o esperado. | Atacado no início da Construção (sprint 5), sobre a arquitetura já testada com o UC05. |
 | RI-09 | Nova mudança de escopo. | Toda alteração passa por issue, com análise de impacto do Product Owner. |
 | RI-10 | Limite de 6 horas insuficiente para carregadores lentos. | Limite configurável pelo síndico. |
 | RI-11 | Dois moradores disputando a mesma vaga recém-liberada. | Aceito: a demanda reprimida é medida e levada à assembleia. |
