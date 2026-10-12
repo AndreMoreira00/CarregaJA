@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.0
+Versão 4.1
 
 ## Dados usados nos testes de aceitação
 
@@ -275,11 +275,12 @@ que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Definição válida | R$ 0,92 a partir de 01/09 | Tarifa registrada e vigente |
+| 01 | Definição válida | R$ 0,92 cadastrada em 01/09 às 08h | Tarifa registrada com a data e hora do cadastro, e vigente a partir dela |
 | 02 | Valor não positivo | R$ 0,00 | Recusado |
-| 03 | Histórico de vigências preservado | Lançar R$ 1,05 a partir de 01/10 | Ambas as vigências permanecem consultáveis |
-| 04 | Sessão antiga não é afetada | Sessão de 08/09, após a mudança de outubro | Continua apurada a R$ 0,92 |
-| 05 | Retroatividade sobre período fechado | Vigência em 01/09 com setembro já fechado | Recusado |
+| 03 | Vigência até a próxima tarifa | R$ 1,05 cadastrada em 15/09 às 14h | A de R$ 0,92 vale até 15/09 14h e a de R$ 1,05 dali em diante; ambas permanecem consultáveis |
+| 04 | Sessão iniciada antes do reajuste | Sessão iniciada em 15/09 às 13h, reajuste às 14h | Continua apurada a R$ 0,92 |
+| 05 | Reajuste no meio do mês | Sessão iniciada em 15/09 às 15h | Apurada a R$ 1,05 |
+| 06 | Cadastro com o mês anterior já fechado | R$ 1,10 cadastrada em 02/10, com setembro fechado | Registrada e vigente a partir do cadastro; setembro não é recalculado |
 
 **Tem protótipo?** Não.
 
