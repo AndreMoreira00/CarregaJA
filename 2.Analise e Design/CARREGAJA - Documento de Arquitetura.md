@@ -1,6 +1,6 @@
 # Documento de Arquitetura
 
-**Versão 1.0**
+**Versão 1.1**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -9,6 +9,7 @@
 | Data | Versão | Descrição | Autor |
 |---|---|---|---|
 | 25/10/2026 | 1.0 | Criação do documento. Registra a arquitetura definida e testada com o UC05 (Manter Veículo): API Spring Boot e telas JSF em projetos separados, conforme o modelo das aulas de Linguagem de Programação 2, e o modelo de implantação. | Henrique de Almeida Marangoni Inacio |
+| 26/10/2026 | 1.1 | Pacotes organizados por camada, e não por caso de uso (seções 2.2, 3 e 8). Diagramas do UC05 no pacote `3.Arquitetura::manterveiculo` e implantação em `3.Arquitetura::implantação`. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -64,7 +65,7 @@ negócio.
 | **API REST em Spring Boot 2.7**, com Spring Data JPA, Bean Validation e Lombok | Mesma pilha dos exercícios de LP2. A linha 2.7 é a última com `javax.*`, compatível com o Tomcat 9. |
 | **Telas em JSF com PrimeFaces 12**, num Tomcat 9 | Componentes prontos de formulário, mensagem e validação. O Tomcat 9 é o servidor usado na disciplina. |
 | **MySQL 8** | Banco relacional usado na disciplina. As tabelas são geradas pelo JPA (`ddl-auto=update`). |
-| **Pacotes organizados pelo caso de uso** (`br.edu.ifsp.carregaja.manterveiculo`), com as camadas dentro | Pedido do professor na apresentação do sprint 3: o pacote da arquitetura tem o nome do caso de uso. Cada caso de uso fica isolado e fácil de achar. |
+| **Pacotes organizados por camada** (`br.edu.ifsp.carregaja.control`, `.service`, `.repository`, `.model`, `.view`), com o nome do caso de uso na pasta da página (`webapp/restricted/manterveiculo`) e no pacote dos diagramas (`3.Arquitetura::manterveiculo`) | Organizar por caso de uso repetiria as mesmas camadas em cada um dos 12 casos de uso. Por camada é a organização dos exercícios de LP2 e do exemplo de arquitetura do professor. O pedido do professor no sprint 3, de o pacote da arquitetura ter o nome do caso de uso, continua atendido na pasta da página e nos diagramas. |
 | **Validação nos dois lados** | A tela valida para orientar o morador na hora. A API valida de novo porque é ela que garante a regra, qualquer que seja o cliente. |
 
 ### 2.3. Requisitos não funcionais que guiam a arquitetura
@@ -83,7 +84,8 @@ negócio.
 
 ## 3. Visão Lógica: Camadas e Pacotes
 
-Diagramas: **Pacotes do Front-end — UC05** e **Pacotes do Back-end — UC05**. Em cada diagrama, o
+Os pacotes Java ficam em `br.edu.ifsp.carregaja`, um por camada. Diagramas, no pacote
+`3.Arquitetura::manterveiculo`: **Pacotes do Front-end — UC05** e **Pacotes do Back-end — UC05**. Em cada diagrama, o
 que pertence ao outro projeto aparece em cinza, só com o nome.
 
 ### 3.1. Front-end (`carregaja-jsf`)
@@ -91,24 +93,27 @@ que pertence ao outro projeto aparece em cinza, só com o nome.
 | Pacote | Responsabilidade | No UC05 |
 |---|---|---|
 | `webapp/restricted/manterveiculo` | Páginas XHTML do caso de uso, no leiaute comum (`WEB-INF/template`) | `ManterVeiculoView.xhtml` |
-| `manterveiculo.controller` | Beans JSF: carregam a tela, recebem as ações e mostram as mensagens | `ManterVeiculoBean` |
-| `manterveiculo.service` | Cliente HTTP da API: monta as chamadas e traduz as falhas em mensagem | `VeiculoRestClient` |
-| `manterveiculo.model` | Os dados como a API os devolve e os corpos das requisições | `Veiculo`, `VeiculoRequest` |
+| `controller` | Beans JSF: carregam a tela, recebem as ações e mostram as mensagens | `ManterVeiculoBean` |
+| `service` | Cliente HTTP da API: monta as chamadas e traduz as falhas em mensagem | `VeiculoRestClient` |
+| `model` | Os dados como a API os devolve e os corpos das requisições | `Veiculo`, `VeiculoRequest` |
 
 ### 3.2. Back-end (`carregaja-api`)
 
 | Pacote | Responsabilidade | No UC05 |
 |---|---|---|
-| `manterveiculo.control` | Rotas REST: recebem a requisição validada, chamam o serviço e escolhem o status HTTP | `VeiculoController` |
-| `manterveiculo.service` | Regras de negócio do caso de uso | `VeiculoService` |
-| `manterveiculo.repository` | Acesso ao banco, por interfaces do Spring Data | `VeiculoRepository` |
-| `manterveiculo.model` | Entidades JPA | `Veiculo` |
-| `manterveiculo.view` | Dados de entrada da API, com as regras de validação | `VeiculoRequest` |
+| `control` | Rotas REST: recebem a requisição validada, chamam o serviço e escolhem o status HTTP | `VeiculoController` |
+| `service` | Regras de negócio do caso de uso | `VeiculoService` |
+| `repository` | Acesso ao banco, por interfaces do Spring Data | `VeiculoRepository` |
+| `model` | Entidades JPA | `Veiculo` |
+| `view` | Dados de entrada da API, com as regras de validação | `VeiculoRequest` |
 
 **Dependências permitidas.** Cada camada só conhece a de baixo: a página conhece o bean, o bean
 conhece o cliente REST, o cliente REST conhece a API apenas pelo endereço e pelo JSON. Na API, o
 controle conhece o serviço, o serviço conhece o repositório, e todos conhecem o modelo e a view.
 Nenhuma camada chama a de cima.
+
+Um caso de uso novo acrescenta classes às camadas que já existem, sem criar pacote novo. Só a
+página ganha uma pasta com o nome do caso de uso.
 
 Diagramas de classes: **Classes do Front-end — UC05** e **Classes do Back-end — UC05**, com todos os
 atributos e as operações públicas de cada classe, nos nomes e tipos do código. As entidades de
@@ -153,7 +158,7 @@ autenticação, sem mudar as camadas.
 
 ## 6. Visão de Implantação
 
-Diagrama: **Modelo de Implantação**, pacote `3.Arquitetura`.
+Diagrama: **Modelo de Implantação**, pacote `3.Arquitetura::implantação`.
 
 | Nó | O que roda | Porta |
 |---|---|---|
@@ -201,6 +206,7 @@ validador com mensagem.
 | 28/09/2026 | Primeira versão executável: um projeto Spring Boot com as telas JSF embutidas (JoinFaces), em `controller → service → dao → model` | Implementação do UC05 no sprint 3 |
 | 11/10/2026 | Pacote `cadastro` renomeado para `manterveiculo`; diagramas separados em front-end e back-end; classes com os nomes e tipos do código | Apontamentos do professor na apresentação do sprint 3 |
 | 25/10/2026 | Projeto dividido em `carregaja-api` e `carregaja-jsf`, no modelo dos exercícios de LP2: camadas `control`, `service`, `repository`, `model` e `view` na API e cliente REST na tela; Modelo de Implantação | A separação de front-end e back-end, antes só nos diagramas, passou a existir no código. A organização segue a da disciplina integrada (RE-02) |
+| 26/10/2026 | Pacotes por camada, direto em cada projeto (`br.edu.ifsp.carregaja.control` em vez de `br.edu.ifsp.carregaja.manterveiculo.control`); no Astah, `3.Arquitetura` reduzido a `carregaja-jsf`, `carregaja-api`, `manterveiculo` (diagramas do UC05) e `implantação` | Por caso de uso, cada um dos 12 casos de uso repetiria as cinco camadas. O nome do caso de uso ficou na pasta da página e no pacote dos diagramas |
 
 ## 9. Pendências da Arquitetura
 
