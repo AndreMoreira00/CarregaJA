@@ -1,6 +1,6 @@
 # Guia de Implementação
 
-**Versão 1.0**
+**Versão 1.1**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -9,6 +9,7 @@
 | Data | Versão | Descrição | Autor |
 |---|---|---|---|
 | 25/10/2026 | 1.0 | Criação do guia a partir do UC05 (Manter Veículo), implementado para testar a arquitetura. | Henrique de Almeida Marangoni Inacio |
+| 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -54,24 +55,27 @@ carregaja-api/   back-end: API REST (Spring Boot 2.7), porta 8081
 carregaja-jsf/   front-end: telas JSF + PrimeFaces, no Tomcat 9, porta 8080
 ```
 
-**Um pacote por caso de uso**, com as camadas dentro, nos dois projetos. O nome do pacote é o do
-caso de uso, em minúsculas e sem espaço: UC05 *Manter Veículo* é `manterveiculo`; UC07 *Manter
-Vagas com Carregador* será `mantervagas`; UC03 *Manter Sessão de Recarga* será `mantersessao`.
+**Um pacote por camada**, direto em `br.edu.ifsp.carregaja`, como nos exercícios de LP2. Um caso
+de uso novo acrescenta classes às camadas que já existem, sem criar pacote. O nome do caso de uso
+aparece só na pasta da página, em minúsculas e sem espaço: UC05 *Manter Veículo* é
+`manterveiculo`; UC07 *Manter Vagas com Carregador* será `mantervagas`; UC03 *Manter Sessão de
+Recarga* será `mantersessao`.
 
 | Projeto | Pacote | Conteúdo |
 |---|---|---|
-| `carregaja-api` | `br.edu.ifsp.carregaja.<caso>.control` | Rotas REST |
-| | `br.edu.ifsp.carregaja.<caso>.service` | Regras de negócio |
-| | `br.edu.ifsp.carregaja.<caso>.repository` | Interfaces do Spring Data |
-| | `br.edu.ifsp.carregaja.<caso>.model` | Entidades JPA |
-| | `br.edu.ifsp.carregaja.<caso>.view` | Dados de entrada, com validação |
-| `carregaja-jsf` | `br.edu.ifsp.carregaja.<caso>.controller` | Beans JSF |
-| | `br.edu.ifsp.carregaja.<caso>.service` | Cliente REST da API |
-| | `br.edu.ifsp.carregaja.<caso>.model` | Dados da tela e corpos das requisições |
-| | `webapp/restricted/<caso>/` | Páginas XHTML |
+| `carregaja-api` | `br.edu.ifsp.carregaja.control` | Rotas REST |
+| | `br.edu.ifsp.carregaja.service` | Regras de negócio |
+| | `br.edu.ifsp.carregaja.repository` | Interfaces do Spring Data |
+| | `br.edu.ifsp.carregaja.model` | Entidades JPA |
+| | `br.edu.ifsp.carregaja.view` | Dados de entrada, com validação |
+| `carregaja-jsf` | `br.edu.ifsp.carregaja.controller` | Beans JSF |
+| | `br.edu.ifsp.carregaja.service` | Cliente REST da API |
+| | `br.edu.ifsp.carregaja.model` | Dados da tela e corpos das requisições |
+| | `webapp/restricted/<caso>/` | Páginas XHTML do caso de uso |
 
-Entidade usada por mais de um caso de uso (o `Veiculo` será lido pelo UC03) continua no pacote do
-caso de uso que a mantém. Os outros a importam.
+No Astah, as classes ficam em `3.Arquitetura::carregaja-api` e `3.Arquitetura::carregaja-jsf`, nas
+mesmas camadas, e os diagramas de cada caso de uso num pacote com o nome dele, como
+`3.Arquitetura::manterveiculo`.
 
 ## 4. Nomes
 
@@ -171,7 +175,7 @@ Roteiro de Teste.
 
 **Antes de pedir revisão:**
 
-- [ ] Pacote com o nome do caso de uso e classes com os nomes da seção 4
+- [ ] Classes nas camadas da seção 3, página na pasta do caso de uso e nomes da seção 4
 - [ ] Nenhuma regra de negócio no controle nem no bean
 - [ ] Validação na tela e na API
 - [ ] Testes do controle e do serviço, passando
