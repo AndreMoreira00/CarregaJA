@@ -1,6 +1,6 @@
 # Documento de Requisitos
 
-**Versão 1.1**
+**Versão 1.2**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -10,6 +10,7 @@
 |---|---|---|---|
 | 26/09/2026 | 1.0 | Criação do documento a partir do detalhamento retirado do Visão v3.1, conforme a apresentação da Iniciação. Inclui requisitos funcionais, regras de negócio e a classificação FURPS+ das restrições. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 1.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
+| 11/10/2026 | 1.2 | RF-13 e RN-08: a tarifa vale a partir da data e hora do cadastro, até o cadastro da próxima, sem data informada pelo síndico. Nova RN-10. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -80,7 +81,7 @@ o usuário que as realizou.
 | RF-10 | Permitir ao morador cadastrar e alterar o próprio veículo. | UC05 |
 | RF-11 | Mostrar ao morador o consumo do mês do seu apartamento, sessão a sessão e acumulado. | UC06 |
 | RF-12 | Permitir ao síndico cadastrar, alterar e desativar vagas com carregador e suas potências. | UC07 |
-| RF-13 | Permitir ao síndico definir a tarifa do kWh com início de vigência, preservando as anteriores. | UC08 |
+| RF-13 | Permitir ao síndico cadastrar a tarifa do kWh, que vale da data e hora do cadastro até o cadastro da próxima (RN-10), preservando as anteriores. | UC08 |
 | RF-14 | Permitir ao síndico cadastrar, alterar e desativar moradores, vinculando-os ao apartamento. | UC09 |
 | RF-15 | Permitir ao síndico encerrar administrativamente uma sessão órfã, registrando quem encerrou e quando. | UC10 |
 | RF-16 | Fechar o mês, consolidando energia e valor por apartamento, e exportar o resultado (RN-08). | UC11 |
@@ -112,8 +113,9 @@ restrições e foram aceitos:
 | RN-05 | A duração máxima da sessão é de 6 horas, como parâmetro. Atingido o limite, a sessão é sinalizada como excedida e permanece aberta. |
 | RN-06 | Cada vaga e cada morador têm no máximo uma sessão aberta. Havendo dois registros simultâneos para a mesma vaga, prevalece o primeiro. |
 | RN-07 | O encerramento da sessão é do próprio morador. O síndico só encerra sessão órfã, depois de confirmar na garagem que o veículo saiu, e o encerramento fica registrado com o responsável e o horário. |
-| RN-08 | O mês só pode ser fechado sem sessões abertas no período. Depois de fechado, não aceita sessões, alterações nem tarifa retroativa. |
+| RN-08 | O mês só pode ser fechado sem sessões abertas no período. Depois de fechado, não aceita sessões nem alterações no período. |
 | RN-09 | Vaga ou morador com histórico é desativado, e não removido. |
+| RN-10 | A tarifa vale da data e hora em que foi cadastrada até o cadastro da próxima. O síndico não informa a data: não há tarifa retroativa nem antecipada. Um reajuste no meio do mês vale só para as sessões iniciadas depois dele (RN-03, RN-04). |
 
 > **Por que a apuração é por energia, e não por tempo.** Na versão 1.1 do Visão, com motorista
 > anônimo, cobrar por tempo evitava que se subdeclarasse a potência para pagar menos. Aqui o
