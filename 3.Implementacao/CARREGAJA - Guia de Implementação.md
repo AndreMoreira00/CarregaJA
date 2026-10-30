@@ -1,6 +1,6 @@
 # Guia de Implementação
 
-**Versão 1.1**
+**Versão 1.2**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -10,6 +10,7 @@
 |---|---|---|---|
 | 25/10/2026 | 1.0 | Criação do guia a partir do UC05 (Manter Veículo), implementado para testar a arquitetura. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
+| 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -92,9 +93,14 @@ mesmas camadas, e os diagramas de cada caso de uso num pacote com o nome dele, c
 | Caminho da rota | substantivo no plural, minúsculo | `/veiculos` |
 
 Classes, métodos, atributos e mensagens em **português**, como no modelo: `criar`, `listarTodos`,
-`buscarPorId`, `atualizar`, `capacidadeBateria`. As convenções de código da linguagem (Oracle Java
+`buscarPorId`, `atualizar`, `capacidadeBateria`. As convenções de nomes da linguagem (Oracle Java
 Code Conventions) valem para o resto: classes em `PascalCase`, métodos e atributos em `camelCase`,
 constantes em `MAIUSCULAS_COM_SUBLINHADO`.
+
+**Indentação.** Hoje a `carregaja-api` usa 2 espaços e a `carregaja-jsf` usa tabulação, herdada do
+projeto-modelo de LP2 (a classe `CarregajaApiApplication`, gerada pelo Spring Initializr, também).
+Não há verificador automático. Os dois projetos devem passar a usar 2 espaços, e a mudança fica
+para o início do sprint 5, antes de os novos casos de uso entrarem.
 
 ## 5. O Que Cada Camada Faz
 
@@ -160,6 +166,9 @@ Os testes de aceitação da História de Usuário viram testes com o mesmo núme
 (`// HU-05, teste 02`). Os testes não usam banco: rodam com `mvn test` em `carregaja-api` sem o
 MySQL ligado. O teste de ponta a ponta, com banco, API e telas, segue o README e, na Transição, o
 Roteiro de Teste.
+
+**Resultado em 30/10/2026** (`mvn test` em `carregaja-api`, código do `develop` no commit `8f7c56e`):
+14 testes, 0 falhas, 0 erros. São 11 em `VeiculoControllerTest` e 3 em `VeiculoServiceTest`.
 
 ## 7. Como Entregar
 
