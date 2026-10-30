@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.1
+Versão 4.2
 
 ## Dados usados nos testes de aceitação
 
@@ -193,6 +193,23 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 | 05 | Troca de veículo não altera o passado | Alterar para 60 kWh após sessões já apuradas | As sessões anteriores mantêm os valores originais |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (30/10/2026)**
+
+O UC05 foi implementado para testar a arquitetura: API em `carregaja-api` e tela em `carregaja-jsf`.
+Cadastra, lista, consulta e altera o veículo (modelo de até 100 caracteres, capacidade e potência
+maiores que zero); não há exclusão (RF-10). O login (UC01) e o cadastro de moradores (UC09) ficam
+para o sprint 5, e por isso o veículo ainda não se vincula a um apartamento.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Parcial: o veículo é registrado, mas ainda sem vínculo ao apartamento | `VeiculoControllerTest.cadastroValidoDevolve201ComOEndereco` |
+| 02 | Atendido | `VeiculoControllerTest.capacidadeZeroDevolve400` |
+| 03 | Atendido | `VeiculoControllerTest.potenciaNegativaDevolve400` |
+| 04 | Pendente: depende do UC03 (sprint 5) | — |
+| 05 | Pendente: depende de sessões apuradas, UC03 e UC04 (sprint 5) | — |
+
+`mvn test` em `carregaja-api`: 14 testes, sem falha.
 
 ---
 
