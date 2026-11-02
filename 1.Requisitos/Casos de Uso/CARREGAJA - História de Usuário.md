@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.5
+Versão 4.6
 
 ## Dados usados nos testes de aceitação
 
@@ -215,7 +215,7 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
 
-`mvn test` em `carregaja-api`: 82 testes, sem falha.
+`mvn test` em `carregaja-api`: 91 testes, sem falha.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
@@ -326,6 +326,19 @@ que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
 | 06 | Cadastro com o mês anterior já fechado | R$ 1,10 cadastrada em 02/10, com setembro fechado | Registrada e vigente a partir do cadastro; setembro não é recalculado |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (02/11/2026)**
+
+O síndico informa só o valor: a vigência começa na data e hora do cadastro, que a API grava com o responsável. A tarifa anterior não é alterada, e continua consultável.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `TarifaServiceTest.aVigenciaComecaNoMomentoDoCadastroComOResponsavel` |
+| 02 | Atendido | `TarifaControllerTest.valorZeroDevolve400` |
+| 03 | Atendido | `TarifaServiceTest.vigenteEAUltimaCadastradaAteOMomento`, `TarifaControllerTest.sindicoConsultaAsTarifasEMoradorAVigente` |
+| 04 | Pendente: depende de sessões, UC03 e UC04 | — |
+| 05 | Pendente: depende de sessões, UC03 e UC04 | — |
+| 06 | Pendente: depende do fechamento, UC11 (sprint 6) | — |
 
 ---
 
