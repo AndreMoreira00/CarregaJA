@@ -57,7 +57,7 @@ consumir seja registrado no meu apartamento**.
 
 **Situação da implementação (02/11/2026)**
 
-Login por e-mail e senha na `carregaja-api`, que devolve um token assinado (JWT); as telas guardam o token na sessão do navegador. Os testes 05 a 07 foram acrescentados nesta versão: a história de cadastro (HU-09) pede credenciais criadas pelo síndico, e sem a troca ele conheceria a senha de todos os moradores (RN-11).
+Login por e-mail e senha na `carregaja-api`, que devolve um token assinado (JWT); as telas guardam o token na sessão do navegador. Os testes 05 a 07 foram acrescentados nesta versão: a história de cadastro (HU-09) pede credenciais criadas pelo síndico, e sem a troca ele conheceria a senha de todos os moradores (RN-11). **É a única tela pronta por enquanto**, com a troca de senha.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
@@ -213,6 +213,8 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 **Situação da implementação (02/11/2026)**
 
+**Parcial: pronto na API, sem tela por enquanto** (decisão de 02/11/2026; a tela está guardada na branch `telas-sprint-5` do fork `R1ck-dev`). A coluna Situação trata da API.
+
 O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
 
 `mvn test` em `carregaja-api`: 91 testes, sem falha.
@@ -286,6 +288,8 @@ modo que **o sistema calcule previsões corretas e o painel reflita a garagem re
 
 **Situação da implementação (02/11/2026)**
 
+**Parcial: pronto na API, sem tela por enquanto** (decisão de 02/11/2026; a tela está guardada na branch `telas-sprint-5` do fork `R1ck-dev`). A coluna Situação trata da API.
+
 O síndico cadastra, altera, desativa, reativa e remove vagas. O código é único e não diferencia maiúsculas.
 
 | Nr. | Situação | Evidência |
@@ -329,6 +333,8 @@ que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
 
 **Situação da implementação (02/11/2026)**
 
+**Parcial: pronto na API, sem tela por enquanto** (decisão de 02/11/2026; a tela está guardada na branch `telas-sprint-5` do fork `R1ck-dev`). A coluna Situação trata da API.
+
 O síndico informa só o valor: a vigência começa na data e hora do cadastro, que a API grava com o responsável. A tarifa anterior não é alterada, e continua consultável.
 
 | Nr. | Situação | Evidência |
@@ -371,6 +377,8 @@ modo que **o consumo seja atribuído à unidade correta no rateio**.
 **Tem protótipo?** Não.
 
 **Situação da implementação (02/11/2026)**
+
+**Parcial: pronto na API, sem tela por enquanto** (decisão de 02/11/2026; a tela está guardada na branch `telas-sprint-5` do fork `R1ck-dev`). A coluna Situação trata da API.
 
 O síndico cadastra, altera, desativa, reativa e remove moradores. O apartamento é criado quando informado pela primeira vez. Morador é quem tem apartamento; o preposto da administradora é síndico sem apartamento. O condomínio não pode ficar sem síndico ativo (RN-12).
 
