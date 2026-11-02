@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.4
+Versão 4.5
 
 ## Dados usados nos testes de aceitação
 
@@ -215,7 +215,7 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
 
-`mvn test` em `carregaja-api`: 66 testes, sem falha.
+`mvn test` em `carregaja-api`: 82 testes, sem falha.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
@@ -283,6 +283,18 @@ modo que **o sistema calcule previsões corretas e o painel reflita a garagem re
 | 05 | Remoção com sessão em andamento | Remover G-02 ocupada | Recusado, com oferta de desativar |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (02/11/2026)**
+
+O síndico cadastra, altera, desativa, reativa e remove vagas. O código é único e não diferencia maiúsculas.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Parcial: a vaga é registrada; aparecer no painel depende do UC02 (sprint 6) | `VagaServiceTest.cadastroValidoNasceAtivo`, `VagaControllerTest.cadastroValidoDevolve201` |
+| 02 | Atendido | `VagaServiceTest.codigoDuplicadoERecusadoMesmoEmMinusculas` |
+| 03 | Atendido | `VagaControllerTest.potenciaZeroDevolve400` |
+| 04 | Parcial: desativa e mantém o cadastro; recusar sessão depende do UC03 | `VagaServiceTest.desativarMantemAVagaGravada` |
+| 05 | Pendente: depende de sessões, UC03 | — |
 
 ---
 
