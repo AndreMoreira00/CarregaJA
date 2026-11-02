@@ -1,6 +1,6 @@
 # Documento de Requisitos
 
-**Versão 1.3**
+**Versão 1.4**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -12,6 +12,7 @@
 | 26/09/2026 | 1.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
 | 11/10/2026 | 1.2 | RF-13 e RN-08: a tarifa vale a partir da data e hora do cadastro, até o cadastro da próxima, sem data informada pelo síndico. Nova RN-10. | Henrique de Almeida Marangoni Inacio |
 | 02/11/2026 | 1.3 | RF-01 e nova RN-11: a senha criada pelo síndico é provisória e o usuário a troca no primeiro acesso. | Henrique de Almeida Marangoni Inacio |
+| 02/11/2026 | 1.4 | Nova RN-12: o condomínio não pode ficar sem síndico ativo. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -30,7 +31,7 @@ completa dos riscos.
 | Documento | Origem |
 |---|---|
 | CARREGAJA - Visão (v4.0) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | Guia - Requisitos de Sistema de Software (FURPS+) | SpinOff / Guidelines |
 | Template - Documento de Requisitos | 1.Requisitos/ |
@@ -118,6 +119,7 @@ restrições e foram aceitos:
 | RN-09 | Vaga ou morador com histórico é desativado, e não removido. |
 | RN-10 | A tarifa vale da data e hora em que foi cadastrada até o cadastro da próxima. O síndico não informa a data: não há tarifa retroativa nem antecipada. Um reajuste no meio do mês vale só para as sessões iniciadas depois dele (RN-03, RN-04). |
 | RN-11 | A senha que o síndico cadastra é provisória. Até trocá-la, o usuário não acessa nenhuma outra função. Se o síndico redefinir a senha, a troca volta a ser exigida. |
+| RN-12 | O condomínio não pode ficar sem síndico ativo: o último não pode ser desativado, removido nem perder o perfil. Sem isso, ninguém mais conseguiria administrar o sistema. |
 
 > **Por que a apuração é por energia, e não por tempo.** Na versão 1.1 do Visão, com motorista
 > anônimo, cobrar por tempo evitava que se subdeclarasse a potência para pagar menos. Aqui o

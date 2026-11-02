@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.3
+Versão 4.4
 
 ## Dados usados nos testes de aceitação
 
@@ -215,7 +215,7 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
 
-`mvn test` em `carregaja-api`: 41 testes, sem falha.
+`mvn test` em `carregaja-api`: 66 testes, sem falha.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
@@ -337,13 +337,25 @@ modo que **o consumo seja atribuído à unidade correta no rateio**.
 
 | Nr. | Funcionalidade / Comportamento | Entradas | Resultado esperado |
 |---|---|---|---|
-| 01 | Cadastro válido | Nome, e-mail e apartamento 42 | Morador ativo, com credenciais criadas |
+| 01 | Cadastro válido | Nome, e-mail, apartamento 42 e senha provisória | Morador ativo, com credenciais criadas; troca a senha no primeiro acesso (HU-01) |
 | 02 | E-mail duplicado | E-mail já cadastrado | Recusado |
 | 03 | Dois moradores no mesmo apartamento | Segundo morador no apartamento 42 | Aceito; o consumo dos dois soma no apartamento |
 | 04 | Desativação revoga o acesso | Desativar morador do apto 17 | Acesso negado em HU-01; histórico mantido |
 | 05 | Remoção com sessões no período aberto | Remover morador com sessões em setembro não fechado | Recusado, com oferta de desativar |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (02/11/2026)**
+
+O síndico cadastra, altera, desativa, reativa e remove moradores. O apartamento é criado quando informado pela primeira vez. Morador é quem tem apartamento; o preposto da administradora é síndico sem apartamento. O condomínio não pode ficar sem síndico ativo (RN-12).
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `UsuarioServiceTest.cadastroValidoCriaMoradorAtivoComSenhaProvisoria`, `UsuarioControllerTest.cadastroValidoDevolve201SemExporASenha` |
+| 02 | Atendido | `UsuarioServiceTest.emailDuplicadoERecusado` |
+| 03 | Atendido | `UsuarioServiceTest.doisMoradoresNoMesmoApartamentoCompartilhamOApartamento`. A soma do consumo entra com o UC06 e o UC11 |
+| 04 | Atendido | `UsuarioServiceTest.desativarMantemOCadastro`, `AutenticacaoControllerTest.tokenDeUsuarioDesativadoDevolve401` |
+| 05 | Pendente: depende de sessões, UC03 | — |
 
 ---
 
