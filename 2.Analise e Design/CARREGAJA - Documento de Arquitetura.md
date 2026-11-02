@@ -1,6 +1,6 @@
 # Documento de Arquitetura
 
-**Versão 1.2**
+**Versão 1.3**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -11,6 +11,7 @@
 | 25/10/2026 | 1.0 | Criação do documento. Registra a arquitetura definida e testada com o UC05 (Manter Veículo): API Spring Boot e telas JSF em projetos separados, conforme o modelo das aulas de Linguagem de Programação 2, e o modelo de implantação. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes organizados por camada, e não por caso de uso (seções 2.2, 3 e 8). Diagramas do UC05 no pacote `3.Arquitetura::manterveiculo` e implantação em `3.Arquitetura::implantação`. | Henrique de Almeida Marangoni Inacio |
 | 02/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. | Henrique de Almeida Marangoni Inacio |
+| 02/11/2026 | 1.3 | Início da sessão e apuração (UC03 e UC04): serviço isolado para a regra de cálculo, travas e `READ_COMMITTED` para a corrida pela vaga. Teste de ponta a ponta do sprint 5. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -41,8 +42,8 @@ negócio.
 | Documento | Origem |
 |---|---|
 | CARREGAJA - Visão (v4.1) | 1.Requisitos/ |
-| CARREGAJA - Documento de Requisitos (v1.2) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - Documento de Requisitos (v1.5) | 1.Requisitos/ |
+| CARREGAJA - História de Usuário (v4.7) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | CARREGAJA - Guia de Implementação | 3.Implementacao/ |
 | Código fonte (submódulo `CarregaJA_Implementacao`) | 3.Implementacao/ |
@@ -82,7 +83,7 @@ negócio.
 | RE-07 — um único condomínio (Funcionalidade) | Um banco e uma implantação por condomínio, sem separação de dados por cliente. |
 | RE-08 — uso identificado (Funcionalidade) | Toda rota, menos a de login, exige o token. O perfil decide o que cada rota aceita (`SegurancaConfig`). |
 | RE-14 — sem orçamento (Projeto) | Só software livre ou gratuito: Spring, PrimeFaces, Tomcat, MySQL Community. |
-| Suportabilidade — parâmetros e não valores fixos (RI-10) | A tarifa e a duração máxima ficam no banco, mantidas pelo síndico, e não no código. Entram na Construção. |
+| Suportabilidade — parâmetros e não valores fixos (RI-10) | A tarifa fica no banco, mantida pelo síndico. A duração máxima é propriedade da API, e não valor fixo no código, até o RF-18 ganhar caso de uso. |
 | Confiabilidade — ações administrativas registradas | Cada entidade administrativa terá responsável e horário gravados, na camada de serviço. Entra na Construção. |
 
 ## 3. Visão Lógica: Camadas e Pacotes
@@ -179,6 +180,24 @@ perfil, e só a rota de troca responde. Nas telas, o `AutenticacaoFilter` leva o
 **Recusas.** Toda regra recusada lança `RegraNegocioException`, e o `TratadorDeErros` a devolve como
 `{"mensagem": "..."}`, que o `ApiClient` mostra na tela.
 
+### 5.2. Início da sessão e apuração (UC03 e UC04)
+
+**A regra isolada (RI-08).** `ApuracaoEnergiaService` tem a potência efetiva, a energia a repor, o tempo
+estimado, a energia estimada, o valor e o estado da sessão. Não conhece banco nem tela, e por isso os
+números da História de Usuário viram testes de unidade diretos.
+
+**Iniciar.** O `SessaoRecargaService` trava o morador e a vaga, sempre nessa ordem, confere as regras e
+grava na sessão a potência, a energia a repor, a previsão e a tarifa vigente (RN-04). A recusa por vaga
+ocupada fica em `RecusaVaga`, para o UC12.
+
+**A corrida pela vaga (RN-06).** As travas fazem dois pedidos simultâneos passarem um de cada vez, e o
+segundo precisa enxergar a sessão que o primeiro acabou de gravar. Por isso a transação usa
+`READ_COMMITTED`: no padrão do MySQL (`REPEATABLE_READ`), ela leria o banco como estava antes. É um
+defeito que só aparece com banco de verdade e requisições simultâneas (seção 7).
+
+**O estado não é gravado.** Excedida e concluída derivam do horário, da previsão e da duração máxima; a
+situação gravada continua sendo em andamento (RN-05).
+
 ## 6. Visão de Implantação
 
 Diagrama: **Modelo de Implantação**, pacote `3.Arquitetura::implantação`.
@@ -223,6 +242,14 @@ no sprint 5.
 silêncio o 0 digitado por 0,1 e gravava. A HU-05 pede recusa, não correção: o limite passou para um
 validador com mensagem.
 
+**Sprint 5, em 02/11/2026.** `mvn test`: 125 testes, sem falha. Ponta a ponta com MySQL e a API no ar: 53
+verificações aprovadas, com os testes de aceitação de UC01, UC09, UC07, UC08 e UC03 e a corrida pela vaga
+em 10 rodadas. As telas foram percorridas num navegador, com a síndica e um morador, do primeiro acesso
+ao início da recarga, no computador e na largura de um celular (390 px, sem rolagem lateral).
+
+**Defeitos encontrados nesse teste.** Dois moradores abriam sessão na mesma vaga (seção 5.2), e a tela
+mostrava a potência e a energia com ponto em vez de vírgula.
+
 ## 8. Refinamento da Arquitetura
 
 | Data | Mudança | Motivo |
@@ -231,10 +258,12 @@ validador com mensagem.
 | 11/10/2026 | Pacote `cadastro` renomeado para `manterveiculo`; diagramas separados em front-end e back-end; classes com os nomes e tipos do código | Apontamentos do professor na apresentação do sprint 3 |
 | 25/10/2026 | Projeto dividido em `carregaja-api` e `carregaja-jsf`, no modelo dos exercícios de LP2: camadas `control`, `service`, `repository`, `model` e `view` na API e cliente REST na tela; Modelo de Implantação | A separação de front-end e back-end, antes só nos diagramas, passou a existir no código. A organização segue a da disciplina integrada (RE-02) |
 | 02/11/2026 | Autenticação na API; `ApiClient` e `BeanBase` concentram o que todo cliente REST e todo bean repetiriam; `TratadorDeErros` leva à tela o motivo das recusas | O UC01 e as regras que só a API conhece, como e-mail repetido e vaga ocupada |
+| 02/11/2026 | `READ_COMMITTED` no início da sessão | A corrida pela vaga, encontrada no teste com MySQL (seção 5.2) |
 | 26/10/2026 | Pacotes por camada, direto em cada projeto (`br.edu.ifsp.carregaja.control` em vez de `br.edu.ifsp.carregaja.manterveiculo.control`); no Astah, `3.Arquitetura` reduzido a `carregaja-jsf`, `carregaja-api`, `manterveiculo` (diagramas do UC05) e `implantação` | Por caso de uso, cada um dos 12 casos de uso repetiria as cinco camadas. O nome do caso de uso ficou na pasta da página e no pacote dos diagramas |
 
 ## 9. Pendências da Arquitetura
 
 | Pendência | Quando |
 |---|---|
-| Regra da potência efetiva, previsão e apuração (RI-08), isoladas num serviço da API com testes de unidade | Sprint 5 |
+| Encerramento da sessão, que passa a chamar a apuração (UC03 e UC04) | Sprint 6 |
+| Ajuste da duração máxima pelo síndico (RF-18, sem caso de uso) | Rever no Backlog |

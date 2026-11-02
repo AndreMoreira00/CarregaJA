@@ -1,6 +1,6 @@
 # Guia de Implementação
 
-**Versão 1.3**
+**Versão 1.4**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -12,6 +12,7 @@
 | 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
 | 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
 | 02/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
+| 02/11/2026 | 1.4 | Serviço de regra sem banco, relógio injetado e teste com banco de verdade quando houver concorrência. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -29,9 +30,9 @@ segue o leiaute do template do Visão.
 
 | Documento | Origem |
 |---|---|
-| CARREGAJA - Documento de Arquitetura (v1.2) | 2.Analise e Design/ |
+| CARREGAJA - Documento de Arquitetura (v1.3) | 2.Analise e Design/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
-| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.7) | 1.Requisitos/Casos de Uso/ |
 | README do código fonte (como rodar) | 3.Implementacao/CarregaJA_Implementacao/ |
 | Exercícios de API e JSF de Linguagem de Programação 2 | Disciplina integrada (RE-02) |
 
@@ -118,7 +119,10 @@ quando o id não existe. **Não tem regra de negócio.** Registra cada chamada c
 situações da sessão. Devolve `Optional` quando o registro pode não existir, em vez de `null`. Para recusar, lança
 `RegraNegocioException` com o status e a mensagem que o usuário vai ler; o `TratadorDeErros` a responde.
 **A regra da potência efetiva (RN-01) e a apuração (RN-02, RN-03) ficam num serviço próprio, com
-testes de unidade** (RI-08).
+testes de unidade** (RI-08): o `ApuracaoEnergiaService`. O horário vem do `Clock` injetado, nunca de
+`LocalDateTime.now()` sem argumento: é ele que fixa o fuso do condomínio e deixa testar "seis horas depois".
+**Quando dois pedidos simultâneos puderem conflitar**, trave as linhas (`@Lock`) e use `READ_COMMITTED`,
+como `SessaoRecargaService.iniciar`.
 
 **`repository` — banco.** Só interfaces que estendem `CrudRepository<Entidade, Long>`. Consulta
 nova é método derivado do nome (`findByAtivoTrue`), sem SQL escrito à mão enquanto der.
@@ -170,10 +174,11 @@ mensagem que a API mandou.
 
 Os testes de aceitação da História de Usuário viram testes com o mesmo número no comentário
 (`// HU-05, teste 02`). Os testes não usam banco: rodam com `mvn test` em `carregaja-api` sem o
-MySQL ligado. O teste de ponta a ponta, com banco, API e telas, segue o README e, na Transição, o
-Roteiro de Teste.
+MySQL ligado. **Eles não provam o que depende do banco:** a corrida pela vaga passava neles e falhava
+no MySQL. Regra com concorrência precisa também do teste de ponta a ponta, que segue o README e, na
+Transição, o Roteiro de Teste.
 
-**Resultado em 02/11/2026** (`mvn test` em `carregaja-api`, com o UC01): 41 testes, 0 falhas, 0 erros.
+**Resultado em 02/11/2026** (`mvn test` em `carregaja-api`, com o UC03 e o UC04): 125 testes, 0 falhas, 0 erros.
 
 ## 7. Como Entregar
 

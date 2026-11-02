@@ -1,6 +1,6 @@
 # Documento de Requisitos
 
-**Versão 1.4**
+**Versão 1.5**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -13,6 +13,7 @@
 | 11/10/2026 | 1.2 | RF-13 e RN-08: a tarifa vale a partir da data e hora do cadastro, até o cadastro da próxima, sem data informada pelo síndico. Nova RN-10. | Henrique de Almeida Marangoni Inacio |
 | 02/11/2026 | 1.3 | RF-01 e nova RN-11: a senha criada pelo síndico é provisória e o usuário a troca no primeiro acesso. | Henrique de Almeida Marangoni Inacio |
 | 02/11/2026 | 1.4 | Nova RN-12: o condomínio não pode ficar sem síndico ativo. | Henrique de Almeida Marangoni Inacio |
+| 02/11/2026 | 1.5 | RF-18: enquanto não há caso de uso, a duração máxima é propriedade da API. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -31,7 +32,7 @@ completa dos riscos.
 | Documento | Origem |
 |---|---|
 | CARREGAJA - Visão (v4.0) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.7) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | Guia - Requisitos de Sistema de Software (FURPS+) | SpinOff / Guidelines |
 | Template - Documento de Requisitos | 1.Requisitos/ |
@@ -92,7 +93,8 @@ o usuário que as realizou.
 
 > **RF-18 ainda não tem caso de uso.** O Visão e a análise de riscos (RI-10) tratam a duração
 > máxima como parâmetro ajustável pelo síndico, mas nenhum caso de uso do modelo cobre essa
-> configuração. Fica registrado como pendência para a Elaboração.
+> configuração. Enquanto isso, a duração é propriedade da API (`carregaja.sessao.duracao-maxima-horas`),
+> parâmetro, e não valor fixo no código, mas ajustável só por quem administra o servidor.
 
 ### 4.1. Limites da solução
 

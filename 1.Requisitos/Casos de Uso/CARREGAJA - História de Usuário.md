@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.6
+Versão 4.7
 
 ## Dados usados nos testes de aceitação
 
@@ -150,6 +150,29 @@ com sessão em andamento.
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (02/11/2026)**
+
+Implementados o início e a previsão (testes 01 a 12). O encerramento (13 a 17) é do sprint 6, como na PCP; até lá, uma sessão aberta não tem como ser encerrada pela tela.
+
+**Teste de ponta a ponta em 02/11/2026**, com MySQL e a API no ar: 53 verificações cobrindo UC01, UC09, UC07, UC08 e UC03, todas aprovadas, e as telas percorridas num navegador, no computador e na largura de um celular. No teste 03, dois moradores registram início na mesma vaga ao mesmo tempo, em 10 rodadas: nas 10, um abre (201) e o outro é recusado (409). **Esse teste achou um defeito que os testes de unidade não enxergam:** as duas sessões abriam, porque no isolamento padrão do MySQL a segunda transação, mesmo depois de esperar a trava da vaga, lia o banco como estava antes da primeira. O início da sessão passou a usar `READ_COMMITTED`.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `SessaoRecargaServiceTest.inicioEmVagaLivreAbreASessaoComAPrevisao` |
+| 02 | Atendido | `SessaoRecargaServiceTest.vagaOcupadaERecusadaComAPrevisaoEARecusaFicaRegistrada` |
+| 03 | Atendido | Teste de ponta a ponta com MySQL (abaixo) |
+| 04 | Atendido | `SessaoRecargaServiceTest.vagaDesativadaERecusadaSemContarComoDemanda` |
+| 05 | Atendido | `SessaoRecargaServiceTest.moradorSemVeiculoEEncaminhadoAoCadastro` |
+| 06 | Atendido | `SessaoRecargaServiceTest.moradorComSessaoAbertaERecusado` |
+| 07 | Atendido | `SessaoRecargaServiceTest.sessaoAbertaAlemDaDuracaoMaximaApareceExcedida` |
+| 08 | Atendido | `ApuracaoEnergiaServiceTest.veiculoLimitaAPotencia` |
+| 09 | Atendido | `ApuracaoEnergiaServiceTest.carregadorLimitaAPotencia` |
+| 10 | Atendido | `ApuracaoEnergiaServiceTest.potenciasIguais` |
+| 11 | Atendido | `ApuracaoEnergiaServiceTest.carregadorMaiorNaoAceleraVeiculoLento` |
+| 12 | Atendido | `SessaoRecargaServiceTest.bateriaCheiaInformaQueNaoHaRecargaAFazer` |
+| 13 a 16 | Pendente: encerramento, sprint 6. O cálculo já está coberto na HU-04 | — |
+| 17 | Parcial: a regra está pronta; falta encerrar, sprint 6 | `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio` |
+
 ---
 
 ## HU-04 — Apurar Energia da Sessão
@@ -180,6 +203,18 @@ contestado**.
 | 05 | Duração nula | Início e encerramento no mesmo minuto | 0,0 kWh; R$ 0,00 |
 
 **Tem protótipo?** Não se aplica — não possui interface própria.
+
+**Situação da implementação (02/11/2026)**
+
+A regra fica isolada em `ApuracaoEnergiaService`, sem banco nem tela (RI-08). Passa a ser chamada com o encerramento, no sprint 6.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `ApuracaoEnergiaServiceTest.tetoDeEnergiaNaoAcionado` |
+| 02 | Atendido | `ApuracaoEnergiaServiceTest.tetoDeEnergiaAcionado` |
+| 03 | Atendido | `ApuracaoEnergiaServiceTest.tetoAcionadoEmSessaoOrfaLonga` |
+| 04 | Atendido | `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio` |
+| 05 | Atendido | `ApuracaoEnergiaServiceTest.duracaoNulaNoMesmoMinuto` |
 
 ---
 
@@ -215,15 +250,15 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
 
-`mvn test` em `carregaja-api`: 91 testes, sem falha.
+`mvn test` em `carregaja-api`: 125 testes, sem falha.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
 | 01 | Atendido: o veículo fica com o morador do token, e o morador com o apartamento | `VeiculoServiceTest.criarGravaOsDadosInformadosELigaAoMorador` |
 | 02 | Atendido | `VeiculoControllerTest.capacidadeZeroDevolve400` |
 | 03 | Atendido | `VeiculoControllerTest.potenciaNegativaDevolve400` |
-| 04 | Pendente: depende do UC03 | — |
-| 05 | Pendente: depende de sessões apuradas, UC03 e UC04 | — |
+| 04 | Atendido: a sessão pede só a vaga e o nível | `SessaoRequest`, `SessaoRecargaServiceTest.inicioEmVagaLivreAbreASessaoComAPrevisao` |
+| 05 | Atendido: a sessão guarda potência e energia | `ApuracaoEnergiaServiceTest.trocarOVeiculoDepoisNaoMudaAApuracao` |
 
 ---
 
@@ -293,8 +328,8 @@ O síndico cadastra, altera, desativa, reativa e remove vagas. O código é úni
 | 01 | Parcial: a vaga é registrada; aparecer no painel depende do UC02 (sprint 6) | `VagaServiceTest.cadastroValidoNasceAtivo`, `VagaControllerTest.cadastroValidoDevolve201` |
 | 02 | Atendido | `VagaServiceTest.codigoDuplicadoERecusadoMesmoEmMinusculas` |
 | 03 | Atendido | `VagaControllerTest.potenciaZeroDevolve400` |
-| 04 | Parcial: desativa e mantém o cadastro; recusar sessão depende do UC03 | `VagaServiceTest.desativarMantemAVagaGravada` |
-| 05 | Pendente: depende de sessões, UC03 | — |
+| 04 | Atendido | `VagaServiceTest.desativarMantemAVagaGravada`, `SessaoRecargaServiceTest.vagaDesativadaERecusadaSemContarComoDemanda` |
+| 05 | Atendido: vaga com sessão, em andamento ou não, é desativada (RN-09) | `VagaServiceTest.vagaComSessoesNaoERemovidaEAMensagemOfereceDesativar` |
 
 ---
 
@@ -336,8 +371,8 @@ O síndico informa só o valor: a vigência começa na data e hora do cadastro, 
 | 01 | Atendido | `TarifaServiceTest.aVigenciaComecaNoMomentoDoCadastroComOResponsavel` |
 | 02 | Atendido | `TarifaControllerTest.valorZeroDevolve400` |
 | 03 | Atendido | `TarifaServiceTest.vigenteEAUltimaCadastradaAteOMomento`, `TarifaControllerTest.sindicoConsultaAsTarifasEMoradorAVigente` |
-| 04 | Pendente: depende de sessões, UC03 e UC04 | — |
-| 05 | Pendente: depende de sessões, UC03 e UC04 | — |
+| 04 | Atendido | `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio` |
+| 05 | Atendido | `SessaoRecargaServiceTest.aSessaoGravaOQueFoiFixadoNoInicio` |
 | 06 | Pendente: depende do fechamento, UC11 (sprint 6) | — |
 
 ---
@@ -380,7 +415,7 @@ O síndico cadastra, altera, desativa, reativa e remove moradores. O apartamento
 | 02 | Atendido | `UsuarioServiceTest.emailDuplicadoERecusado` |
 | 03 | Atendido | `UsuarioServiceTest.doisMoradoresNoMesmoApartamentoCompartilhamOApartamento`. A soma do consumo entra com o UC06 e o UC11 |
 | 04 | Atendido | `UsuarioServiceTest.desativarMantemOCadastro`, `AutenticacaoControllerTest.tokenDeUsuarioDesativadoDevolve401` |
-| 05 | Pendente: depende de sessões, UC03 | — |
+| 05 | Atendido: morador com qualquer sessão é desativado (RN-09) | `UsuarioServiceTest.moradorComSessoesNaoERemovido` |
 
 ---
 
