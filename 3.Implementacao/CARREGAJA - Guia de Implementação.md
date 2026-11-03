@@ -12,7 +12,7 @@
 | 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
 | 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
-| 03/11/2026 | 1.4 | Bean e cliente REST no formato do modelo de LP2, sem `BeanBase` e sem `ApiClient` (seção 5.2). | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.4 | Bean e cliente REST no formato do modelo de LP2, sem `BeanBase` e sem `ApiClient` (seção 5.2), e rotas sem registro de log (seção 5.1). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -111,8 +111,8 @@ fecha-chaves. O `.editorconfig` na raiz do repositório avisa a IDE; não há ve
 
 **`control` — rotas.** Recebe a requisição com `@Valid @RequestBody`, chama o serviço e decide o
 status: `201` com `Location` ao criar, `200` ao consultar e alterar, `204` ao remover, `404`
-quando o id não existe. **Não tem regra de negócio.** Registra cada chamada com o `log` do
-`@Slf4j`. O usuário logado chega por `@AuthenticationPrincipal Usuario`. **Rota nova precisa de regra em
+quando o id não existe. **Não tem regra de negócio.** O usuário logado chega por
+`@AuthenticationPrincipal Usuario`. **Rota nova precisa de regra em
 `SegurancaConfig`**, dizendo qual perfil a usa.
 
 **`service` — regras.** Toda regra de negócio fica aqui: cálculos, verificações entre entidades,

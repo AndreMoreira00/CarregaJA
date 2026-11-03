@@ -131,7 +131,7 @@ de Arquitetura é só o do UC05, o caso de uso que testou a arquitetura; os dema
 |---|---|---|
 | Spring Data (`CrudRepository`) | `VeiculoRepository` | Todo o SQL de gravação e consulta |
 | Bean Validation (`@NotBlank`, `@Positive`, `@Valid`) | `VeiculoRequest` da API | Os `if` de validação e a resposta 400 |
-| Lombok (`@Getter`, `@Setter`, `@Slf4j`) | Entidades, requisições e controle | Acessores e declaração de log |
+| Lombok (`@Getter`, `@Setter`) | Entidades e requisições | Acessores |
 | Jackson | API e clientes REST das telas | Conversão entre objeto e JSON |
 | PrimeFaces | Páginas | Campos numéricos, mensagens e botões com AJAX |
 | MVC, *Service Layer*, *Repository* e objeto de requisição (DTO) | Toda a organização em pacotes | Mistura de regra, tela e banco na mesma classe |
