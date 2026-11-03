@@ -11,7 +11,7 @@
 | 25/10/2026 | 1.0 | Criação do guia a partir do UC05 (Manter Veículo), implementado para testar a arquitetura. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
 | 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
-| 02/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. A referência de tela passa a ser o UC01. | Henrique de Almeida Marangoni Inacio |
+| 02/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -19,9 +19,8 @@
 
 Este guia diz como implementar um caso de uso do CARREGAJA de modo que o código siga o Modelo de
 Arquitetura: onde cada classe fica, como se chama, o que cada camada pode fazer, como testar e
-como entregar. O exemplo de referência na API é o **UC05 — Manter Veículo**, e nas telas é o **UC01 — Autenticar
-Usuário**, a única tela pronta por enquanto; as demais estão na branch `telas-sprint-5` do fork `R1ck-dev`.
-Na dúvida, copie o que eles fazem.
+como entregar. O exemplo de referência é o **UC05 — Manter Veículo**, já implementado. Na dúvida,
+copie o que ele faz.
 
 O SpinOff prevê o Guia de Implementação em `3.Implementacao/`, mas não oferece template. O guia
 segue o leiaute do template do Visão.
@@ -79,12 +78,12 @@ Recarga* será `mantersessao`.
 | | `webapp/restricted/<caso>/` | Páginas XHTML do caso de uso. Só o login fica fora de `restricted`, em `webapp/autenticarusuario/` |
 
 No Astah, as classes ficam em `3.Arquitetura::carregaja-api` e `3.Arquitetura::carregaja-jsf`, nas
-mesmas camadas. Os diagramas de classes são os do UC05, em `3.Arquitetura::manterveiculo`, e os do login, em
-`3.Arquitetura::autenticarusuario`; os demais casos de uso seguem o mesmo desenho, sem diagrama próprio.
+mesmas camadas. Os diagramas são os do UC05, em `3.Arquitetura::manterveiculo`, sem os acessores do Lombok; os demais
+casos de uso seguem o mesmo desenho, sem diagrama próprio.
 
 ## 4. Nomes
 
-| Elemento | Padrão | Exemplo |
+| Elemento | Padrão | Exemplo no UC05 |
 |---|---|---|
 | Rota REST | `<Entidade>Controller` | `VeiculoController` |
 | Serviço da API | `<Entidade>Service` | `VeiculoService` |
@@ -92,9 +91,9 @@ mesmas camadas. Os diagramas de classes são os do UC05, em `3.Arquitetura::mant
 | Entidade | `<Entidade>` | `Veiculo` |
 | Dados de entrada | `<Entidade>Request` | `VeiculoRequest` |
 | Resposta que não é uma entidade | `<Entidade>Response` | `AutenticacaoResponse` |
-| Bean JSF | `Manter<Entidade>Bean` (ou o verbo do caso de uso) | `AutenticarUsuarioBean` |
-| Página | `Manter<Entidade>View.xhtml` (ou o verbo do caso de uso) | `AutenticarUsuarioView.xhtml` |
-| Cliente REST | `<Entidade>RestClient` | `AutenticacaoRestClient` |
+| Bean JSF | `Manter<Entidade>Bean` (ou o verbo do caso de uso) | `ManterVeiculoBean` |
+| Página | `Manter<Entidade>View.xhtml` | `ManterVeiculoView.xhtml` |
+| Cliente REST | `<Entidade>RestClient` | `VeiculoRestClient` |
 | Caminho da rota | substantivo no plural, minúsculo | `/veiculos` |
 
 Classes, métodos, atributos e mensagens em **português**, como no modelo: `criar`, `listarTodos`,
@@ -144,10 +143,10 @@ em silêncio em vez de recusar (defeito encontrado no teste do UC05).
 **Bean.** `@Named @ViewScoped`, estende `BeanBase`, que mostra as mensagens (`informar`, `reclamar`).
 Carrega os dados no `inicializar()`, chamado por `<f:event type="preRenderView">`, e não em postback.
 Trata a `ApiException` do cliente REST com `reclamar`. Não chama a API diretamente: passa pelo cliente
-REST. **Página nova** entra no menu (`Header.xhtml`). O `AutenticacaoFilter` hoje só exige o login; página
-de um perfil só precisa de regra nele, como na branch `telas-sprint-5`.
+REST. **Página nova** entra no menu (`Header.xhtml`). Se for de um perfil só, precisa de regra no
+`AutenticacaoFilter`, como a *Meu veículo*.
 
-**Cliente REST.** `@ApplicationScoped`, só com os caminhos do caso de uso, como o `AutenticacaoRestClient`. O
+**Cliente REST.** `@ApplicationScoped`, só com os caminhos do caso de uso, como o `VeiculoRestClient`. O
 `ApiClient` faz o resto: endereço da API (propriedade `carregaja.api.url`, com `http://localhost:8081`
 como padrão), token do usuário, JSON e a tradução de toda resposta fora de 2xx em `ApiException`, com a
 mensagem que a API mandou.
@@ -195,4 +194,4 @@ Roteiro de Teste.
 - [ ] Validação na tela e na API
 - [ ] Testes do controle e do serviço, passando
 - [ ] README atualizado se mudou o jeito de rodar
-- [ ] Diagramas do UC05 e do login atualizados, se as classes deles mudaram
+- [ ] Diagramas do UC05 atualizados, se as classes dele mudaram
