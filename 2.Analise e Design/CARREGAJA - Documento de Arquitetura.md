@@ -119,9 +119,11 @@ Nenhuma camada chama a de cima.
 Um caso de uso novo acrescenta classes às camadas que já existem, sem criar pacote novo. Só a
 página ganha uma pasta com o nome do caso de uso.
 
-Diagramas de classes, um conjunto por caso de uso, no pacote com o nome dele: **Classes do Back-end** e, no UC01, também
-**Classes do Front-end** e **Classes de Segurança**, com todos os atributos e as operações públicas de cada classe, nos nomes e
-tipos do código. As entidades de negócio de cada caso estão em **Classes de Negócio**, pacote `2.Design`.
+Diagramas de classes: **Classes do Back-end — UC05**, o caso de uso que testou a arquitetura, e **Classes do Front-end — UC01**,
+a única tela que existe, com todos os atributos e as operações públicas de cada classe, nos nomes e tipos do código. As entidades
+de negócio do UC05 estão em **Classes de Negócio — UC05**, e todas as do sistema no **Modelo de Objetos**, pacote `2.Design`.
+Por decisão de 02/11/2026, os demais casos de uso seguem o mesmo desenho e não têm diagrama próprio; as classes deles estão em
+`3.Arquitetura::carregaja-api`.
 
 ## 4. Recursos Reutilizados e Padrões
 
