@@ -55,16 +55,16 @@ consumir seja registrado no meu apartamento**.
 
 **Tem protótipo?** Não.
 
-**Situação da implementação (02/11/2026)**
+**Situação da implementação (03/11/2026)**
 
-Login por e-mail e senha na `carregaja-api`, que devolve um token assinado (JWT); as telas guardam o token na sessão do navegador. Os testes 05 a 07 foram acrescentados nesta versão: a história de cadastro (HU-09) pede credenciais criadas pelo síndico, e sem a troca ele conheceria a senha de todos os moradores (RN-11). As telas prontas por enquanto são esta, com a troca de senha, e a do veículo (HU-05).
+Login por e-mail e senha na `carregaja-api`, que devolve um token assinado (JWT); as telas guardam o token na sessão do navegador. Os testes 05 a 07 foram acrescentados nesta versão: a história de cadastro (HU-09) pede credenciais criadas pelo síndico, e sem a troca ele conheceria a senha de todos os moradores (RN-11). Por enquanto o sistema tem só esta história e a do veículo (HU-05), cada uma com a API e a tela; os demais casos de uso do sprint 5 voltam depois da apresentação. Até lá, o único usuário é o primeiro síndico, que vem da configuração.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
 | 01 | Atendido | `AutenticacaoServiceTest.credenciaisValidasGeramTokenDoUsuario`, `AutenticacaoControllerTest.acessoValidoDevolveTokenPerfilEApartamento` |
 | 02 | Atendido | `AutenticacaoServiceTest.senhaIncorretaEEmailDesconhecidoTemAMesmaRecusa` |
 | 03 | Atendido | `AutenticacaoServiceTest.moradorDesativadoERecusadoComOrientacao` |
-| 04 | Atendido | `AutenticacaoControllerTest.usuarioComOsDoisPerfisDevolveOsDois` |
+| 04 | Atendido | `AutenticacaoControllerTest.usuarioComOsDoisPerfisDevolveOsDois`, `PrimeiroSindicoServiceTest.comApartamentoTemOsDoisPerfis` |
 | 05 | Atendido | `AutenticacaoControllerTest.senhaProvisoriaSoPermiteATroca` |
 | 06 | Atendido | `AutenticacaoServiceTest.trocarSenhaGravaANovaELiberaOAcesso` |
 | 07 | Atendido | `AutenticacaoServiceTest.senhaAtualIncorretaNaoTroca` |
@@ -211,11 +211,11 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 **Tem protótipo?** Não.
 
-**Situação da implementação (02/11/2026)**
+**Situação da implementação (03/11/2026)**
 
 O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
 
-`mvn test` em `carregaja-api`: 41 testes, sem falha.
+`mvn test` em `carregaja-api`: 45 testes, sem falha.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
