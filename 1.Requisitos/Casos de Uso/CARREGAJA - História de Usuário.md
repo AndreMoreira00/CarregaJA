@@ -57,7 +57,7 @@ consumir seja registrado no meu apartamento**.
 
 **Situação da implementação (02/11/2026)**
 
-Login por e-mail e senha na `carregaja-api`, que devolve um token assinado (JWT); as telas guardam o token na sessão do navegador. Os testes 05 a 07 foram acrescentados nesta versão: a história de cadastro (HU-09) pede credenciais criadas pelo síndico, e sem a troca ele conheceria a senha de todos os moradores (RN-11). **É a única tela pronta por enquanto**, com a troca de senha.
+Login por e-mail e senha na `carregaja-api`, que devolve um token assinado (JWT); as telas guardam o token na sessão do navegador. Os testes 05 a 07 foram acrescentados nesta versão: a história de cadastro (HU-09) pede credenciais criadas pelo síndico, e sem a troca ele conheceria a senha de todos os moradores (RN-11). As telas prontas por enquanto são esta, com a troca de senha, e a do veículo (HU-05).
 
 | Nr. | Situação | Evidência |
 |---|---|---|
@@ -156,7 +156,7 @@ com sessão em andamento.
 
 Implementados o início e a previsão (testes 01 a 12). O encerramento (13 a 17) é do sprint 6, como na PCP; até lá, uma sessão aberta não tem como ser encerrada.
 
-**Teste de ponta a ponta em 02/11/2026**, com MySQL e a API no ar: 53 verificações cobrindo UC01, UC09, UC07, UC08 e UC03, todas aprovadas. A tela de login e a troca de senha foram percorridas num navegador, no computador e na largura de um celular. No teste 03, dois moradores registram início na mesma vaga ao mesmo tempo, em 10 rodadas: nas 10, um abre (201) e o outro é recusado (409). **Esse teste achou um defeito que os testes de unidade não enxergam:** as duas sessões abriam, porque no isolamento padrão do MySQL a segunda transação, mesmo depois de esperar a trava da vaga, lia o banco como estava antes da primeira. O início da sessão passou a usar `READ_COMMITTED`.
+**Teste de ponta a ponta em 02/11/2026**, com MySQL e a API no ar: 53 verificações cobrindo UC01, UC09, UC07, UC08 e UC03, todas aprovadas. As telas de login, troca de senha e veículo foram percorridas num navegador, no computador e na largura de um celular. No teste 03, dois moradores registram início na mesma vaga ao mesmo tempo, em 10 rodadas: nas 10, um abre (201) e o outro é recusado (409). **Esse teste achou um defeito que os testes de unidade não enxergam:** as duas sessões abriam, porque no isolamento padrão do MySQL a segunda transação, mesmo depois de esperar a trava da vaga, lia o banco como estava antes da primeira. O início da sessão passou a usar `READ_COMMITTED`.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
@@ -249,8 +249,6 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 **Tem protótipo?** Não.
 
 **Situação da implementação (02/11/2026)**
-
-**Parcial: pronto na API, sem tela por enquanto** (decisão de 02/11/2026; a tela está guardada na branch `telas-sprint-5` do fork `R1ck-dev`). A coluna Situação trata da API.
 
 O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
 
