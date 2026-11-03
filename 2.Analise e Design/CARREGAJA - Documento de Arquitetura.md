@@ -10,7 +10,7 @@
 |---|---|---|---|
 | 25/10/2026 | 1.0 | Criação do documento. Registra a arquitetura definida e testada com o UC05 (Manter Veículo): API Spring Boot e telas JSF em projetos separados, conforme o modelo das aulas de Linguagem de Programação 2, e o modelo de implantação. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes organizados por camada, e não por caso de uso (seções 2.2, 3 e 8). Diagramas do UC05 no pacote `3.Arquitetura::manterveiculo` e implantação em `3.Arquitetura::implantação`. | Henrique de Almeida Marangoni Inacio |
-| 02/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. Por enquanto, a única tela é a de login. | Henrique de Almeida Marangoni Inacio |
+| 02/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. Por enquanto, as telas são a de login e a do veículo. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -67,7 +67,7 @@ negócio.
 | **Telas em JSF com PrimeFaces 12**, num Tomcat 9 | Componentes prontos de formulário, mensagem e validação. O Tomcat 9 é o servidor usado na disciplina. |
 | **MySQL 8** | Banco relacional usado na disciplina. As tabelas são geradas pelo JPA (`ddl-auto=update`). |
 | **Pacotes organizados por camada** (`br.edu.ifsp.carregaja.control`, `.service`, `.repository`, `.model`, `.view`), com o nome do caso de uso na pasta da página (`webapp/restricted/manterveiculo`) e no pacote dos diagramas (`3.Arquitetura::manterveiculo`) | Organizar por caso de uso repetiria as mesmas camadas em cada um dos 12 casos de uso. Por camada é a organização dos exercícios de LP2 e do exemplo de arquitetura do professor. O pedido do professor no sprint 3, de o pacote da arquitetura ter o nome do caso de uso, continua atendido na pasta da página e nos diagramas. |
-| **Por enquanto, a única tela é a de login**, com a troca de senha. Os demais casos de uso são usados pelas rotas da API | Decisão do Scrum Master em 02/11/2026. As telas dos outros casos, inclusive a do veículo, testada no sprint 4, estão guardadas na branch `telas-sprint-5` do fork `R1ck-dev` |
+| **Por enquanto, as únicas telas são a de login, com a troca de senha, e a do veículo**. Os demais casos de uso são usados pelas rotas da API | Decisão do Scrum Master em 02/11/2026. As telas dos outros casos estão guardadas na branch `telas-sprint-5` do fork `R1ck-dev` |
 | **Autenticação por token na API**, com Spring Security e JWT. A API confere e-mail e senha (BCrypt), devolve um token assinado e, a cada requisição, lê do banco o usuário do token | É a API que garante as regras, qualquer que seja o cliente: mesmo chamada sem passar pela tela, ela não deixa um morador agir como síndico nem em nome de outro. Ler o usuário do banco a cada requisição faz a desativação valer na hora (HU-09, teste 04), sem esperar o token vencer |
 | **Validação nos dois lados** | A tela valida para orientar o morador na hora. A API valida de novo porque é ela que garante a regra, qualquer que seja o cliente. |
 
@@ -88,18 +88,18 @@ negócio.
 
 ## 3. Visão Lógica: Camadas e Pacotes
 
-Os pacotes Java ficam em `br.edu.ifsp.carregaja`, um por camada. Diagramas: **Pacotes do Front-end — UC01**, em
-`3.Arquitetura::autenticarusuario`, e **Pacotes do Back-end — UC05**, em `3.Arquitetura::manterveiculo`. Em cada diagrama, o
+Os pacotes Java ficam em `br.edu.ifsp.carregaja`, um por camada. Diagramas, no pacote
+`3.Arquitetura::manterveiculo`: **Pacotes do Front-end — UC05** e **Pacotes do Back-end — UC05**. Em cada diagrama, o
 que pertence ao outro projeto aparece em cinza, só com o nome.
 
 ### 3.1. Front-end (`carregaja-jsf`)
 
-| Pacote | Responsabilidade | No UC01 |
+| Pacote | Responsabilidade | No UC05 |
 |---|---|---|
-| `webapp/autenticarusuario` e `webapp/restricted/autenticarusuario` | Páginas XHTML do caso de uso, no leiaute comum (`WEB-INF/template`) | `AutenticarUsuarioView.xhtml`, `TrocarSenhaView.xhtml` |
-| `controller` | Beans JSF: carregam a tela, recebem as ações e mostram as mensagens | `AutenticarUsuarioBean`, `TrocarSenhaBean`, `AutenticacaoFilter` |
-| `service` | Cliente HTTP da API: monta as chamadas e traduz as falhas em mensagem | `AutenticacaoRestClient`, `ApiClient`, `UsuarioLogado` |
-| `model` | Os dados como a API os devolve e os corpos das requisições | `Usuario`, `LoginRequest`, `TrocarSenhaRequest` |
+| `webapp/restricted/manterveiculo` | Páginas XHTML do caso de uso, no leiaute comum (`WEB-INF/template`) | `ManterVeiculoView.xhtml` |
+| `controller` | Beans JSF: carregam a tela, recebem as ações e mostram as mensagens | `ManterVeiculoBean` |
+| `service` | Cliente HTTP da API: monta as chamadas e traduz as falhas em mensagem | `VeiculoRestClient` |
+| `model` | Os dados como a API os devolve e os corpos das requisições | `Veiculo`, `VeiculoRequest` |
 
 ### 3.2. Back-end (`carregaja-api`)
 
@@ -119,11 +119,10 @@ Nenhuma camada chama a de cima.
 Um caso de uso novo acrescenta classes às camadas que já existem, sem criar pacote novo. Só a
 página ganha uma pasta com o nome do caso de uso.
 
-Diagramas de classes: **Classes do Back-end — UC05**, o caso de uso que testou a arquitetura, e **Classes do Front-end — UC01**,
-a única tela que existe, com todos os atributos e as operações públicas de cada classe, nos nomes e tipos do código. As entidades
-de negócio do UC05 estão em **Classes de Negócio — UC05**, e todas as do sistema no **Modelo de Objetos**, pacote `2.Design`.
-Por decisão de 02/11/2026, os demais casos de uso seguem o mesmo desenho e não têm diagrama próprio; as classes deles estão em
-`3.Arquitetura::carregaja-api`.
+Diagramas de classes: **Classes do Front-end — UC05** e **Classes do Back-end — UC05**, com os atributos e as operações
+públicas de cada classe, nos nomes e tipos do código, sem os acessores que o Lombok gera. As entidades de negócio do UC05 estão em
+**Classes de Negócio — UC05**, e todas as do sistema no **Modelo de Objetos**, pacote `2.Design`. Por decisão de 02/11/2026, o Modelo
+de Arquitetura é só o do UC05, o caso de uso que testou a arquitetura; os demais seguem o mesmo desenho, sem diagrama próprio.
 
 ## 4. Recursos Reutilizados e Padrões
 
@@ -139,11 +138,8 @@ Por decisão de 02/11/2026, os demais casos de uso seguem o mesmo desenho e não
 
 ## 5. Cenário Significativo: UC05 — Manter Veículo
 
-> **A tela deste cenário saiu em 02/11/2026** (seção 2.2) e está guardada na branch `telas-sprint-5`. O caminho a
-> partir de `POST /veiculos` segue igual, agora chamado direto.
-
-**Abrir a tela.** O morador abre *Meu veículo*. O `ManterVeiculoBean` pede a lista ao
-`VeiculoRestClient`, que faz `GET /veiculos`. Se já há veículo, os campos vêm preenchidos; se não,
+**Abrir a tela.** O morador abre *Meu veículo*. O `ManterVeiculoBean` pede o veículo ao
+`VeiculoRestClient`, que faz `GET /veiculos/meu`. Se já há veículo, os campos vêm preenchidos; se não,
 vazios.
 
 **Salvar.** O morador informa modelo, capacidade da bateria (kWh) e potência máxima (kW) e clica
@@ -203,7 +199,7 @@ para o Guia de Implantação, na Transição.
 
 ## 7. Teste da Arquitetura
 
-O UC05 foi implementado nos dois projetos e testado em 25/10/2026, quando a tela dele ainda existia.
+O UC05 foi implementado nos dois projetos e testado em 25/10/2026.
 
 **Testes de unidade** (`mvn test` em `carregaja-api`), 14 testes, todos aprovados, sem banco:
 
@@ -243,5 +239,5 @@ validador com mensagem.
 
 | Pendência | Quando |
 |---|---|
-| Telas dos casos de uso além do login, hoje na branch `telas-sprint-5` | A decidir |
+| Telas dos casos de uso além do login e do veículo, hoje na branch `telas-sprint-5` | A decidir |
 | Regra da potência efetiva, previsão e apuração (RI-08), isoladas num serviço da API com testes de unidade | Sprint 5 |
