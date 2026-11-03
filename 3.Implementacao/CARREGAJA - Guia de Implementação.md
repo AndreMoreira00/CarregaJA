@@ -11,7 +11,7 @@
 | 25/10/2026 | 1.0 | Criação do guia a partir do UC05 (Manter Veículo), implementado para testar a arquitetura. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
 | 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
-| 02/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -46,7 +46,7 @@ segue o leiaute do template do Visão.
 | IDE | Livre: Eclipse, IntelliJ ou VS Code com o pacote Java |
 
 A senha do `root` do MySQL (`MYSQL_SENHA`), o segredo do token (`CARREGAJA_JWT_SEGREDO`) e os dados do
-primeiro síndico (`CARREGAJA_SINDICO_EMAIL`, `CARREGAJA_SINDICO_SENHA`) vão em variáveis de ambiente,
+primeiro síndico (`CARREGAJA_SINDICO_EMAIL`, `CARREGAJA_SINDICO_SENHA`, `CARREGAJA_SINDICO_APARTAMENTO`) vão em variáveis de ambiente,
 nunca no `application.properties`. O passo a passo para subir a API e as telas está no README do
 código.
 
@@ -173,7 +173,11 @@ Os testes de aceitação da História de Usuário viram testes com o mesmo núme
 MySQL ligado. O teste de ponta a ponta, com banco, API e telas, segue o README e, na Transição, o
 Roteiro de Teste.
 
-**Resultado em 02/11/2026** (`mvn test` em `carregaja-api`, com o UC01): 41 testes, 0 falhas, 0 erros.
+**Resultado em 03/11/2026** (`mvn test` em `carregaja-api`, com o UC01 e o UC05): 45 testes, 0 falhas, 0 erros.
+
+**De ponta a ponta, com MySQL, API e telas, em 03/11/2026:** a coleção do Postman executou 18 requisições e 34 verificações,
+sem falha. Nas telas, em Chrome: login recusado, senha provisória, troca de senha, cadastro e alteração do veículo, recusas,
+saída e a tela no tamanho de celular, sem erro no console.
 
 ## 7. Como Entregar
 

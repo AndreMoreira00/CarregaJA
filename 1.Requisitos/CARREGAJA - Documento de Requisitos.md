@@ -11,7 +11,7 @@
 | 26/09/2026 | 1.0 | Criação do documento a partir do detalhamento retirado do Visão v3.1, conforme a apresentação da Iniciação. Inclui requisitos funcionais, regras de negócio e a classificação FURPS+ das restrições. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 1.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
 | 11/10/2026 | 1.2 | RF-13 e RN-08: a tarifa vale a partir da data e hora do cadastro, até o cadastro da próxima, sem data informada pelo síndico. Nova RN-10. | Henrique de Almeida Marangoni Inacio |
-| 02/11/2026 | 1.3 | RF-01 e nova RN-11: a senha criada pelo síndico é provisória e o usuário a troca no primeiro acesso. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.3 | RF-01 e nova RN-11: a senha criada pelo síndico é provisória e o usuário a troca no primeiro acesso. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 

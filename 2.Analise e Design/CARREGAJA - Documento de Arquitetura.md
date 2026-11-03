@@ -10,7 +10,7 @@
 |---|---|---|---|
 | 25/10/2026 | 1.0 | Criação do documento. Registra a arquitetura definida e testada com o UC05 (Manter Veículo): API Spring Boot e telas JSF em projetos separados, conforme o modelo das aulas de Linguagem de Programação 2, e o modelo de implantação. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes organizados por camada, e não por caso de uso (seções 2.2, 3 e 8). Diagramas do UC05 no pacote `3.Arquitetura::manterveiculo` e implantação em `3.Arquitetura::implantação`. | Henrique de Almeida Marangoni Inacio |
-| 02/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. Por enquanto, as telas são a de login e a do veículo. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. Por enquanto, o sistema tem só o UC01 e o UC05. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -67,7 +67,7 @@ negócio.
 | **Telas em JSF com PrimeFaces 12**, num Tomcat 9 | Componentes prontos de formulário, mensagem e validação. O Tomcat 9 é o servidor usado na disciplina. |
 | **MySQL 8** | Banco relacional usado na disciplina. As tabelas são geradas pelo JPA (`ddl-auto=update`). |
 | **Pacotes organizados por camada** (`br.edu.ifsp.carregaja.control`, `.service`, `.repository`, `.model`, `.view`), com o nome do caso de uso na pasta da página (`webapp/restricted/manterveiculo`) e no pacote dos diagramas (`3.Arquitetura::manterveiculo`) | Organizar por caso de uso repetiria as mesmas camadas em cada um dos 12 casos de uso. Por camada é a organização dos exercícios de LP2 e do exemplo de arquitetura do professor. O pedido do professor no sprint 3, de o pacote da arquitetura ter o nome do caso de uso, continua atendido na pasta da página e nos diagramas. |
-| **Por enquanto, as únicas telas são a de login, com a troca de senha, e a do veículo**. Os demais casos de uso são usados pelas rotas da API | Decisão do Scrum Master em 02/11/2026. As telas dos outros casos estão guardadas na branch `telas-sprint-5` do fork `R1ck-dev` |
+| **Por enquanto, o sistema tem só o UC01 e o UC05**, cada um com a API e a tela | Decisão do Scrum Master em 03/11/2026, para a apresentação do sprint. Os demais casos do sprint 5 estão prontos e voltam depois dela |
 | **Autenticação por token na API**, com Spring Security e JWT. A API confere e-mail e senha (BCrypt), devolve um token assinado e, a cada requisição, lê do banco o usuário do token | É a API que garante as regras, qualquer que seja o cliente: mesmo chamada sem passar pela tela, ela não deixa um morador agir como síndico nem em nome de outro. Ler o usuário do banco a cada requisição faz a desativação valer na hora (HU-09, teste 04), sem esperar o token vencer |
 | **Validação nos dois lados** | A tela valida para orientar o morador na hora. A API valida de novo porque é ela que garante a regra, qualquer que seja o cliente. |
 
@@ -176,7 +176,8 @@ perfil, e só a rota de troca responde. Nas telas, o `AutenticacaoFilter` leva q
 login e quem tem senha provisória à `TrocarSenhaView`, mas é só orientação: quem garante é a API.
 
 **Primeiro síndico.** Quem cadastra moradores é o síndico, então o primeiro nasce da configuração: o
-`PrimeiroSindicoService` o cria ao subir a API, se ainda não houver nenhum.
+`PrimeiroSindicoService` o cria ao subir a API, se ainda não houver nenhum. Com
+`CARREGAJA_SINDICO_APARTAMENTO`, ele também é morador, com os dois perfis (HU-01, teste 04), e pode ter veículo.
 
 **Recusas.** Toda regra recusada lança `RegraNegocioException`, e o `TratadorDeErros` a devolve como
 `{"mensagem": "..."}`, que o `ApiClient` mostra na tela.
@@ -193,7 +194,7 @@ Diagrama: **Modelo de Implantação**, pacote `3.Arquitetura::implantação`.
 | Servidor do condomínio → MySQL 8.4 | banco `carregaja` | 3306 |
 
 Os três rodam sobre o JRE 21, no mesmo servidor (RE-07). A API lê de variáveis de ambiente a senha do
-banco, o segredo do token e os dados do primeiro síndico; nenhum deles fica no código. O navegador só fala com o Tomcat 9; a
+banco, o segredo do token e os dados do primeiro síndico; nenhum deles fica no versionamento. O navegador só fala com o Tomcat 9; a
 API e o banco não precisam ficar expostos à rede do condomínio. O passo a passo de instalação vai
 para o Guia de Implantação, na Transição.
 
@@ -239,5 +240,5 @@ validador com mensagem.
 
 | Pendência | Quando |
 |---|---|
-| Telas dos casos de uso além do login e do veículo, hoje na branch `telas-sprint-5` | A decidir |
+| Demais casos de uso do sprint 5 (UC03, UC04, UC07, UC08, UC09), prontos e guardados | Depois da apresentação |
 | Regra da potência efetiva, previsão e apuração (RI-08), isoladas num serviço da API com testes de unidade | Sprint 5 |
