@@ -80,8 +80,8 @@ Recarga* será `mantersessao`.
 | | `webapp/restricted/<caso>/` | Páginas XHTML do caso de uso. Só o login fica fora de `restricted`, em `webapp/autenticarusuario/` |
 
 No Astah, as classes ficam em `3.Arquitetura::carregaja-api` e `3.Arquitetura::carregaja-jsf`, nas
-mesmas camadas, e os diagramas de cada caso de uso num pacote com o nome dele, como
-`3.Arquitetura::manterveiculo`.
+mesmas camadas. Os diagramas de classes são os do UC05, em `3.Arquitetura::manterveiculo`, e os do login, em
+`3.Arquitetura::autenticarusuario`; os demais casos de uso seguem o mesmo desenho, sem diagrama próprio.
 
 ## 4. Nomes
 
@@ -200,4 +200,4 @@ Transição, o Roteiro de Teste.
 - [ ] Validação na tela e na API
 - [ ] Testes do controle e do serviço, passando
 - [ ] README atualizado se mudou o jeito de rodar
-- [ ] Diagramas de classes atualizados se surgiu classe, atributo ou operação pública
+- [ ] Diagramas do UC05 e do login atualizados, se as classes deles mudaram
