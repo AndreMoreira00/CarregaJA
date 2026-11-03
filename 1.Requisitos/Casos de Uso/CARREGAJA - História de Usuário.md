@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.2
+Versão 4.3
 
 ## Dados usados nos testes de aceitação
 
@@ -49,8 +49,25 @@ consumir seja registrado no meu apartamento**.
 | 02 | Acesso com senha incorreta | E-mail correto, senha errada | Recusado, com mensagem genérica que não indica o campo errado |
 | 03 | Acesso de morador desativado | Credenciais de morador desativado em HU-09 | Recusado, com orientação a procurar o síndico |
 | 04 | Usuário com os dois perfis | Credenciais da síndica, que também é moradora | Acesso concedido com os perfis Morador e Síndico |
+| 05 | Primeiro acesso com senha provisória | Credenciais recém-criadas pelo síndico | Acesso só à troca de senha; qualquer outra função é negada |
+| 06 | Troca de senha válida | Senha atual correta e nova senha de 8 a 72 caracteres | Senha trocada e acesso liberado |
+| 07 | Senha atual incorreta na troca | Senha atual errada | Recusado; a senha não muda |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (03/11/2026)**
+
+Login por e-mail e senha na `carregaja-api`, que devolve um token assinado (JWT); as telas guardam o token na sessão do navegador. Os testes 05 a 07 foram acrescentados nesta versão: a história de cadastro (HU-09) pede credenciais criadas pelo síndico, e sem a troca ele conheceria a senha de todos os moradores (RN-11). Por enquanto o sistema tem só esta história e a do veículo (HU-05), cada uma com a API e a tela; os demais casos de uso do sprint 5 voltam depois da apresentação. Até lá, o único usuário é o primeiro síndico, que vem da configuração.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `AutenticacaoServiceTest.credenciaisValidasGeramTokenDoUsuario`, `AutenticacaoControllerTest.acessoValidoDevolveTokenPerfilEApartamento` |
+| 02 | Atendido | `AutenticacaoServiceTest.senhaIncorretaEEmailDesconhecidoTemAMesmaRecusa` |
+| 03 | Atendido | `AutenticacaoServiceTest.moradorDesativadoERecusadoComOrientacao` |
+| 04 | Atendido | `AutenticacaoControllerTest.usuarioComOsDoisPerfisDevolveOsDois`, `PrimeiroSindicoServiceTest.comApartamentoTemOsDoisPerfis` |
+| 05 | Atendido | `AutenticacaoControllerTest.senhaProvisoriaSoPermiteATroca` |
+| 06 | Atendido | `AutenticacaoServiceTest.trocarSenhaGravaANovaELiberaOAcesso` |
+| 07 | Atendido | `AutenticacaoServiceTest.senhaAtualIncorretaNaoTroca` |
 
 ---
 
@@ -194,22 +211,19 @@ declarar as características a cada recarga e as previsões saiam corretas**.
 
 **Tem protótipo?** Não.
 
-**Situação da implementação (30/10/2026)**
+**Situação da implementação (03/11/2026)**
 
-O UC05 foi implementado para testar a arquitetura: API em `carregaja-api` e tela em `carregaja-jsf`.
-Cadastra, lista, consulta e altera o veículo (modelo de até 100 caracteres, capacidade e potência
-maiores que zero); não há exclusão (RF-10). O login (UC01) e o cadastro de moradores (UC09) ficam
-para o sprint 5, e por isso o veículo ainda não se vincula a um apartamento.
+O UC05 foi implementado para testar a arquitetura e, com o UC01, passou a ser do morador: cada um cadastra, consulta e altera só o próprio veículo; o síndico consulta todos, para conferi-los (RI-01). Não há exclusão (RF-10).
+
+`mvn test` em `carregaja-api`: 45 testes, sem falha.
 
 | Nr. | Situação | Evidência |
 |---|---|---|
-| 01 | Parcial: o veículo é registrado, mas ainda sem vínculo ao apartamento | `VeiculoControllerTest.cadastroValidoDevolve201ComOEndereco` |
+| 01 | Atendido: o veículo fica com o morador do token, e o morador com o apartamento | `VeiculoServiceTest.criarGravaOsDadosInformadosELigaAoMorador` |
 | 02 | Atendido | `VeiculoControllerTest.capacidadeZeroDevolve400` |
 | 03 | Atendido | `VeiculoControllerTest.potenciaNegativaDevolve400` |
-| 04 | Pendente: depende do UC03 (sprint 5) | — |
-| 05 | Pendente: depende de sessões apuradas, UC03 e UC04 (sprint 5) | — |
-
-`mvn test` em `carregaja-api`: 14 testes, sem falha.
+| 04 | Pendente: depende do UC03 | — |
+| 05 | Pendente: depende de sessões apuradas, UC03 e UC04 | — |
 
 ---
 

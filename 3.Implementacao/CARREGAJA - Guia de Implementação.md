@@ -1,6 +1,6 @@
 # Guia de Implementação
 
-**Versão 1.2**
+**Versão 1.4**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -11,6 +11,8 @@
 | 25/10/2026 | 1.0 | Criação do guia a partir do UC05 (Manter Veículo), implementado para testar a arquitetura. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
 | 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.4 | Bean e cliente REST no formato do modelo de LP2, sem `BeanBase` e sem `ApiClient` (seção 5.2), e rotas sem registro de log (seção 5.1). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -28,9 +30,9 @@ segue o leiaute do template do Visão.
 
 | Documento | Origem |
 |---|---|
-| CARREGAJA - Documento de Arquitetura (v1.0) | 2.Analise e Design/ |
+| CARREGAJA - Documento de Arquitetura (v1.2) | 2.Analise e Design/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
-| CARREGAJA - História de Usuário (v4.1) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
 | README do código fonte (como rodar) | 3.Implementacao/CarregaJA_Implementacao/ |
 | Exercícios de API e JSF de Linguagem de Programação 2 | Disciplina integrada (RE-02) |
 
@@ -44,8 +46,10 @@ segue o leiaute do template do Visão.
 | Tomcat | 9 (o front-end usa a linha `javax.*`) |
 | IDE | Livre: Eclipse, IntelliJ ou VS Code com o pacote Java |
 
-A senha do usuário `root` do MySQL vai na variável de ambiente `MYSQL_SENHA`, nunca no
-`application.properties`. O passo a passo para subir a API e as telas está no README do código.
+A senha do `root` do MySQL (`MYSQL_SENHA`), o segredo do token (`CARREGAJA_JWT_SEGREDO`) e os dados do
+primeiro síndico (`CARREGAJA_SINDICO_EMAIL`, `CARREGAJA_SINDICO_SENHA`, `CARREGAJA_SINDICO_APARTAMENTO`) vão em variáveis de ambiente,
+nunca no `application.properties`. O passo a passo para subir a API e as telas está no README do
+código.
 
 ## 3. Estrutura do Código
 
@@ -68,15 +72,15 @@ Recarga* será `mantersessao`.
 | | `br.edu.ifsp.carregaja.service` | Regras de negócio |
 | | `br.edu.ifsp.carregaja.repository` | Interfaces do Spring Data |
 | | `br.edu.ifsp.carregaja.model` | Entidades JPA |
-| | `br.edu.ifsp.carregaja.view` | Dados de entrada, com validação |
+| | `br.edu.ifsp.carregaja.view` | Dados de entrada, com validação, e respostas que não são uma entidade |
 | `carregaja-jsf` | `br.edu.ifsp.carregaja.controller` | Beans JSF |
 | | `br.edu.ifsp.carregaja.service` | Cliente REST da API |
 | | `br.edu.ifsp.carregaja.model` | Dados da tela e corpos das requisições |
-| | `webapp/restricted/<caso>/` | Páginas XHTML do caso de uso |
+| | `webapp/restricted/<caso>/` | Páginas XHTML do caso de uso. Só o login fica fora de `restricted`, em `webapp/autenticarusuario/` |
 
 No Astah, as classes ficam em `3.Arquitetura::carregaja-api` e `3.Arquitetura::carregaja-jsf`, nas
-mesmas camadas, e os diagramas de cada caso de uso num pacote com o nome dele, como
-`3.Arquitetura::manterveiculo`.
+mesmas camadas. Os diagramas são os do UC05, em `3.Arquitetura::manterveiculo`, sem os acessores do Lombok; os demais
+casos de uso seguem o mesmo desenho, sem diagrama próprio.
 
 ## 4. Nomes
 
@@ -87,6 +91,7 @@ mesmas camadas, e os diagramas de cada caso de uso num pacote com o nome dele, c
 | Repositório | `<Entidade>Repository` | `VeiculoRepository` |
 | Entidade | `<Entidade>` | `Veiculo` |
 | Dados de entrada | `<Entidade>Request` | `VeiculoRequest` |
+| Resposta que não é uma entidade | `<Entidade>Response` | `AutenticacaoResponse` |
 | Bean JSF | `Manter<Entidade>Bean` (ou o verbo do caso de uso) | `ManterVeiculoBean` |
 | Página | `Manter<Entidade>View.xhtml` | `ManterVeiculoView.xhtml` |
 | Cliente REST | `<Entidade>RestClient` | `VeiculoRestClient` |
@@ -97,10 +102,8 @@ Classes, métodos, atributos e mensagens em **português**, como no modelo: `cri
 Code Conventions) valem para o resto: classes em `PascalCase`, métodos e atributos em `camelCase`,
 constantes em `MAIUSCULAS_COM_SUBLINHADO`.
 
-**Indentação.** Hoje a `carregaja-api` usa 2 espaços e a `carregaja-jsf` usa tabulação, herdada do
-projeto-modelo de LP2 (a classe `CarregajaApiApplication`, gerada pelo Spring Initializr, também).
-Não há verificador automático. Os dois projetos devem passar a usar 2 espaços, e a mudança fica
-para o início do sprint 5, antes de os novos casos de uso entrarem.
+**Indentação.** Dois espaços nos dois projetos, em Java, XHTML e XML, com `catch` e `else` na linha do
+fecha-chaves. O `.editorconfig` na raiz do repositório avisa a IDE; não há verificador automático.
 
 ## 5. O Que Cada Camada Faz
 
@@ -108,11 +111,13 @@ para o início do sprint 5, antes de os novos casos de uso entrarem.
 
 **`control` — rotas.** Recebe a requisição com `@Valid @RequestBody`, chama o serviço e decide o
 status: `201` com `Location` ao criar, `200` ao consultar e alterar, `204` ao remover, `404`
-quando o id não existe. **Não tem regra de negócio.** Registra cada chamada com o `log` do
-`@Slf4j`.
+quando o id não existe. **Não tem regra de negócio.** O usuário logado chega por
+`@AuthenticationPrincipal Usuario`. **Rota nova precisa de regra em
+`SegurancaConfig`**, dizendo qual perfil a usa.
 
 **`service` — regras.** Toda regra de negócio fica aqui: cálculos, verificações entre entidades,
-situações da sessão. Devolve `Optional` quando o registro pode não existir, em vez de `null`.
+situações da sessão. Devolve `Optional` quando o registro pode não existir, em vez de `null`. Para recusar, lança
+`RegraNegocioException` com o status e a mensagem que o usuário vai ler; o `TratadorDeErros` a responde.
 **A regra da potência efetiva (RN-01) e a apuração (RN-02, RN-03) ficam num serviço próprio, com
 testes de unidade** (RI-08).
 
@@ -136,14 +141,16 @@ com `required="true"` e `requiredMessage`; limites numéricos com `<f:validateDo
 `validatorMessage`. **Não usar `minValue` do `p:inputNumber` como validação**: ele corrige o valor
 em silêncio em vez de recusar (defeito encontrado no teste do UC05).
 
-**Bean.** `@Named @ViewScoped`, `Serializable`. Carrega os dados no `inicializar()`, chamado por
-`<f:event type="preRenderView">`, e não em postback. Trata a `ApiException` do cliente REST
-mostrando a mensagem com `FacesMessage`. Não chama a API diretamente: passa pelo cliente REST.
+**Bean.** `@Named @ViewScoped`, implementa `Serializable` e tem os próprios métodos privados de mensagem
+(`informar`, `reclamar`), como no modelo de LP2. Carrega os dados no `inicializar()`, chamado por
+`<f:event type="preRenderView">`, e não em postback. Trata a `ApiException` do cliente REST. Não chama a
+API diretamente: passa pelo cliente REST. **Página nova** entra no menu (`Header.xhtml`). Se for de um
+perfil só, o menu a esconde com `rendered` e quem garante o perfil é a API.
 
-**Cliente REST.** `@ApplicationScoped`, com o `HttpClient` do Java e o `ObjectMapper` do Jackson,
-como o `VeiculoRestClient`. O endereço da API vem da propriedade `carregaja.api.url`, com
-`http://localhost:8081` como padrão. Toda resposta fora de 2xx vira `ApiException` com uma mensagem
-que o morador entenda.
+**Cliente REST.** `@ApplicationScoped`, um por recurso da API, como o `VeiculoRestClient`. Monta cada
+requisição, com o endereço da API (propriedade `carregaja.api.url`, com `http://localhost:8081` como
+padrão) e o token do `UsuarioLogado`, e transforma toda resposta fora de 2xx em `ApiException`, com a
+mensagem que a API mandou.
 
 ### 5.3. Regras para os dois lados
 
@@ -159,7 +166,7 @@ que o morador entenda.
 
 | Teste | Como | Exemplo |
 |---|---|---|
-| Controle | `@WebMvcTest(<Entidade>Controller.class)` com o serviço em `@MockBean`. Uma verificação por status e por regra de validação | `VeiculoControllerTest` |
+| Controle | `@WebMvcTest(<Entidade>Controller.class)`, estendendo `ControleTesteBase`, com o serviço em `@MockBean`. Passa pelas regras de segurança de verdade: a requisição se identifica com `.with(logado(morador()))`. Uma verificação por status, por regra de validação e por perfil | `VeiculoControllerTest` |
 | Serviço | JUnit com o repositório simulado (`Mockito.mock`). Uma verificação por regra de negócio | `VeiculoServiceTest` |
 
 Os testes de aceitação da História de Usuário viram testes com o mesmo número no comentário
@@ -167,8 +174,11 @@ Os testes de aceitação da História de Usuário viram testes com o mesmo núme
 MySQL ligado. O teste de ponta a ponta, com banco, API e telas, segue o README e, na Transição, o
 Roteiro de Teste.
 
-**Resultado em 30/10/2026** (`mvn test` em `carregaja-api`, código do `develop` no commit `8f7c56e`):
-14 testes, 0 falhas, 0 erros. São 11 em `VeiculoControllerTest` e 3 em `VeiculoServiceTest`.
+**Resultado em 03/11/2026** (`mvn test` em `carregaja-api`, com o UC01 e o UC05): 45 testes, 0 falhas, 0 erros.
+
+**De ponta a ponta, com MySQL, API e telas, em 03/11/2026:** a coleção do Postman executou 18 requisições e 34 verificações,
+sem falha. Nas telas, em Chrome: login recusado, senha provisória, troca de senha, cadastro e alteração do veículo, recusas,
+saída e a tela no tamanho de celular, sem erro no console.
 
 ## 7. Como Entregar
 
@@ -189,4 +199,4 @@ Roteiro de Teste.
 - [ ] Validação na tela e na API
 - [ ] Testes do controle e do serviço, passando
 - [ ] README atualizado se mudou o jeito de rodar
-- [ ] Diagramas de classes atualizados se surgiu classe, atributo ou operação pública
+- [ ] Diagramas do UC05 atualizados, se as classes dele mudaram

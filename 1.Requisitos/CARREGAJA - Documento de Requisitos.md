@@ -1,6 +1,6 @@
 # Documento de Requisitos
 
-**Versão 1.2**
+**Versão 1.3**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -11,6 +11,7 @@
 | 26/09/2026 | 1.0 | Criação do documento a partir do detalhamento retirado do Visão v3.1, conforme a apresentação da Iniciação. Inclui requisitos funcionais, regras de negócio e a classificação FURPS+ das restrições. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 1.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
 | 11/10/2026 | 1.2 | RF-13 e RN-08: a tarifa vale a partir da data e hora do cadastro, até o cadastro da próxima, sem data informada pelo síndico. Nova RN-10. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.3 | RF-01 e nova RN-11: a senha criada pelo síndico é provisória e o usuário a troca no primeiro acesso. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -29,7 +30,7 @@ completa dos riscos.
 | Documento | Origem |
 |---|---|
 | CARREGAJA - Visão (v4.0) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.0) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | Guia - Requisitos de Sistema de Software (FURPS+) | SpinOff / Guidelines |
 | Template - Documento de Requisitos | 1.Requisitos/ |
@@ -69,7 +70,7 @@ o usuário que as realizou.
 
 | # | O sistema deve | Caso de uso |
 |---|---|---|
-| RF-01 | Autenticar morador e síndico por e-mail e senha e identificar o apartamento do morador. | UC01 |
+| RF-01 | Autenticar morador e síndico por e-mail e senha, identificar o apartamento do morador e exigir a troca da senha provisória no primeiro acesso (RN-11). | UC01 |
 | RF-02 | Exibir a situação de cada vaga (livre, ocupada, concluída e ainda ocupada, ou excedida) e a previsão de liberação das ocupadas. | UC02 |
 | RF-03 | Ocultar do morador quem ocupa uma vaga e exibir essa identificação ao síndico. | UC02 |
 | RF-04 | Permitir ao morador iniciar uma sessão em vaga livre, informando a vaga e o nível atual da bateria. | UC03 |
@@ -116,6 +117,7 @@ restrições e foram aceitos:
 | RN-08 | O mês só pode ser fechado sem sessões abertas no período. Depois de fechado, não aceita sessões nem alterações no período. |
 | RN-09 | Vaga ou morador com histórico é desativado, e não removido. |
 | RN-10 | A tarifa vale da data e hora em que foi cadastrada até o cadastro da próxima. O síndico não informa a data: não há tarifa retroativa nem antecipada. Um reajuste no meio do mês vale só para as sessões iniciadas depois dele (RN-03, RN-04). |
+| RN-11 | A senha que o síndico cadastra é provisória. Até trocá-la, o usuário não acessa nenhuma outra função. Se o síndico redefinir a senha, a troca volta a ser exigida. |
 
 > **Por que a apuração é por energia, e não por tempo.** Na versão 1.1 do Visão, com motorista
 > anônimo, cobrar por tempo evitava que se subdeclarasse a potência para pagar menos. Aqui o
