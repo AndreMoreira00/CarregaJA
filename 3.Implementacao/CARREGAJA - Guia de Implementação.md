@@ -1,6 +1,6 @@
 # Guia de Implementação
 
-**Versão 1.3**
+**Versão 1.4**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -12,6 +12,7 @@
 | 26/10/2026 | 1.1 | Pacotes por camada, e não por caso de uso (seção 3). | Henrique de Almeida Marangoni Inacio |
 | 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.4 | Bean e cliente REST no formato do modelo de LP2, sem `BeanBase` e sem `ApiClient` (seção 5.2). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -140,15 +141,15 @@ com `required="true"` e `requiredMessage`; limites numéricos com `<f:validateDo
 `validatorMessage`. **Não usar `minValue` do `p:inputNumber` como validação**: ele corrige o valor
 em silêncio em vez de recusar (defeito encontrado no teste do UC05).
 
-**Bean.** `@Named @ViewScoped`, estende `BeanBase`, que mostra as mensagens (`informar`, `reclamar`).
-Carrega os dados no `inicializar()`, chamado por `<f:event type="preRenderView">`, e não em postback.
-Trata a `ApiException` do cliente REST com `reclamar`. Não chama a API diretamente: passa pelo cliente
-REST. **Página nova** entra no menu (`Header.xhtml`). Se for de um perfil só, precisa de regra no
-`AutenticacaoFilter`, como a *Meu veículo*.
+**Bean.** `@Named @ViewScoped`, implementa `Serializable` e tem os próprios métodos privados de mensagem
+(`informar`, `reclamar`), como no modelo de LP2. Carrega os dados no `inicializar()`, chamado por
+`<f:event type="preRenderView">`, e não em postback. Trata a `ApiException` do cliente REST. Não chama a
+API diretamente: passa pelo cliente REST. **Página nova** entra no menu (`Header.xhtml`). Se for de um
+perfil só, o menu a esconde com `rendered` e quem garante o perfil é a API.
 
-**Cliente REST.** `@ApplicationScoped`, só com os caminhos do caso de uso, como o `VeiculoRestClient`. O
-`ApiClient` faz o resto: endereço da API (propriedade `carregaja.api.url`, com `http://localhost:8081`
-como padrão), token do usuário, JSON e a tradução de toda resposta fora de 2xx em `ApiException`, com a
+**Cliente REST.** `@ApplicationScoped`, um por recurso da API, como o `VeiculoRestClient`. Monta cada
+requisição, com o endereço da API (propriedade `carregaja.api.url`, com `http://localhost:8081` como
+padrão) e o token do `UsuarioLogado`, e transforma toda resposta fora de 2xx em `ApiException`, com a
 mensagem que a API mandou.
 
 ### 5.3. Regras para os dois lados

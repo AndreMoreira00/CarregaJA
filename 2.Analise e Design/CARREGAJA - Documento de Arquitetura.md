@@ -1,6 +1,6 @@
 # Documento de Arquitetura
 
-**Versão 1.2**
+**Versão 1.3**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -11,6 +11,7 @@
 | 25/10/2026 | 1.0 | Criação do documento. Registra a arquitetura definida e testada com o UC05 (Manter Veículo): API Spring Boot e telas JSF em projetos separados, conforme o modelo das aulas de Linguagem de Programação 2, e o modelo de implantação. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes organizados por camada, e não por caso de uso (seções 2.2, 3 e 8). Diagramas do UC05 no pacote `3.Arquitetura::manterveiculo` e implantação em `3.Arquitetura::implantação`. | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. Por enquanto, o sistema tem só o UC01 e o UC05. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.3 | Telas simplificadas no modelo de LP2: cada cliente REST faz as próprias chamadas e cada bean mostra as próprias mensagens (seções 4, 5.1 e 8). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -131,7 +132,7 @@ de Arquitetura é só o do UC05, o caso de uso que testou a arquitetura; os dema
 | Spring Data (`CrudRepository`) | `VeiculoRepository` | Todo o SQL de gravação e consulta |
 | Bean Validation (`@NotBlank`, `@Positive`, `@Valid`) | `VeiculoRequest` da API | Os `if` de validação e a resposta 400 |
 | Lombok (`@Getter`, `@Setter`, `@Slf4j`) | Entidades, requisições e controle | Acessores e declaração de log |
-| Jackson | API e `ApiClient` | Conversão entre objeto e JSON |
+| Jackson | API e clientes REST das telas | Conversão entre objeto e JSON |
 | PrimeFaces | Páginas | Campos numéricos, mensagens e botões com AJAX |
 | MVC, *Service Layer*, *Repository* e objeto de requisição (DTO) | Toda a organização em pacotes | Mistura de regra, tela e banco na mesma classe |
 | Injeção de dependência pelo construtor | Classes da API | Acoplamento a implementações concretas |
@@ -167,7 +168,7 @@ veículo ao usuário do token (HU-05, teste 01): o corpo da requisição não di
 BCrypt e o `TokenService` assina o token. E-mail desconhecido e senha errada têm a mesma resposta
 (HU-01, teste 02). O bean guarda o token e o usuário no `UsuarioLogado`, de escopo de sessão.
 
-**Cada chamada.** O `ApiClient` põe o token no cabeçalho `Authorization`. Na API, o `TokenFiltro`
+**Cada chamada.** O cliente REST põe o token no cabeçalho `Authorization`. Na API, o `TokenFiltro`
 valida a assinatura e lê o usuário do banco; o `SegurancaConfig` decide pela rota e pelo perfil.
 Sem token válido a resposta é 401; com perfil errado, 403.
 
@@ -180,7 +181,7 @@ login e quem tem senha provisória à `TrocarSenhaView`, mas é só orientação
 `CARREGAJA_SINDICO_APARTAMENTO`, ele também é morador, com os dois perfis (HU-01, teste 04), e pode ter veículo.
 
 **Recusas.** Toda regra recusada lança `RegraNegocioException`, e o `TratadorDeErros` a devolve como
-`{"mensagem": "..."}`, que o `ApiClient` mostra na tela.
+`{"mensagem": "..."}`, que o cliente REST lê e o bean mostra na tela.
 
 ## 6. Visão de Implantação
 
@@ -235,6 +236,7 @@ validador com mensagem.
 | 25/10/2026 | Projeto dividido em `carregaja-api` e `carregaja-jsf`, no modelo dos exercícios de LP2: camadas `control`, `service`, `repository`, `model` e `view` na API e cliente REST na tela; Modelo de Implantação | A separação de front-end e back-end, antes só nos diagramas, passou a existir no código. A organização segue a da disciplina integrada (RE-02) |
 | 02/11/2026 | Autenticação na API; `ApiClient` e `BeanBase` concentram o que todo cliente REST e todo bean repetiriam; `TratadorDeErros` leva à tela o motivo das recusas | O UC01 e as regras que só a API conhece, como e-mail repetido e vaga ocupada |
 | 26/10/2026 | Pacotes por camada, direto em cada projeto (`br.edu.ifsp.carregaja.control` em vez de `br.edu.ifsp.carregaja.manterveiculo.control`); no Astah, `3.Arquitetura` reduzido a `carregaja-jsf`, `carregaja-api`, `manterveiculo` (diagramas do UC05) e `implantação` | Por caso de uso, cada um dos 12 casos de uso repetiria as cinco camadas. O nome do caso de uso ficou na pasta da página e no pacote dos diagramas |
+| 03/11/2026 | `ApiClient` e `BeanBase` retirados: cada cliente REST faz as próprias chamadas e cada bean mostra as próprias mensagens; `AutenticacaoFilter` reduzido ao login e à senha provisória | Deixar as telas no formato do modelo de LP2. Só há dois clientes REST, porque os demais casos de uso são pela API; o custo aceito é a repetição do código HTTP entre eles |
 
 ## 9. Pendências da Arquitetura
 
