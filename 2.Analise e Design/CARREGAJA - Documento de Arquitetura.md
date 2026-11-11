@@ -1,6 +1,6 @@
 # Documento de Arquitetura
 
-**Versão 1.1**
+**Versão 1.3**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -10,6 +10,8 @@
 |---|---|---|---|
 | 25/10/2026 | 1.0 | Criação do documento. Registra a arquitetura definida e testada com o UC05 (Manter Veículo): API Spring Boot e telas JSF em projetos separados, conforme o modelo das aulas de Linguagem de Programação 2, e o modelo de implantação. | Henrique de Almeida Marangoni Inacio |
 | 26/10/2026 | 1.1 | Pacotes organizados por camada, e não por caso de uso (seções 2.2, 3 e 8). Diagramas do UC05 no pacote `3.Arquitetura::manterveiculo` e implantação em `3.Arquitetura::implantação`. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. Por enquanto, o sistema tem só o UC01 e o UC05. | Henrique de Almeida Marangoni Inacio |
+| 03/11/2026 | 1.3 | Telas simplificadas no modelo de LP2: cada cliente REST faz as próprias chamadas e cada bean mostra as próprias mensagens (seções 4, 5.1 e 8). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -41,7 +43,7 @@ negócio.
 |---|---|
 | CARREGAJA - Visão (v4.1) | 1.Requisitos/ |
 | CARREGAJA - Documento de Requisitos (v1.2) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.1) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | CARREGAJA - Guia de Implementação | 3.Implementacao/ |
 | Código fonte (submódulo `CarregaJA_Implementacao`) | 3.Implementacao/ |
@@ -66,6 +68,8 @@ negócio.
 | **Telas em JSF com PrimeFaces 12**, num Tomcat 9 | Componentes prontos de formulário, mensagem e validação. O Tomcat 9 é o servidor usado na disciplina. |
 | **MySQL 8** | Banco relacional usado na disciplina. As tabelas são geradas pelo JPA (`ddl-auto=update`). |
 | **Pacotes organizados por camada** (`br.edu.ifsp.carregaja.control`, `.service`, `.repository`, `.model`, `.view`), com o nome do caso de uso na pasta da página (`webapp/restricted/manterveiculo`) e no pacote dos diagramas (`3.Arquitetura::manterveiculo`) | Organizar por caso de uso repetiria as mesmas camadas em cada um dos 12 casos de uso. Por camada é a organização dos exercícios de LP2 e do exemplo de arquitetura do professor. O pedido do professor no sprint 3, de o pacote da arquitetura ter o nome do caso de uso, continua atendido na pasta da página e nos diagramas. |
+| **Por enquanto, o sistema tem só o UC01 e o UC05**, cada um com a API e a tela | Decisão do Scrum Master em 03/11/2026, para a apresentação do sprint. Os demais casos do sprint 5 estão prontos e voltam depois dela |
+| **Autenticação por token na API**, com Spring Security e JWT. A API confere e-mail e senha (BCrypt), devolve um token assinado e, a cada requisição, lê do banco o usuário do token | É a API que garante as regras, qualquer que seja o cliente: mesmo chamada sem passar pela tela, ela não deixa um morador agir como síndico nem em nome de outro. Ler o usuário do banco a cada requisição faz a desativação valer na hora (HU-09, teste 04), sem esperar o token vencer |
 | **Validação nos dois lados** | A tela valida para orientar o morador na hora. A API valida de novo porque é ela que garante a regra, qualquer que seja o cliente. |
 
 ### 2.3. Requisitos não funcionais que guiam a arquitetura
@@ -78,6 +82,7 @@ negócio.
 | RE-04 — independente do sistema operacional do cliente (Suportabilidade) | O cliente é só o navegador. |
 | RE-05 — sem integração com os carregadores (Interface) | Não há componente de comunicação com equipamento. |
 | RE-07 — um único condomínio (Funcionalidade) | Um banco e uma implantação por condomínio, sem separação de dados por cliente. |
+| RE-08 — uso identificado (Funcionalidade) | Toda rota, menos a de login, exige o token. O perfil decide o que cada rota aceita (`SegurancaConfig`). |
 | RE-14 — sem orçamento (Projeto) | Só software livre ou gratuito: Spring, PrimeFaces, Tomcat, MySQL Community. |
 | Suportabilidade — parâmetros e não valores fixos (RI-10) | A tarifa e a duração máxima ficam no banco, mantidas pelo síndico, e não no código. Entram na Construção. |
 | Confiabilidade — ações administrativas registradas | Cada entidade administrativa terá responsável e horário gravados, na camada de serviço. Entra na Construção. |
@@ -115,9 +120,10 @@ Nenhuma camada chama a de cima.
 Um caso de uso novo acrescenta classes às camadas que já existem, sem criar pacote novo. Só a
 página ganha uma pasta com o nome do caso de uso.
 
-Diagramas de classes: **Classes do Front-end — UC05** e **Classes do Back-end — UC05**, com todos os
-atributos e as operações públicas de cada classe, nos nomes e tipos do código. As entidades de
-negócio que o UC05 usa estão no diagrama **Classes de Negócio — UC05**, pacote `2.Design`.
+Diagramas de classes: **Classes do Front-end — UC05** e **Classes do Back-end — UC05**, com os atributos e as operações
+públicas de cada classe, nos nomes e tipos do código, sem os acessores que o Lombok gera. As entidades de negócio do UC05 estão em
+**Classes de Negócio — UC05**, e todas as do sistema no **Modelo de Objetos**, pacote `2.Design`. Por decisão de 02/11/2026, o Modelo
+de Arquitetura é só o do UC05, o caso de uso que testou a arquitetura; os demais seguem o mesmo desenho, sem diagrama próprio.
 
 ## 4. Recursos Reutilizados e Padrões
 
@@ -125,16 +131,16 @@ negócio que o UC05 usa estão no diagrama **Classes de Negócio — UC05**, pac
 |---|---|---|
 | Spring Data (`CrudRepository`) | `VeiculoRepository` | Todo o SQL de gravação e consulta |
 | Bean Validation (`@NotBlank`, `@Positive`, `@Valid`) | `VeiculoRequest` da API | Os `if` de validação e a resposta 400 |
-| Lombok (`@Getter`, `@Setter`, `@Slf4j`) | Entidades, requisições e controle | Acessores e declaração de log |
-| Jackson | API e `VeiculoRestClient` | Conversão entre objeto e JSON |
+| Lombok (`@Getter`, `@Setter`) | Entidades e requisições | Acessores |
+| Jackson | API e clientes REST das telas | Conversão entre objeto e JSON |
 | PrimeFaces | Páginas | Campos numéricos, mensagens e botões com AJAX |
 | MVC, *Service Layer*, *Repository* e objeto de requisição (DTO) | Toda a organização em pacotes | Mistura de regra, tela e banco na mesma classe |
 | Injeção de dependência pelo construtor | Classes da API | Acoplamento a implementações concretas |
 
 ## 5. Cenário Significativo: UC05 — Manter Veículo
 
-**Abrir a tela.** O morador abre *Meu veículo*. O `ManterVeiculoBean` pede a lista ao
-`VeiculoRestClient`, que faz `GET /veiculos`. Se já há veículo, os campos vêm preenchidos; se não,
+**Abrir a tela.** O morador abre *Meu veículo*. O `ManterVeiculoBean` pede o veículo ao
+`VeiculoRestClient`, que faz `GET /veiculos/meu`. Se já há veículo, os campos vêm preenchidos; se não,
 vazios.
 
 **Salvar.** O morador informa modelo, capacidade da bateria (kWh) e potência máxima (kW) e clica
@@ -152,9 +158,30 @@ em *Salvar*:
 5. O bean mostra *Veículo cadastrado com sucesso* ou *Veículo alterado com sucesso*. Se a API
    estiver fora do ar ou responder erro, mostra a mensagem do `VeiculoRestClient`.
 
-**Ainda sem login.** Até o UC01 (sprint 5) não há morador identificado: a tela mostra um único
-veículo. A ligação do veículo ao morador e ao apartamento (HU-05, teste 01) entra com a
-autenticação, sem mudar as camadas.
+**Veículo do morador.** Desde o UC01, `GET /veiculos/meu` devolve o veículo de quem chama, e a API liga o
+veículo ao usuário do token (HU-05, teste 01): o corpo da requisição não diz de quem é o veículo.
+
+### 5.1. Autenticação (UC01)
+
+**Entrar.** A página `AutenticarUsuarioView` chama o `AutenticarUsuarioBean`, que pede ao
+`AutenticacaoRestClient` um `POST /autenticacao`. O `AutenticacaoService` confere a senha pelo hash
+BCrypt e o `TokenService` assina o token. E-mail desconhecido e senha errada têm a mesma resposta
+(HU-01, teste 02). O bean guarda o token e o usuário no `UsuarioLogado`, de escopo de sessão.
+
+**Cada chamada.** O cliente REST põe o token no cabeçalho `Authorization`. Na API, o `TokenFiltro`
+valida a assinatura e lê o usuário do banco; o `SegurancaConfig` decide pela rota e pelo perfil.
+Sem token válido a resposta é 401; com perfil errado, 403.
+
+**Senha provisória (RN-11).** Enquanto `trocarSenha` for verdadeiro, o `TokenFiltro` não concede nenhum
+perfil, e só a rota de troca responde. Nas telas, o `AutenticacaoFilter` leva quem não entrou ao
+login e quem tem senha provisória à `TrocarSenhaView`, mas é só orientação: quem garante é a API.
+
+**Primeiro síndico.** Quem cadastra moradores é o síndico, então o primeiro nasce da configuração: o
+`PrimeiroSindicoService` o cria ao subir a API, se ainda não houver nenhum. Com
+`CARREGAJA_SINDICO_APARTAMENTO`, ele também é morador, com os dois perfis (HU-01, teste 04), e pode ter veículo.
+
+**Recusas.** Toda regra recusada lança `RegraNegocioException`, e o `TratadorDeErros` a devolve como
+`{"mensagem": "..."}`, que o cliente REST lê e o bean mostra na tela.
 
 ## 6. Visão de Implantação
 
@@ -167,7 +194,8 @@ Diagrama: **Modelo de Implantação**, pacote `3.Arquitetura::implantação`.
 | Servidor do condomínio → Spring Boot 2.7, com Tomcat embutido | `carregaja-api.war` (API) | 8081 |
 | Servidor do condomínio → MySQL 8.4 | banco `carregaja` | 3306 |
 
-Os três rodam sobre o JRE 21, no mesmo servidor (RE-07). O navegador só fala com o Tomcat 9; a
+Os três rodam sobre o JRE 21, no mesmo servidor (RE-07). A API lê de variáveis de ambiente a senha do
+banco, o segredo do token e os dados do primeiro síndico; nenhum deles fica no versionamento. O navegador só fala com o Tomcat 9; a
 API e o banco não precisam ficar expostos à rede do condomínio. O passo a passo de instalação vai
 para o Guia de Implantação, na Transição.
 
@@ -206,13 +234,13 @@ validador com mensagem.
 | 28/09/2026 | Primeira versão executável: um projeto Spring Boot com as telas JSF embutidas (JoinFaces), em `controller → service → dao → model` | Implementação do UC05 no sprint 3 |
 | 11/10/2026 | Pacote `cadastro` renomeado para `manterveiculo`; diagramas separados em front-end e back-end; classes com os nomes e tipos do código | Apontamentos do professor na apresentação do sprint 3 |
 | 25/10/2026 | Projeto dividido em `carregaja-api` e `carregaja-jsf`, no modelo dos exercícios de LP2: camadas `control`, `service`, `repository`, `model` e `view` na API e cliente REST na tela; Modelo de Implantação | A separação de front-end e back-end, antes só nos diagramas, passou a existir no código. A organização segue a da disciplina integrada (RE-02) |
+| 02/11/2026 | Autenticação na API; `ApiClient` e `BeanBase` concentram o que todo cliente REST e todo bean repetiriam; `TratadorDeErros` leva à tela o motivo das recusas | O UC01 e as regras que só a API conhece, como e-mail repetido e vaga ocupada |
 | 26/10/2026 | Pacotes por camada, direto em cada projeto (`br.edu.ifsp.carregaja.control` em vez de `br.edu.ifsp.carregaja.manterveiculo.control`); no Astah, `3.Arquitetura` reduzido a `carregaja-jsf`, `carregaja-api`, `manterveiculo` (diagramas do UC05) e `implantação` | Por caso de uso, cada um dos 12 casos de uso repetiria as cinco camadas. O nome do caso de uso ficou na pasta da página e no pacote dos diagramas |
+| 03/11/2026 | `ApiClient` e `BeanBase` retirados: cada cliente REST faz as próprias chamadas e cada bean mostra as próprias mensagens; `AutenticacaoFilter` reduzido ao login e à senha provisória | Deixar as telas no formato do modelo de LP2. Só há dois clientes REST, porque os demais casos de uso são pela API; o custo aceito é a repetição do código HTTP entre eles |
 
 ## 9. Pendências da Arquitetura
 
 | Pendência | Quando |
 |---|---|
-| Autenticação e perfis (UC01). Até lá a API não exige credencial; por isso, na implantação ela fica acessível só a partir do próprio servidor | Sprint 5 |
-| Ligar o veículo ao morador e ao apartamento | Sprint 5, com o UC01 |
+| Demais casos de uso do sprint 5 (UC03, UC04, UC07, UC08, UC09), prontos e guardados | Depois da apresentação |
 | Regra da potência efetiva, previsão e apuração (RI-08), isoladas num serviço da API com testes de unidade | Sprint 5 |
-| Erros de validação da API chegam à tela como o corpo da resposta. Hoje a tela valida antes e o caso não ocorre pelo uso normal | Rever quando surgir regra que só a API conhece |
