@@ -254,6 +254,19 @@ quanto será lançado na minha cota antes de recebê-la**.
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (15/11/2026)**
+
+O UC06 foi implementado na API (`GET /consumos/meu`), ainda sem tela. O apartamento é o do morador logado, e o total soma o valor gravado em cada sessão (RN-04), com o mesmo cálculo do UC11. Como a API ainda não encerra sessões, os casos foram conferidos nos testes de unidade.
+
+`mvn test` em `carregaja-api`: 160 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `ConsumoServiceTest.consumoDoMesTrazSessoesETotal` |
+| 02 | Atendido | `ConsumoServiceTest.mesSemSessoesInformaAusencia` |
+| 03 | Atendido: a linha vem com a situação da sessão; o encerramento pelo síndico depende do UC10 | `ConsumoServiceTest.sessaoEncerradaPeloSindicoVemMarcada` |
+| 04 | Atendido: o apartamento sai do token, não da requisição | `ConsumoServiceTest.consultaUsaOApartamentoDoMoradorLogado` |
+
 ---
 
 ## HU-07 — Manter Vagas com Carregador
@@ -409,6 +422,21 @@ possa repassar à administradora os valores a lançar em cada cota condominial**
 | 06 | Total geral para conferência | Após o caso 01 | 157,0 kWh apresentado como total do condomínio |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (15/11/2026)**
+
+O UC11 foi implementado na API (`POST /fechamentos` e `GET /fechamentos/{id}`), ainda sem tela. O fechamento grava o `FechamentoMensal` e um `ItemRateio` por apartamento, e registra o síndico e o horário. Como a API ainda não encerra sessões, os casos foram conferidos nos testes de unidade, e o Postman mostra só as recusas.
+
+`mvn test` em `carregaja-api`: 160 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `FechamentoMensalServiceTest.fecharSetembroGravaResponsavelHorarioETotalGeral` |
+| 02 | Atendido | `FechamentoMensalServiceTest.rateioGravaUmItemPorApartamento` |
+| 03 | Atendido: a recusa lista a vaga, o apartamento e o início de cada sessão aberta | `FechamentoMensalServiceTest.sessaoAbertaNoMesImpedeOFechamento` |
+| 04 | Atendido: só fecha mês que já terminou, e a sessão sempre começa no horário atual | `FechamentoMensalServiceTest.mesQueAindaNaoTerminouERecusado` |
+| 05 | Pendente: depende da tela; o resultado já sai no `GET /fechamentos/{id}` | `FechamentoMensalControllerTest.buscarFechamentoDevolveOsItens` |
+| 06 | Atendido | `FechamentoMensalServiceTest.fecharSetembroGravaResponsavelHorarioETotalGeral` |
 
 ---
 
