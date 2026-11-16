@@ -315,6 +315,25 @@ que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (16/11/2026)**
+
+O UC08 foi implementado na API, ainda sem tela: o síndico cadastra a tarifa em `POST /tarifas` e consulta as anteriores em
+`GET /tarifas`, e qualquer usuário vê a vigente em `GET /tarifas/vigente`. O síndico informa só o valor: a vigência começa na
+data e hora do cadastro, gravada com o responsável, e vai até a próxima (RN-10). A tarifa anterior não é alterada. A sessão
+fixa a tarifa do início (RN-04), e o fechamento grava o valor de cada apartamento, então uma tarifa nova não muda o que já foi
+apurado. Os testes 04 a 06, que dependiam da sessão e do fechamento, foram conferidos também com a API no ar e o MySQL.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `TarifaServiceTest.aVigenciaComecaNoMomentoDoCadastroComOResponsavel`, `TarifaControllerTest.definicaoValidaDevolve201ComAVigencia` |
+| 02 | Atendido | `TarifaControllerTest.valorZeroDevolve400` |
+| 03 | Atendido | `TarifaServiceTest.vigenteEAUltimaCadastradaAteOMomento`, `TarifaControllerTest.sindicoConsultaAsTarifasEMoradorAVigente` |
+| 04 | Atendido | `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio`; com o MySQL, sessão iniciada antes do reajuste para R$ 1,05 apurada a R$ 0,92 |
+| 05 | Atendido | Com o MySQL, sessão iniciada depois do reajuste fixa R$ 1,05 e é apurada a ela |
+| 06 | Atendido | Com o MySQL, mês fechado com R$ 83,78; a R$ 1,10 cadastrada depois, o fechamento consultado de novo segue com R$ 83,78 |
+
 ---
 
 ## HU-09 — Manter Moradores
@@ -344,6 +363,24 @@ modo que **o consumo seja atribuído à unidade correta no rateio**.
 | 05 | Remoção com sessões no período aberto | Remover morador com sessões em setembro não fechado | Recusado, com oferta de desativar |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (16/11/2026)**
+
+O UC09 foi implementado na API (rotas em `/usuarios`), ainda sem tela: o síndico cadastra, altera, desativa, reativa e remove
+moradores. O apartamento é criado quando informado pela primeira vez. Morador é quem tem apartamento; o preposto da
+administradora é síndico sem apartamento. O morador nasce com senha provisória, que troca no primeiro acesso (RN-11), e o
+condomínio não pode ficar sem síndico ativo (RN-12). Desativar vale na hora, mesmo para quem já tinha token, porque o usuário é
+lido do banco a cada requisição. Os testes foram conferidos também com a API no ar e o MySQL.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido: a senha não volta na resposta | `UsuarioServiceTest.cadastroValidoCriaMoradorAtivoComSenhaProvisoria`, `UsuarioControllerTest.cadastroValidoDevolve201SemExporASenha` |
+| 02 | Atendido | `UsuarioServiceTest.emailDuplicadoERecusado` |
+| 03 | Atendido: o consumo do UC06 e o rateio do UC11 somam pelo apartamento | `UsuarioServiceTest.doisMoradoresNoMesmoApartamentoCompartilhamOApartamento`; com o MySQL, os dois ficam no mesmo apartamento |
+| 04 | Atendido: o cadastro e as sessões continuam | `UsuarioServiceTest.desativarMantemOCadastro`, `AutenticacaoControllerTest.tokenDeUsuarioDesativadoDevolve401`; com o MySQL, o token deixa de valer e o login é recusado |
+| 05 | Atendido | `UsuarioServiceTest.moradorComSessoesNaoERemovido`; com o MySQL, a recusa oferece desativar |
 
 ---
 
@@ -440,6 +477,25 @@ vaga**, de modo que **eu possa levar dados à assembleia ao propor a ampliação
 | 06 | Período sem utilização | Julho | Informa ausência de registros |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (16/11/2026)**
+
+O UC12 foi implementado na API, ainda sem tela: `GET /historico?de=&ate=`, só para o síndico, com filtros opcionais por vaga e
+por apartamento. Devolve as horas de ocupação de cada vaga com o percentual do período, a faixa horária de pico, o consumo por
+apartamento e as recusas por vaga e por faixa horária. O período vai até o momento atual, para o percentual não ser diluído por
+dias que ainda não aconteceram. O consumo é o das sessões encerradas no período, como no fechamento do mês. As consultas ao
+banco, que só tinham sido conferidas sem ele, foram conferidas com a API no ar e o MySQL, já com sessões encerradas.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `HistoricoServiceTest.ocupacaoPorVagaDaAsHorasEOPercentualDoPeriodo`; com o MySQL, 6,5 h na G-02 e 7,0 h na G-01 |
+| 02 | Atendido | `HistoricoServiceTest.faixaDePicoEAHoraComMaisOcupacao` |
+| 03 | Atendido | `HistoricoServiceTest.consumoPorApartamentoSomaAEnergiaApurada`; com o MySQL, 41,2 kWh no 17 e 48,0 kWh no 42 |
+| 04 | Atendido | `HistoricoServiceTest.demandaReprimidaContaAsRecusasPorVaga`; com o MySQL, as duas recusas na G-02 |
+| 05 | Atendido | `HistoricoServiceTest.recusasSaoDistribuidasPorFaixaHoraria` |
+| 06 | Atendido | `HistoricoServiceTest.periodoSemUtilizacaoInformaAusenciaDeRegistros`, `HistoricoControllerTest.periodoSemRegistrosDevolve200ComAMensagem` |
 
 ---
 
