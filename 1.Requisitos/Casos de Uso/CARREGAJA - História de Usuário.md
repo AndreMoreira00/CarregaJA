@@ -101,6 +101,22 @@ ocupadas**, de modo que **eu decida se desço agora ou mais tarde, em vez de des
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (15/11/2026)**
+
+O UC02 foi implementado na API (`GET /painel`), ainda sem tela. O estado da vaga não é gravado: deriva da sessão aberta e do horário da consulta, pela mesma regra da sessão (RN-05). Só quem tem o perfil de síndico recebe o apartamento e o nome de quem ocupa a vaga (RF-03). A vaga desativada e sem sessão fica fora do painel, porque não aceita recarga. Sem vaga livre, a liberação mais próxima considera só as vagas ainda dentro do previsto. Os testes 03 e 04 dependem do relógio e foram conferidos nos testes de unidade; os demais também foram conferidos com a API no ar e o MySQL, pelas requisições da coleção do Postman.
+
+`mvn test` em `carregaja-api`: 153 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `PainelVagasServiceTest.vagaSemSessaoFicaLivre` |
+| 02 | Atendido | `PainelVagasServiceTest.sessaoDentroDoPrevistoFicaOcupadaComAPrevisao`, `PainelVagasControllerTest.devolveALivreEAOcupadaComAPrevisao` |
+| 03 | Atendido | `PainelVagasServiceTest.sessaoAlemDaPrevisaoFicaConcluidaAindaOcupada` |
+| 04 | Atendido: a consulta sinaliza a sessão e não a encerra | `PainelVagasServiceTest.sessaoAlemDaDuracaoMaximaFicaExcedidaEContinuaAberta` |
+| 05 | Atendido: o apartamento e o nome nem vão na resposta do morador | `PainelVagasControllerTest.moradorNaoRecebeAIdentificacaoDeQuemOcupa` |
+| 06 | Atendido | `PainelVagasControllerTest.sindicoRecebeOApartamentoEONome` |
+| 07 | Atendido | `PainelVagasServiceTest.semVagaLivreDestacaALiberacaoMaisProxima`, `PainelVagasControllerTest.semVagaLivreDevolveAMensagemEALiberacaoMaisProxima` |
+
 ---
 
 ## HU-03 — Manter Sessão de Recarga
@@ -283,6 +299,20 @@ modo que **o sistema calcule previsões corretas e o painel reflita a garagem re
 | 05 | Remoção com sessão em andamento | Remover G-02 ocupada | Recusado, com oferta de desativar |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (15/11/2026)**
+
+O UC07 foi implementado na API (rotas em `/vagas`), ainda sem tela: o síndico cadastra, altera, desativa, reativa e remove vagas, e o código é único sem diferenciar maiúsculas. A recusa de nova sessão na vaga desativada (teste 04) e a de remoção da vaga com sessões (teste 05) dependem da sessão de recarga (UC03): foram conferidas sobre o código que já tem a sessão, o mesmo do UC02, com 153 testes. Os testes também foram conferidos com a API no ar e o MySQL, pelas requisições da coleção do Postman.
+
+`mvn test` em `carregaja-api`, só com o UC07 sobre o `develop`: 61 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido: a vaga nasce ativa e aparece livre no painel | `VagaServiceTest.cadastroValidoNasceAtivo`, `VagaControllerTest.cadastroValidoDevolve201`, `PainelVagasServiceTest.vagaSemSessaoFicaLivre` |
+| 02 | Atendido: `g-01` é a mesma vaga que `G-01` | `VagaServiceTest.codigoDuplicadoERecusadoMesmoEmMinusculas`, `VagaControllerTest.codigoDuplicadoDevolve409` |
+| 03 | Atendido | `VagaControllerTest.potenciaZeroDevolve400` |
+| 04 | Atendido: a vaga continua gravada, recusa nova sessão e sai do painel enquanto está sem sessão | `VagaServiceTest.desativarMantemAVagaGravada`, `SessaoRecargaServiceTest.vagaDesativadaERecusadaSemContarComoDemanda`, `PainelVagasServiceTest.vagaDesativadaSemSessaoFicaForaDoPainel` |
+| 05 | Atendido: a recusa orienta a desativar a vaga | `VagaServiceTest.vagaComSessoesNaoERemovidaEAMensagemOfereceDesativar` |
 
 ---
 
