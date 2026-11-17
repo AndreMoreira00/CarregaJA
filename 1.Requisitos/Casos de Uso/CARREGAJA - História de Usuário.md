@@ -166,6 +166,38 @@ com sessão em andamento.
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (16/11/2026)**
+
+O UC03 foi implementado na API, ainda sem tela: `POST /sessoes` inicia, `GET /sessoes/minha` mostra a sessão aberta e
+`POST /sessoes/minha/encerrar` encerra, apurando a energia pelo UC04. A potência efetiva, a energia a repor, a previsão e a
+tarifa ficam gravadas no início, então trocar o veículo ou a tarifa depois não muda a sessão (RN-04). A vaga não guarda estado:
+volta a aparecer livre assim que a sessão é encerrada. As corridas (teste 03 no início, e o morador e o síndico encerrando a
+mesma sessão) só aparecem com o banco: foram conferidas com a API no ar e o MySQL, em 10 e 20 rodadas, sempre com um único
+vencedor. Essa conferência achou um defeito que os testes de unidade não mostravam: o morador e o síndico encerrando ao mesmo
+tempo apuravam a sessão duas vezes. A sessão passou a ser lida já com a trava.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `SessaoRecargaServiceTest.inicioEmVagaLivreAbreASessaoComAPrevisao`, `SessaoRecargaControllerTest.inicioValidoDevolve201ComAPrevisao`, `PainelVagasServiceTest.sessaoDentroDoPrevistoFicaOcupadaComAPrevisao` |
+| 02 | Atendido: a recusa fica gravada para o UC12 | `SessaoRecargaServiceTest.vagaOcupadaERecusadaComAPrevisaoEARecusaFicaRegistrada`, `SessaoRecargaControllerTest.vagaOcupadaDevolve409ComAMensagem` |
+| 03 | Atendido | Conferido com o MySQL: dois moradores iniciando na G-02 ao mesmo tempo, 10 rodadas, sempre um 201 e um 409 |
+| 04 | Atendido | `SessaoRecargaServiceTest.vagaDesativadaERecusadaSemContarComoDemanda` |
+| 05 | Atendido | `SessaoRecargaServiceTest.moradorSemVeiculoEEncaminhadoAoCadastro` |
+| 06 | Atendido | `SessaoRecargaServiceTest.moradorComSessaoAbertaERecusado` |
+| 07 | Atendido: a sessão continua aberta | `SessaoRecargaServiceTest.sessaoAbertaAlemDaDuracaoMaximaApareceExcedida`, `ApuracaoEnergiaServiceTest.aoAtingirADuracaoMaximaFicaExcedidaEAberta` |
+| 08 | Atendido | `ApuracaoEnergiaServiceTest.veiculoLimitaAPotencia` |
+| 09 | Atendido | `ApuracaoEnergiaServiceTest.carregadorLimitaAPotencia` |
+| 10 | Atendido | `ApuracaoEnergiaServiceTest.potenciasIguais` |
+| 11 | Atendido | `ApuracaoEnergiaServiceTest.carregadorMaiorNaoAceleraVeiculoLento` |
+| 12 | Atendido | `SessaoRecargaServiceTest.bateriaCheiaInformaQueNaoHaRecargaAFazer`, `ApuracaoEnergiaServiceTest.bateriaCheiaNaoTemEnergiaARepor` |
+| 13 | Atendido | `EncerramentoSessaoServiceTest.encerramentoComTetoDeEnergiaAcionado`; com o MySQL, 28,0 kWh, R$ 25,76 e a vaga livre no painel |
+| 14 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAntesDeCompletarACarga` |
+| 15 | Parcial: a resposta do encerramento traz a duração, a energia e o valor; falta a tela | `EncerramentoSessaoServiceTest.encerramentoDevolveDuracaoEnergiaEValor`, `SessaoRecargaControllerTest.moradorEncerraASuaEVeDuracaoEnergiaEValor` |
+| 16 | Atendido | `EncerramentoSessaoServiceTest.semSessaoAbertaInformaQueNaoHaOQueEncerrar`, `SessaoRecargaControllerTest.encerrarSemSessaoAbertaDevolve404ComAMensagem` |
+| 17 | Atendido: a tarifa vigente nem é consultada no encerramento | `EncerramentoSessaoServiceTest.tarifaAlteradaDuranteASessaoNaoMudaOValor`, `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio` |
+
 ---
 
 ## HU-04 — Apurar Energia da Sessão
@@ -196,6 +228,22 @@ contestado**.
 | 05 | Duração nula | Início e encerramento no mesmo minuto | 0,0 kWh; R$ 0,00 |
 
 **Tem protótipo?** Não se aplica — não possui interface própria.
+
+**Situação da implementação (16/11/2026)**
+
+O UC04 não tem rota própria: é o `ApuracaoEnergiaService`, chamado no encerramento pelo morador (UC03) e pelo síndico (UC10), e
+as regras RN-01 a RN-05 ficam nele, sem banco nem tela, testadas isoladamente (RI-08). A apuração usa só o que a sessão gravou
+no início e conta minutos inteiros.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `ApuracaoEnergiaServiceTest.tetoDeEnergiaNaoAcionado` |
+| 02 | Atendido | `ApuracaoEnergiaServiceTest.tetoDeEnergiaAcionado` |
+| 03 | Atendido | `ApuracaoEnergiaServiceTest.tetoAcionadoEmSessaoOrfaLonga`; com o MySQL, no encerramento administrativo |
+| 04 | Atendido | `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio` |
+| 05 | Atendido | `ApuracaoEnergiaServiceTest.duracaoNulaNoMesmoMinuto` |
 
 ---
 
@@ -269,6 +317,19 @@ quanto será lançado na minha cota antes de recebê-la**.
 | 04 | Morador não vê consumo alheio | Morador do apto 42 consulta | Apenas as sessões do apartamento 42 |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (15/11/2026)**
+
+O UC06 foi implementado na API (`GET /consumos/meu`), ainda sem tela. O apartamento é o do morador logado, e o total soma o valor gravado em cada sessão (RN-04), com o mesmo cálculo do UC11. Como a API ainda não encerra sessões, os casos foram conferidos nos testes de unidade.
+
+`mvn test` em `carregaja-api`: 160 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `ConsumoServiceTest.consumoDoMesTrazSessoesETotal` |
+| 02 | Atendido | `ConsumoServiceTest.mesSemSessoesInformaAusencia` |
+| 03 | Atendido: a linha vem com a situação da sessão; o encerramento pelo síndico depende do UC10 | `ConsumoServiceTest.sessaoEncerradaPeloSindicoVemMarcada` |
+| 04 | Atendido: o apartamento sai do token, não da requisição | `ConsumoServiceTest.consultaUsaOApartamentoDoMoradorLogado` |
 
 ---
 
@@ -345,6 +406,25 @@ que **o que é cobrado dos moradores acompanhe a conta de luz da área comum**.
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (16/11/2026)**
+
+O UC08 foi implementado na API, ainda sem tela: o síndico cadastra a tarifa em `POST /tarifas` e consulta as anteriores em
+`GET /tarifas`, e qualquer usuário vê a vigente em `GET /tarifas/vigente`. O síndico informa só o valor: a vigência começa na
+data e hora do cadastro, gravada com o responsável, e vai até a próxima (RN-10). A tarifa anterior não é alterada. A sessão
+fixa a tarifa do início (RN-04), e o fechamento grava o valor de cada apartamento, então uma tarifa nova não muda o que já foi
+apurado. Os testes 04 a 06, que dependiam da sessão e do fechamento, foram conferidos também com a API no ar e o MySQL.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `TarifaServiceTest.aVigenciaComecaNoMomentoDoCadastroComOResponsavel`, `TarifaControllerTest.definicaoValidaDevolve201ComAVigencia` |
+| 02 | Atendido | `TarifaControllerTest.valorZeroDevolve400` |
+| 03 | Atendido | `TarifaServiceTest.vigenteEAUltimaCadastradaAteOMomento`, `TarifaControllerTest.sindicoConsultaAsTarifasEMoradorAVigente` |
+| 04 | Atendido | `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio`; com o MySQL, sessão iniciada antes do reajuste para R$ 1,05 apurada a R$ 0,92 |
+| 05 | Atendido | Com o MySQL, sessão iniciada depois do reajuste fixa R$ 1,05 e é apurada a ela |
+| 06 | Atendido | Com o MySQL, mês fechado com R$ 83,78; a R$ 1,10 cadastrada depois, o fechamento consultado de novo segue com R$ 83,78 |
+
 ---
 
 ## HU-09 — Manter Moradores
@@ -374,6 +454,24 @@ modo que **o consumo seja atribuído à unidade correta no rateio**.
 | 05 | Remoção com sessões no período aberto | Remover morador com sessões em setembro não fechado | Recusado, com oferta de desativar |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (16/11/2026)**
+
+O UC09 foi implementado na API (rotas em `/usuarios`), ainda sem tela: o síndico cadastra, altera, desativa, reativa e remove
+moradores. O apartamento é criado quando informado pela primeira vez. Morador é quem tem apartamento; o preposto da
+administradora é síndico sem apartamento. O morador nasce com senha provisória, que troca no primeiro acesso (RN-11), e o
+condomínio não pode ficar sem síndico ativo (RN-12). Desativar vale na hora, mesmo para quem já tinha token, porque o usuário é
+lido do banco a cada requisição. Os testes foram conferidos também com a API no ar e o MySQL.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido: a senha não volta na resposta | `UsuarioServiceTest.cadastroValidoCriaMoradorAtivoComSenhaProvisoria`, `UsuarioControllerTest.cadastroValidoDevolve201SemExporASenha` |
+| 02 | Atendido | `UsuarioServiceTest.emailDuplicadoERecusado` |
+| 03 | Atendido: o consumo do UC06 e o rateio do UC11 somam pelo apartamento | `UsuarioServiceTest.doisMoradoresNoMesmoApartamentoCompartilhamOApartamento`; com o MySQL, os dois ficam no mesmo apartamento |
+| 04 | Atendido: o cadastro e as sessões continuam | `UsuarioServiceTest.desativarMantemOCadastro`, `AutenticacaoControllerTest.tokenDeUsuarioDesativadoDevolve401`; com o MySQL, o token deixa de valer e o login é recusado |
+| 05 | Atendido | `UsuarioServiceTest.moradorComSessoesNaoERemovido`; com o MySQL, a recusa oferece desativar |
 
 ---
 
@@ -409,6 +507,25 @@ fisicamente** que o veículo já não está na vaga.
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (16/11/2026)**
+
+O UC10 foi implementado na API, ainda sem tela: o síndico vê as sessões abertas, das mais antigas para as mais novas, com o
+apartamento, o morador e o estado de cada uma, em `GET /sessoes/abertas`, e encerra a órfã em
+`POST /sessoes/{id}/encerrar-administrativamente`. A sessão fica marcada como administrativa e guarda o síndico; o horário é o
+fim dela (RF-15). A pré-condição virou regra: a API recusa o encerramento administrativo antes da previsão de conclusão, quando
+a recarga ainda pode estar acontecendo, e aí só o morador encerra (RN-07). O sistema não sabe se o veículo saiu da vaga (RE-05),
+então a confirmação na garagem continua sendo do síndico. Os testes foram conferidos também com a API no ar e o MySQL.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAdministrativoApuraComOTeto`; com o MySQL, sessão recuada 7 h: 48,0 kWh e R$ 44,16 |
+| 02 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAdministrativoRegistraOSindicoEOHorario`, `SessaoRecargaControllerTest.sindicoEncerraAOrfaEFicaRegistrado`; no MySQL, o síndico e o fim gravados na sessão |
+| 03 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAdministrativoApuraComOTeto` |
+| 04 | Atendido | `ConsumoServiceTest.sessaoEncerradaPeloSindicoVemMarcada`; com o MySQL, a linha aparece em `GET /consumos/meu` |
+| 05 | Atendido: o morador também não vê a lista das sessões abertas | `SessaoRecargaControllerTest.moradorNaoEncerraSessaoDeTerceiroNemVeAsAbertas` |
+
 ---
 
 ## HU-11 — Fechar Mês e Gerar Rateio
@@ -440,6 +557,21 @@ possa repassar à administradora os valores a lançar em cada cota condominial**
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (15/11/2026)**
+
+O UC11 foi implementado na API (`POST /fechamentos` e `GET /fechamentos/{id}`), ainda sem tela. O fechamento grava o `FechamentoMensal` e um `ItemRateio` por apartamento, e registra o síndico e o horário. Como a API ainda não encerra sessões, os casos foram conferidos nos testes de unidade, e o Postman mostra só as recusas.
+
+`mvn test` em `carregaja-api`: 160 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `FechamentoMensalServiceTest.fecharSetembroGravaResponsavelHorarioETotalGeral` |
+| 02 | Atendido | `FechamentoMensalServiceTest.rateioGravaUmItemPorApartamento` |
+| 03 | Atendido: a recusa lista a vaga, o apartamento e o início de cada sessão aberta | `FechamentoMensalServiceTest.sessaoAbertaNoMesImpedeOFechamento` |
+| 04 | Atendido: só fecha mês que já terminou, e a sessão sempre começa no horário atual | `FechamentoMensalServiceTest.mesQueAindaNaoTerminouERecusado` |
+| 05 | Pendente: depende da tela; o resultado já sai no `GET /fechamentos/{id}` | `FechamentoMensalControllerTest.buscarFechamentoDevolveOsItens` |
+| 06 | Atendido | `FechamentoMensalServiceTest.fecharSetembroGravaResponsavelHorarioETotalGeral` |
+
 ---
 
 ## HU-12 — Consultar Histórico de Utilização
@@ -470,6 +602,25 @@ vaga**, de modo que **eu possa levar dados à assembleia ao propor a ampliação
 | 06 | Período sem utilização | Julho | Informa ausência de registros |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (16/11/2026)**
+
+O UC12 foi implementado na API, ainda sem tela: `GET /historico?de=&ate=`, só para o síndico, com filtros opcionais por vaga e
+por apartamento. Devolve as horas de ocupação de cada vaga com o percentual do período, a faixa horária de pico, o consumo por
+apartamento e as recusas por vaga e por faixa horária. O período vai até o momento atual, para o percentual não ser diluído por
+dias que ainda não aconteceram. O consumo é o das sessões encerradas no período, como no fechamento do mês. As consultas ao
+banco, que só tinham sido conferidas sem ele, foram conferidas com a API no ar e o MySQL, já com sessões encerradas.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `HistoricoServiceTest.ocupacaoPorVagaDaAsHorasEOPercentualDoPeriodo`; com o MySQL, 6,5 h na G-02 e 7,0 h na G-01 |
+| 02 | Atendido | `HistoricoServiceTest.faixaDePicoEAHoraComMaisOcupacao` |
+| 03 | Atendido | `HistoricoServiceTest.consumoPorApartamentoSomaAEnergiaApurada`; com o MySQL, 41,2 kWh no 17 e 48,0 kWh no 42 |
+| 04 | Atendido | `HistoricoServiceTest.demandaReprimidaContaAsRecusasPorVaga`; com o MySQL, as duas recusas na G-02 |
+| 05 | Atendido | `HistoricoServiceTest.recusasSaoDistribuidasPorFaixaHoraria` |
+| 06 | Atendido | `HistoricoServiceTest.periodoSemUtilizacaoInformaAusenciaDeRegistros`, `HistoricoControllerTest.periodoSemRegistrosDevolve200ComAMensagem` |
 
 ---
 
