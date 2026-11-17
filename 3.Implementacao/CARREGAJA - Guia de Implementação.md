@@ -1,6 +1,6 @@
 # Guia de Implementação
 
-**Versão 1.4**
+**Versão 1.5**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -13,6 +13,7 @@
 | 30/10/2026 | 1.2 | Indentação como o código está hoje (seção 4) e resultado dos testes (seção 6). | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.4 | Bean e cliente REST no formato do modelo de LP2, sem `BeanBase` e sem `ApiClient` (seção 5.2), e rotas sem registro de log (seção 5.1). | Henrique de Almeida Marangoni Inacio |
+| 17/11/2026 | 1.5 | Telas em HTML, CSS e JavaScript simples dentro da API, no lugar do JSF (seções 2, 3, 4, 5.2, 6 e 7). Pacotes por caso de uso dentro de cada camada (seção 3). Segurança por rota e resultado dos testes (277). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -20,8 +21,7 @@
 
 Este guia diz como implementar um caso de uso do CARREGAJA de modo que o código siga o Modelo de
 Arquitetura: onde cada classe fica, como se chama, o que cada camada pode fazer, como testar e
-como entregar. O exemplo de referência é o **UC05 — Manter Veículo**, já implementado. Na dúvida,
-copie o que ele faz.
+como entregar. O exemplo de referência é o **UC05 — Manter Veículo**. Na dúvida, copie o que ele faz.
 
 O SpinOff prevê o Guia de Implementação em `3.Implementacao/`, mas não oferece template. O guia
 segue o leiaute do template do Visão.
@@ -30,57 +30,69 @@ segue o leiaute do template do Visão.
 
 | Documento | Origem |
 |---|---|
-| CARREGAJA - Documento de Arquitetura (v1.2) | 2.Analise e Design/ |
+| CARREGAJA - Documento de Arquitetura (v1.4) | 2.Analise e Design/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
-| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
 | README do código fonte (como rodar) | 3.Implementacao/CarregaJA_Implementacao/ |
-| Exercícios de API e JSF de Linguagem de Programação 2 | Disciplina integrada (RE-02) |
+| Exercícios de API de Linguagem de Programação 2 | Disciplina integrada (RE-02) |
 
 ## 2. Ambiente
 
 | Ferramenta | Versão |
 |---|---|
 | Java (JDK) | 21 |
-| Maven | 3.9, ou o `mvnw` de cada projeto |
+| Maven | 3.9, ou o `mvnw` do projeto |
 | MySQL | 8 (8.4 testado), local ou em contêiner |
-| Tomcat | 9 (o front-end usa a linha `javax.*`) |
+| Navegador | Chrome ou outro atual, para as telas |
 | IDE | Livre: Eclipse, IntelliJ ou VS Code com o pacote Java |
+
+Não há servidor de aplicação: a API leva o Tomcat embutido e serve as telas.
 
 A senha do `root` do MySQL (`MYSQL_SENHA`), o segredo do token (`CARREGAJA_JWT_SEGREDO`) e os dados do
 primeiro síndico (`CARREGAJA_SINDICO_EMAIL`, `CARREGAJA_SINDICO_SENHA`, `CARREGAJA_SINDICO_APARTAMENTO`) vão em variáveis de ambiente,
-nunca no `application.properties`. O passo a passo para subir a API e as telas está no README do
-código.
+nunca no `application.properties`. No Windows, a pasta `scripts/` sobe tudo (`iniciar-tudo.bat`) com os valores de
+`scripts/config.bat`, que o git ignora. O passo a passo está no README do código.
 
 ## 3. Estrutura do Código
 
-O repositório `CarregaJA_Implementacao` tem dois projetos Maven:
+O repositório `CarregaJA_Implementacao` tem um projeto Maven, o `carregaja-api`, na porta 8081, que
+serve a API REST e as telas:
 
 ```
-carregaja-api/   back-end: API REST (Spring Boot 2.7), porta 8081
-carregaja-jsf/   front-end: telas JSF + PrimeFaces, no Tomcat 9, porta 8080
+carregaja-api/src/main/java/br/edu/ifsp/carregaja/     back-end (API REST, Spring Boot 2.7)
+carregaja-api/src/main/resources/static/               front-end (telas em HTML, CSS e JavaScript)
 ```
 
-**Um pacote por camada**, direto em `br.edu.ifsp.carregaja`, como nos exercícios de LP2. Um caso
-de uso novo acrescenta classes às camadas que já existem, sem criar pacote. O nome do caso de uso
-aparece só na pasta da página, em minúsculas e sem espaço: UC05 *Manter Veículo* é
-`manterveiculo`; UC07 *Manter Vagas com Carregador* será `mantervagas`; UC03 *Manter Sessão de
-Recarga* será `mantersessao`.
+**Um pacote por camada e, dentro dela, um por caso de uso**, com o nome do caso de uso do Astah em
+minúsculas e sem espaço: UC05 *Manter Veículo* é `manterveiculo`; UC07 *Manter Vagas com Carregador*
+é `mantervagas`; UC03 *Manter Sessão de Recarga* é `mantersessaorecarga`. Um caso de uso novo ganha
+uma pasta em cada camada que usa, e não um pacote novo de camada.
 
-| Projeto | Pacote | Conteúdo |
-|---|---|---|
-| `carregaja-api` | `br.edu.ifsp.carregaja.control` | Rotas REST |
-| | `br.edu.ifsp.carregaja.service` | Regras de negócio |
-| | `br.edu.ifsp.carregaja.repository` | Interfaces do Spring Data |
-| | `br.edu.ifsp.carregaja.model` | Entidades JPA |
-| | `br.edu.ifsp.carregaja.view` | Dados de entrada, com validação, e respostas que não são uma entidade |
-| `carregaja-jsf` | `br.edu.ifsp.carregaja.controller` | Beans JSF |
-| | `br.edu.ifsp.carregaja.service` | Cliente REST da API |
-| | `br.edu.ifsp.carregaja.model` | Dados da tela e corpos das requisições |
-| | `webapp/restricted/<caso>/` | Páginas XHTML do caso de uso. Só o login fica fora de `restricted`, em `webapp/autenticarusuario/` |
+| Pacote (em `br.edu.ifsp.carregaja`) | Conteúdo |
+|---|---|
+| `control.<caso de uso>` | Rotas REST |
+| `service.<caso de uso>` | Regras de negócio |
+| `repository.<caso de uso>` | Interfaces do Spring Data |
+| `model.<caso de uso>` | Entidades JPA |
+| `view.<caso de uso>` | Dados de entrada, com validação, e respostas que não são uma entidade |
+| `compartilhado` (dentro de `repository` e `model`) | O que mais de um caso de uso usa: `Usuario`, `Vaga`, `Veiculo`, `SessaoRecarga`, `Apartamento` e os repositórios deles |
+| raiz de cada camada | O que é de todos: `TratadorDeErros`, `RegraNegocioException`, `ErroResponse` |
 
-No Astah, as classes ficam em `3.Arquitetura::carregaja-api` e `3.Arquitetura::carregaja-jsf`, nas
-mesmas camadas. Os diagramas são os do UC05, em `3.Arquitetura::manterveiculo`, sem os acessores do Lombok; os demais
-casos de uso seguem o mesmo desenho, sem diagrama próprio.
+O UC04 (*Apurar Energia da Sessão*) não tem rota: é o `service.apurarenergia.ApuracaoEnergiaService`.
+O UC10 usa o `SessaoRecargaController` e o `SessaoRecargaService`, do `mantersessaorecarga`.
+
+As telas seguem a mesma divisão, em `static`:
+
+| Pasta ou arquivo | Conteúdo |
+|---|---|
+| `<caso de uso>/<tela>.html` e `<tela>.js` | A página e o script dela, lado a lado (ex.: `manterveiculo/veiculo.html` e `veiculo.js`). Só o login e a troca de senha ficam em `autenticarusuario/` |
+| `js/comum.js` | O que todas as telas usam |
+| `css/estilo.css` | O estilo de todas as telas |
+| `index.html` | Decide para onde ir: o painel, se há login, ou o login |
+
+No Astah, as classes ficam em `3.Arquitetura::carregaja-api`, nas mesmas camadas. Cada caso de uso tem os
+diagramas de classes do front-end e do back-end em `3.Arquitetura::<caso de uso>` (o UC05, em
+`manterveiculo`, também tem os de pacotes), sem os acessores do Lombok.
 
 ## 4. Nomes
 
@@ -92,9 +104,8 @@ casos de uso seguem o mesmo desenho, sem diagrama próprio.
 | Entidade | `<Entidade>` | `Veiculo` |
 | Dados de entrada | `<Entidade>Request` | `VeiculoRequest` |
 | Resposta que não é uma entidade | `<Entidade>Response` | `AutenticacaoResponse` |
-| Bean JSF | `Manter<Entidade>Bean` (ou o verbo do caso de uso) | `ManterVeiculoBean` |
-| Página | `Manter<Entidade>View.xhtml` | `ManterVeiculoView.xhtml` |
-| Cliente REST | `<Entidade>RestClient` | `VeiculoRestClient` |
+| Página | `<caso de uso>/<tela>.html` | `manterveiculo/veiculo.html` |
+| Script da página | `<caso de uso>/<tela>.js` | `manterveiculo/veiculo.js` |
 | Caminho da rota | substantivo no plural, minúsculo | `/veiculos` |
 
 Classes, métodos, atributos e mensagens em **português**, como no modelo: `criar`, `listarTodos`,
@@ -102,8 +113,9 @@ Classes, métodos, atributos e mensagens em **português**, como no modelo: `cri
 Code Conventions) valem para o resto: classes em `PascalCase`, métodos e atributos em `camelCase`,
 constantes em `MAIUSCULAS_COM_SUBLINHADO`.
 
-**Indentação.** Dois espaços nos dois projetos, em Java, XHTML e XML, com `catch` e `else` na linha do
-fecha-chaves. O `.editorconfig` na raiz do repositório avisa a IDE; não há verificador automático.
+**Indentação.** Dois espaços em Java, XML, HTML, CSS e JavaScript, com `catch` e `else` na linha do
+fecha-chaves. O `.editorconfig` na raiz do repositório avisa a IDE para Java e XML; não há verificador
+automático.
 
 ## 5. O Que Cada Camada Faz
 
@@ -113,13 +125,15 @@ fecha-chaves. O `.editorconfig` na raiz do repositório avisa a IDE; não há ve
 status: `201` com `Location` ao criar, `200` ao consultar e alterar, `204` ao remover, `404`
 quando o id não existe. **Não tem regra de negócio.** O usuário logado chega por
 `@AuthenticationPrincipal Usuario`. **Rota nova precisa de regra em
-`SegurancaConfig`**, dizendo qual perfil a usa.
+`SegurancaConfig`**, dizendo qual perfil a usa, e de uma linha no `PermissoesPorPerfilTest`. A regra usa
+`mvcMatchers`, e não `antMatchers`, para a barra no fim do endereço não cair numa regra mais frouxa.
 
 **`service` — regras.** Toda regra de negócio fica aqui: cálculos, verificações entre entidades,
 situações da sessão. Devolve `Optional` quando o registro pode não existir, em vez de `null`. Para recusar, lança
 `RegraNegocioException` com o status e a mensagem que o usuário vai ler; o `TratadorDeErros` a responde.
-**A regra da potência efetiva (RN-01) e a apuração (RN-02, RN-03) ficam num serviço próprio, com
-testes de unidade** (RI-08).
+**A regra da potência efetiva (RN-01) e a apuração (RN-02, RN-03) ficam num serviço próprio, o
+`ApuracaoEnergiaService`, com testes de unidade** (RI-08). Regra que depende de duas requisições ao mesmo
+tempo (vaga ocupada, encerramento duplicado) precisa de trava e de teste com o banco: ver a seção 6.
 
 **`repository` — banco.** Só interfaces que estendem `CrudRepository<Entidade, Long>`. Consulta
 nova é método derivado do nome (`findByAtivoTrue`), sem SQL escrito à mão enquanto der.
@@ -136,21 +150,18 @@ no corpo: vem na rota.
 
 ### 5.2. Front-end
 
-**Página.** Usa o leiaute `/WEB-INF/template/LayoutPadrao.xhtml` e define o bloco `corpo`. Campos
-com `required="true"` e `requiredMessage`; limites numéricos com `<f:validateDoubleRange>` e
-`validatorMessage`. **Não usar `minValue` do `p:inputNumber` como validação**: ele corrige o valor
-em silêncio em vez de recusar (defeito encontrado no teste do UC05).
+**Página.** Um arquivo HTML com `viewport` para o celular, o `css/estilo.css` e o `js/comum.js`, e o
+script da própria tela no fim. Campos com `required` e, nos numéricos, `min`; a API valida de novo.
+O conteúdo vai dentro de `<main>`, e a cor dos botões e das situações vem das classes `secundario`,
+`perigo` e `selo`.
 
-**Bean.** `@Named @ViewScoped`, implementa `Serializable` e tem os próprios métodos privados de mensagem
-(`informar`, `reclamar`), como no modelo de LP2. Carrega os dados no `inicializar()`, chamado por
-`<f:event type="preRenderView">`, e não em postback. Trata a `ApiException` do cliente REST. Não chama a
-API diretamente: passa pelo cliente REST. **Página nova** entra no menu (`Header.xhtml`). Se for de um
-perfil só, o menu a esconde com `rendered` e quem garante o perfil é a API.
+**Script da tela.** Não usa framework nem `import`. Busca os dados com `api('GET', '/veiculos/meu')`, que já
+põe o token no cabeçalho `Authorization` e transforma toda resposta fora de 2xx em erro com a mensagem que a
+API mandou, e mostra o resultado com `aviso(...)`. Não tem regra de negócio: quem decide é a API. Texto vindo
+da API passa por `esc(...)` antes de entrar no HTML.
 
-**Cliente REST.** `@ApplicationScoped`, um por recurso da API, como o `VeiculoRestClient`. Monta cada
-requisição, com o endereço da API (propriedade `carregaja.api.url`, com `http://localhost:8081` como
-padrão) e o token do `UsuarioLogado`, e transforma toda resposta fora de 2xx em `ApiException`, com a
-mensagem que a API mandou.
+**Tela nova** entra no menu, em `js/comum.js`. Se for de um perfil só, o menu a esconde, mas quem garante o
+perfil é a API.
 
 ### 5.3. Regras para os dois lados
 
@@ -170,15 +181,20 @@ mensagem que a API mandou.
 | Serviço | JUnit com o repositório simulado (`Mockito.mock`). Uma verificação por regra de negócio | `VeiculoServiceTest` |
 
 Os testes de aceitação da História de Usuário viram testes com o mesmo número no comentário
-(`// HU-05, teste 02`). Os testes não usam banco: rodam com `mvn test` em `carregaja-api` sem o
-MySQL ligado. O teste de ponta a ponta, com banco, API e telas, segue o README e, na Transição, o
-Roteiro de Teste.
+(`// HU-05, teste 02`). Os testes de unidade não usam banco: rodam com `mvn test` em `carregaja-api` sem o
+MySQL ligado. O `PermissoesPorPerfilTest` confere, rota a rota, o que morador e síndico podem usar.
 
-**Resultado em 03/11/2026** (`mvn test` em `carregaja-api`, com o UC01 e o UC05): 45 testes, 0 falhas, 0 erros.
+**Regra com concorrência precisa de teste com o banco.** Dois moradores abriram sessão na mesma vaga com
+todos os testes de unidade passando, porque a leitura dos perfis abria a foto do `REPEATABLE_READ` antes da trava
+da vaga. A correção foi `READ_COMMITTED` em `SessaoRecargaService.iniciar`. Por isso, o que a coleção e os
+testes de unidade não mostram se confere com o MySQL e a API no ar.
 
-**De ponta a ponta, com MySQL, API e telas, em 03/11/2026:** a coleção do Postman executou 18 requisições e 34 verificações,
-sem falha. Nas telas, em Chrome: login recusado, senha provisória, troca de senha, cadastro e alteração do veículo, recusas,
-saída e a tela no tamanho de celular, sem erro no console.
+**Resultado em 17/11/2026** (`mvn test` em `carregaja-api`, com os 12 casos de uso): **277 testes, 0 falhas,
+0 erros.**
+
+**De ponta a ponta, com MySQL, API e telas:** a coleção do Postman (`carregaja-api/CarregaJA.postman_collection.json`,
+rodada depois de `scripts\zerar-banco.bat`) executou 108 requisições e 223 verificações, sem falha. Nas telas, em Chrome,
+54 fluxos clicados nos 12 casos de uso, sem falha (conferência de 16/11/2026).
 
 ## 7. Como Entregar
 
@@ -186,7 +202,7 @@ saída e a tela no tamanho de celular, sem erro no console.
 2. Criar o branch a partir da issue, saindo do `develop`: `<número>-feature-<descrição>`.
 3. Implementar seguindo este guia, com commits pequenos e mensagem no imperativo, em português,
    dizendo o que muda (ex.: *Recusa veículo com o modelo em branco*).
-4. Rodar `mvn test` em `carregaja-api` e `mvn package` em `carregaja-jsf`: os dois sem erro.
+4. Rodar `mvn test` em `carregaja-api`, sem erro, e passar pela tela no navegador.
 5. Abrir o Pull Request para o `develop` com o template do repositório, pedindo revisão de outro
    integrante. Quem não tem permissão de escrita entrega pelo próprio *fork*.
 6. Se o caso de uso mudou um diagrama, atualizar o `.asta` no repositório `CarregaJA`, numa PR
@@ -194,9 +210,10 @@ saída e a tela no tamanho de celular, sem erro no console.
 
 **Antes de pedir revisão:**
 
-- [ ] Classes nas camadas da seção 3, página na pasta do caso de uso e nomes da seção 4
-- [ ] Nenhuma regra de negócio no controle nem no bean
+- [ ] Classes nas camadas da seção 3, com a pasta do caso de uso, e nomes da seção 4
+- [ ] Nenhuma regra de negócio no controle nem no script da tela
 - [ ] Validação na tela e na API
+- [ ] Rota nova em `SegurancaConfig` e no `PermissoesPorPerfilTest`
 - [ ] Testes do controle e do serviço, passando
 - [ ] README atualizado se mudou o jeito de rodar
-- [ ] Diagramas do UC05 atualizados, se as classes dele mudaram
+- [ ] Diagramas de classes do caso de uso atualizados, se as classes dele mudaram

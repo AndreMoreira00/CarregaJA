@@ -1,6 +1,6 @@
 # Visão
 
-**Versão 4.1**
+**Versão 4.2**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -14,6 +14,7 @@
 | 31/08/2026 | 3.1 | Revisão geral e condensação do texto. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 4.0 | Documento reduzido a uma visão geral, conforme a apresentação da Iniciação. O detalhamento de problemas, restrições, riscos e limitações passou para o Documento de Requisitos. Seções 2 a 6 reescritas. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 4.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
+| 17/11/2026 | 4.2 | Referências aos demais documentos atualizadas (Documento de Requisitos v1.4, História de Usuário v4.4); a duração máxima é ajustada na configuração, e não pelo síndico (RF-18); glossário do painel com as quatro situações. Sem mudança de escopo. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -38,13 +39,13 @@ energia que ele de fato consumiu.
 | Termo | Definição |
 |---|---|
 | Apartamento | Unidade autônoma do condomínio. É a ele que o consumo é atribuído no rateio. |
-| Duração Máxima de Sessão | Tempo limite de uma sessão: 6 horas por padrão, ajustável pelo síndico. Atingido o limite, a sessão é sinalizada como excedida, mas não é encerrada. |
+| Duração Máxima de Sessão | Tempo limite de uma sessão: 6 horas por padrão, ajustável na configuração do sistema (sem tela, RF-18). Atingido o limite, a sessão é sinalizada como excedida, mas não é encerrada. |
 | Energia Estimada | Energia atribuída a uma sessão: potência efetiva × duração, limitada à energia que faltava na bateria. |
 | Fechamento do Mês | Consolidação, pelo síndico, das sessões do mês por apartamento. Depois dele o período não aceita alterações. |
 | kW e kWh | Unidades de potência e de energia. A concessionária cobra o condomínio em kWh. |
 | Morador | Condômino ou residente autorizado, com login, vinculado a um apartamento. |
 | Nível de Bateria | Percentual de carga informado pelo morador ao iniciar a sessão. |
-| Painel de Vagas | Tela com a situação de cada vaga (livre, ocupada ou excedida) e a previsão de liberação das ocupadas. |
+| Painel de Vagas | Tela com a situação de cada vaga (livre, ocupada, concluída e ainda ocupada, ou excedida) e a previsão de liberação das ocupadas. |
 | Potência Efetiva | O menor valor entre a potência do carregador e a potência máxima aceita pelo veículo. |
 | Rateio | Distribuição do custo da energia entre os apartamentos, proporcional ao consumo de cada um. |
 | Sessão de Recarga | Uso de uma vaga por um veículo, do início ao encerramento declarados pelo morador. |
@@ -59,8 +60,8 @@ energia que ele de fato consumiu.
 | Documento | Origem |
 |---|---|
 | SpinOff - Processo de Desenvolvimento de Sistemas | http://arum.tec.br/SpinOff/index.htm |
-| CARREGAJA - Documento de Requisitos (v1.0) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.0) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - Documento de Requisitos (v1.4) | 1.Requisitos/ |
+| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | CARREGAJA - Planejamento e Controle do Projeto | 6.Gerenciamento de Projeto/ |
 
@@ -148,7 +149,7 @@ Owner representa o cliente (RE-16).
 | RI-07 | Requisitos validados só internamente (RE-16). | Premissas registradas e validação pelo Product Owner. |
 | RI-08 | Cálculo de previsão e de apuração mais complexo que o esperado. | Atacado no início da Construção (sprint 5), sobre a arquitetura já testada com o UC05. |
 | RI-09 | Nova mudança de escopo. | Toda alteração passa por issue, com análise de impacto do Product Owner. |
-| RI-10 | Limite de 6 horas insuficiente para carregadores lentos. | Limite configurável pelo síndico. |
+| RI-10 | Limite de 6 horas insuficiente para carregadores lentos. | Limite configurável na configuração do sistema, sem tela para o síndico (RF-18). |
 | RI-11 | Dois moradores disputando a mesma vaga recém-liberada. | Aceito: a demanda reprimida é medida e levada à assembleia. |
 
 ## 6. Requisitos de Documentação
