@@ -74,6 +74,43 @@ cd CarregaJA
 git submodule update --init --recursive
 ```
 
+## Situação em 16/11/2026
+
+Os 12 casos de uso estão prontos, com API, testes, coleção do Postman e a situação na História de Usuário. As telas
+são HTML, CSS e JS simples e ficam dentro da API (o JSF saiu). A meta é fechar o projeto e apresentar na terça, 17/11.
+
+**Onde está o código.** O repositório do código só recebe Pull Request; o que é novo está no fork
+`R1ck-dev/CarregaJA_Implementacao`, na branch **`63-feature-telas-html-css-js`** (PR #38), que já inclui as outras:
+
+```bash
+git clone -b 63-feature-telas-html-css-js https://github.com/R1ck-dev/CarregaJA_Implementacao.git
+```
+
+O ponteiro do submódulo aqui continua no commit antigo de propósito. O `README.md` do código ensina a rodar
+(`scripts\iniciar-tudo.bat`, depois <http://localhost:8081>) e lista as rotas e as telas.
+
+**Pull Requests abertas.** Código: #28, #29, #30, #32, #33 e #34 (dos colegas), #35 (encerramento e sessão órfã), #36
+(Postman), #37 (correção de segurança) e #38 (telas). A #30 aponta para uma branch antiga e precisa ser redirecionada
+para o `develop`. Ordem de merge: as dos colegas, depois #35, #36, #37 e #38. Artefatos: #59 e #60 (colegas), #61 e #62
+(situação das histórias).
+
+**Atualização de 17/11/2026.** Os documentos, o Astah e as Histórias de Usuário foram conferidos contra o código (277 testes sem falha) e corrigidos: Documento de Arquitetura v1.4 e Guia de Implementação v1.5 sem JSF, Visão v4.2, Documento de Requisitos v1.4 e História de Usuário v4.4 (HU-05 testes 04 e 05, HU-03 teste 15 e HU-11 teste 05 atendidos, nenhuma história "sem tela"), `.docx` de todos regerados, e `.asta` com a arquitetura nova (telas em HTML, pacotes por caso de uso, implantação sem Tomcat, diagramas de classes do front-end e do back-end de todos os casos de uso e o Modelo de Objetos com `encerradaPor`, `momento` e `responsavel`). Programa: `_ferramentas/astah/ArquiteturaHtml.java`. As PRs #38 e #39 do código já foram mescladas; a #40 (pacotes por caso de uso, que os documentos já descrevem) segue aberta, e o ponteiro do submódulo ainda precisa avançar. Dos itens abaixo, o 3, o 4 e o 5 estão feitos.
+
+**Falta, nesta ordem:**
+
+1. Estilização simples das telas, só em `css/estilo.css`. Cor sugerida: azul sóbrio.
+2. Decidir o que fazer ao trocar o apartamento de um morador que já tem sessões (hoje isso move o rateio, o consumo e o
+   histórico passados para o apartamento novo). Recomendado: recusar a troca de quem tem sessões.
+3. Diagramas do Astah dos casos de uso novos, com o front-end em HTML dentro da API.
+4. Documento de Arquitetura e Guia de Implementação: trocar JSF por "telas em HTML dentro da API".
+5. Gerar o `.docx` das Histórias de Usuário, uma vez só, depois que as PRs #59 a #62 entrarem.
+6. Planilha de Planejamento e Controle: reescrever o sprint 6 e antecipar o 7, com nota de revisão.
+7. Implantação na nuvem: escolher o serviço e conferir se o pacote roda com `java -jar`.
+
+**Cuidados.** A branch `passagem-2026-11-16` traz o `.asta` com uma alteração local do Henrique, ainda não revisada: só
+uma pessoa edita o modelo por vez, com o Astah fechado ao mexer por programa. Nunca versionar o
+`scripts/config.bat` do código, que tem a senha do MySQL.
+
 ## Diagramas
 
 Os modelos são mantidos no **Astah**, em um único arquivo em
