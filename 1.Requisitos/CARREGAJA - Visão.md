@@ -14,7 +14,7 @@
 | 31/08/2026 | 3.1 | Revisão geral e condensação do texto. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 4.0 | Documento reduzido a uma visão geral, conforme a apresentação da Iniciação. O detalhamento de problemas, restrições, riscos e limitações passou para o Documento de Requisitos. Seções 2 a 6 reescritas. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 4.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
-| 17/11/2026 | 4.2 | Referências aos demais documentos atualizadas (Documento de Requisitos v1.4, História de Usuário v4.4); a duração máxima é ajustada na configuração, e não pelo síndico (RF-18); glossário do painel com as quatro situações. Sem mudança de escopo. | Henrique de Almeida Marangoni Inacio |
+| 17/11/2026 | 4.2 | Referências aos demais documentos atualizadas (Documento de Requisitos v1.4, História de Usuário v4.4); a duração máxima é ajustada na configuração, e não pelo síndico (RF-18); glossário do painel com as quatro situações e quatro termos novos (encerramento administrativo, previsão de conclusão, recusa por vaga ocupada e senha provisória). Sem mudança de escopo. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -40,6 +40,7 @@ energia que ele de fato consumiu.
 |---|---|
 | Apartamento | Unidade autônoma do condomínio. É a ele que o consumo é atribuído no rateio. |
 | Duração Máxima de Sessão | Tempo limite de uma sessão: 6 horas por padrão, ajustável na configuração do sistema (sem tela, RF-18). Atingido o limite, a sessão é sinalizada como excedida, mas não é encerrada. |
+| Encerramento Administrativo | Encerramento de uma sessão órfã pelo síndico, depois da previsão de conclusão e de confirmar na garagem que o veículo saiu. Registra o síndico responsável. |
 | Energia Estimada | Energia atribuída a uma sessão: potência efetiva × duração, limitada à energia que faltava na bateria. |
 | Fechamento do Mês | Consolidação, pelo síndico, das sessões do mês por apartamento. Depois dele o período não aceita alterações. |
 | kW e kWh | Unidades de potência e de energia. A concessionária cobra o condomínio em kWh. |
@@ -47,7 +48,10 @@ energia que ele de fato consumiu.
 | Nível de Bateria | Percentual de carga informado pelo morador ao iniciar a sessão. |
 | Painel de Vagas | Tela com a situação de cada vaga (livre, ocupada, concluída e ainda ocupada, ou excedida) e a previsão de liberação das ocupadas. |
 | Potência Efetiva | O menor valor entre a potência do carregador e a potência máxima aceita pelo veículo. |
+| Previsão de Conclusão | Horário em que a recarga deve terminar, calculado no início da sessão: início somado à energia a repor dividida pela potência efetiva. |
+| Recusa por Vaga Ocupada | Tentativa de iniciar uma sessão em vaga que já está ocupada. É registrada e forma a demanda reprimida que o histórico leva à assembleia. |
 | Rateio | Distribuição do custo da energia entre os apartamentos, proporcional ao consumo de cada um. |
+| Senha Provisória | Senha que o síndico define ao cadastrar um morador. Só serve para trocá-la no primeiro acesso. |
 | Sessão de Recarga | Uso de uma vaga por um veículo, do início ao encerramento declarados pelo morador. |
 | Sessão Órfã | Sessão que continua aberta depois que o veículo saiu da vaga. É encerrada pelo síndico. |
 | Síndico | Responsável pela administração do condomínio. Configura o sistema, trata exceções e fecha o mês. |
