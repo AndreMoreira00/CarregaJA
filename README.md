@@ -94,6 +94,8 @@ O ponteiro do submódulo aqui continua no commit antigo de propósito. O `README
 para o `develop`. Ordem de merge: as dos colegas, depois #35, #36, #37 e #38. Artefatos: #59 e #60 (colegas), #61 e #62
 (situação das histórias).
 
+**Atualização de 17/11/2026.** Os documentos, o Astah e as Histórias de Usuário foram conferidos contra o código (277 testes sem falha) e corrigidos: Documento de Arquitetura v1.4 e Guia de Implementação v1.5 sem JSF, Visão v4.2, Documento de Requisitos v1.4 e História de Usuário v4.4 (HU-05 testes 04 e 05, HU-03 teste 15 e HU-11 teste 05 atendidos, nenhuma história "sem tela"), `.docx` de todos regerados, e `.asta` com a arquitetura nova (telas em HTML, pacotes por caso de uso, implantação sem Tomcat, diagramas de classes do front-end e do back-end de todos os casos de uso e o Modelo de Objetos com `encerradaPor`, `momento` e `responsavel`). Programa: `_ferramentas/astah/ArquiteturaHtml.java`. As PRs #38 e #39 do código já foram mescladas; a #40 (pacotes por caso de uso, que os documentos já descrevem) segue aberta, e o ponteiro do submódulo ainda precisa avançar. Dos itens abaixo, o 3, o 4 e o 5 estão feitos.
+
 **Falta, nesta ordem:**
 
 1. Estilização simples das telas, só em `css/estilo.css`. Cor sugerida: azul sóbrio.
