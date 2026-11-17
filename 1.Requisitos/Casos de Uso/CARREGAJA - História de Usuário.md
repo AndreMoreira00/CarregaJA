@@ -150,6 +150,38 @@ com sessão em andamento.
 
 **Tem protótipo?** Não.
 
+**Situação da implementação (16/11/2026)**
+
+O UC03 foi implementado na API, ainda sem tela: `POST /sessoes` inicia, `GET /sessoes/minha` mostra a sessão aberta e
+`POST /sessoes/minha/encerrar` encerra, apurando a energia pelo UC04. A potência efetiva, a energia a repor, a previsão e a
+tarifa ficam gravadas no início, então trocar o veículo ou a tarifa depois não muda a sessão (RN-04). A vaga não guarda estado:
+volta a aparecer livre assim que a sessão é encerrada. As corridas (teste 03 no início, e o morador e o síndico encerrando a
+mesma sessão) só aparecem com o banco: foram conferidas com a API no ar e o MySQL, em 10 e 20 rodadas, sempre com um único
+vencedor. Essa conferência achou um defeito que os testes de unidade não mostravam: o morador e o síndico encerrando ao mesmo
+tempo apuravam a sessão duas vezes. A sessão passou a ser lida já com a trava.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `SessaoRecargaServiceTest.inicioEmVagaLivreAbreASessaoComAPrevisao`, `SessaoRecargaControllerTest.inicioValidoDevolve201ComAPrevisao`, `PainelVagasServiceTest.sessaoDentroDoPrevistoFicaOcupadaComAPrevisao` |
+| 02 | Atendido: a recusa fica gravada para o UC12 | `SessaoRecargaServiceTest.vagaOcupadaERecusadaComAPrevisaoEARecusaFicaRegistrada`, `SessaoRecargaControllerTest.vagaOcupadaDevolve409ComAMensagem` |
+| 03 | Atendido | Conferido com o MySQL: dois moradores iniciando na G-02 ao mesmo tempo, 10 rodadas, sempre um 201 e um 409 |
+| 04 | Atendido | `SessaoRecargaServiceTest.vagaDesativadaERecusadaSemContarComoDemanda` |
+| 05 | Atendido | `SessaoRecargaServiceTest.moradorSemVeiculoEEncaminhadoAoCadastro` |
+| 06 | Atendido | `SessaoRecargaServiceTest.moradorComSessaoAbertaERecusado` |
+| 07 | Atendido: a sessão continua aberta | `SessaoRecargaServiceTest.sessaoAbertaAlemDaDuracaoMaximaApareceExcedida`, `ApuracaoEnergiaServiceTest.aoAtingirADuracaoMaximaFicaExcedidaEAberta` |
+| 08 | Atendido | `ApuracaoEnergiaServiceTest.veiculoLimitaAPotencia` |
+| 09 | Atendido | `ApuracaoEnergiaServiceTest.carregadorLimitaAPotencia` |
+| 10 | Atendido | `ApuracaoEnergiaServiceTest.potenciasIguais` |
+| 11 | Atendido | `ApuracaoEnergiaServiceTest.carregadorMaiorNaoAceleraVeiculoLento` |
+| 12 | Atendido | `SessaoRecargaServiceTest.bateriaCheiaInformaQueNaoHaRecargaAFazer`, `ApuracaoEnergiaServiceTest.bateriaCheiaNaoTemEnergiaARepor` |
+| 13 | Atendido | `EncerramentoSessaoServiceTest.encerramentoComTetoDeEnergiaAcionado`; com o MySQL, 28,0 kWh, R$ 25,76 e a vaga livre no painel |
+| 14 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAntesDeCompletarACarga` |
+| 15 | Parcial: a resposta do encerramento traz a duração, a energia e o valor; falta a tela | `EncerramentoSessaoServiceTest.encerramentoDevolveDuracaoEnergiaEValor`, `SessaoRecargaControllerTest.moradorEncerraASuaEVeDuracaoEnergiaEValor` |
+| 16 | Atendido | `EncerramentoSessaoServiceTest.semSessaoAbertaInformaQueNaoHaOQueEncerrar`, `SessaoRecargaControllerTest.encerrarSemSessaoAbertaDevolve404ComAMensagem` |
+| 17 | Atendido: a tarifa vigente nem é consultada no encerramento | `EncerramentoSessaoServiceTest.tarifaAlteradaDuranteASessaoNaoMudaOValor`, `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio` |
+
 ---
 
 ## HU-04 — Apurar Energia da Sessão
@@ -180,6 +212,22 @@ contestado**.
 | 05 | Duração nula | Início e encerramento no mesmo minuto | 0,0 kWh; R$ 0,00 |
 
 **Tem protótipo?** Não se aplica — não possui interface própria.
+
+**Situação da implementação (16/11/2026)**
+
+O UC04 não tem rota própria: é o `ApuracaoEnergiaService`, chamado no encerramento pelo morador (UC03) e pelo síndico (UC10), e
+as regras RN-01 a RN-05 ficam nele, sem banco nem tela, testadas isoladamente (RI-08). A apuração usa só o que a sessão gravou
+no início e conta minutos inteiros.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `ApuracaoEnergiaServiceTest.tetoDeEnergiaNaoAcionado` |
+| 02 | Atendido | `ApuracaoEnergiaServiceTest.tetoDeEnergiaAcionado` |
+| 03 | Atendido | `ApuracaoEnergiaServiceTest.tetoAcionadoEmSessaoOrfaLonga`; com o MySQL, no encerramento administrativo |
+| 04 | Atendido | `ApuracaoEnergiaServiceTest.apuraPelaTarifaGravadaNoInicio` |
+| 05 | Atendido | `ApuracaoEnergiaServiceTest.duracaoNulaNoMesmoMinuto` |
 
 ---
 
@@ -391,6 +439,25 @@ fisicamente** que o veículo já não está na vaga.
 | 05 | Morador não acessa a função | Morador tenta encerrar sessão de terceiro | Função indisponível ao perfil Morador |
 
 **Tem protótipo?** Não.
+
+**Situação da implementação (16/11/2026)**
+
+O UC10 foi implementado na API, ainda sem tela: o síndico vê as sessões abertas, das mais antigas para as mais novas, com o
+apartamento, o morador e o estado de cada uma, em `GET /sessoes/abertas`, e encerra a órfã em
+`POST /sessoes/{id}/encerrar-administrativamente`. A sessão fica marcada como administrativa e guarda o síndico; o horário é o
+fim dela (RF-15). A pré-condição virou regra: a API recusa o encerramento administrativo antes da previsão de conclusão, quando
+a recarga ainda pode estar acontecendo, e aí só o morador encerra (RN-07). O sistema não sabe se o veículo saiu da vaga (RE-05),
+então a confirmação na garagem continua sendo do síndico. Os testes foram conferidos também com a API no ar e o MySQL.
+
+`mvn test` em `carregaja-api`: 223 testes, sem falha.
+
+| Nr. | Situação | Evidência |
+|---|---|---|
+| 01 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAdministrativoApuraComOTeto`; com o MySQL, sessão recuada 7 h: 48,0 kWh e R$ 44,16 |
+| 02 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAdministrativoRegistraOSindicoEOHorario`, `SessaoRecargaControllerTest.sindicoEncerraAOrfaEFicaRegistrado`; no MySQL, o síndico e o fim gravados na sessão |
+| 03 | Atendido | `EncerramentoSessaoServiceTest.encerramentoAdministrativoApuraComOTeto` |
+| 04 | Atendido | `ConsumoServiceTest.sessaoEncerradaPeloSindicoVemMarcada`; com o MySQL, a linha aparece em `GET /consumos/meu` |
+| 05 | Atendido: o morador também não vê a lista das sessões abertas | `SessaoRecargaControllerTest.moradorNaoEncerraSessaoDeTerceiroNemVeAsAbertas` |
 
 ---
 
