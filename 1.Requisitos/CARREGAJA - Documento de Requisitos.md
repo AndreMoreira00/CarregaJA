@@ -1,6 +1,6 @@
 # Documento de Requisitos
 
-**Versão 1.3**
+**Versão 1.4**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -12,6 +12,7 @@
 | 26/09/2026 | 1.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
 | 11/10/2026 | 1.2 | RF-13 e RN-08: a tarifa vale a partir da data e hora do cadastro, até o cadastro da próxima, sem data informada pelo síndico. Nova RN-10. | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.3 | RF-01 e nova RN-11: a senha criada pelo síndico é provisória e o usuário a troca no primeiro acesso. | Henrique de Almeida Marangoni Inacio |
+| 17/11/2026 | 1.4 | Referências atualizadas (Visão v4.2, História de Usuário v4.4) e nota do RF-18 e do RI-10: a duração máxima é propriedade da API, ajustada na configuração e sem caso de uso. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -29,8 +30,8 @@ completa dos riscos.
 
 | Documento | Origem |
 |---|---|
-| CARREGAJA - Visão (v4.0) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.3) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - Visão (v4.2) | 1.Requisitos/ |
+| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | Guia - Requisitos de Sistema de Software (FURPS+) | SpinOff / Guidelines |
 | Template - Documento de Requisitos | 1.Requisitos/ |
@@ -90,8 +91,8 @@ o usuário que as realizou.
 | RF-18 | Permitir ajustar a duração máxima da sessão (RN-05). | — |
 
 > **RF-18 ainda não tem caso de uso.** O Visão e a análise de riscos (RI-10) tratam a duração
-> máxima como parâmetro ajustável pelo síndico, mas nenhum caso de uso do modelo cobre essa
-> configuração. Fica registrado como pendência para a Elaboração.
+> máxima como parâmetro ajustável, mas nenhum caso de uso do modelo cobre essa
+> configuração. Na implementação, a duração máxima é uma propriedade da API (`carregaja.sessao.duracao-maxima-horas`, 6 horas), alterada na configuração e não por tela; o RF-18 segue sem caso de uso, como pendência registrada.
 
 ### 4.1. Limites da solução
 
@@ -220,7 +221,7 @@ para deixar explícito que a limitação é conhecida e foi aceita conscientemen
 | RI-07 | **Ausência de cliente real para validar os requisitos** (RE-16). | Requisitos validados apenas internamente; premissas incorretas sobre o domínio podem passar despercebidas. | **Mitigar.** Registro explícito das premissas assumidas; validação do escopo e do planejamento pelo Product Owner; revisão dos requisitos a cada sprint. |
 | RI-08 | **Complexidade subestimada do cálculo de previsão e de apuração**: potência efetiva e limite de energia mais complexos que o previsto. | Retrabalho na Construção; atraso nas entregas de sessão e de rateio. | **Mitigar.** A arquitetura é testada com o UC05 (Manter Veículo) na Elaboração. Previsão de conclusão e apuração entram no sprint 5, o primeiro da Construção, isoladas num serviço coberto por testes de unidade, por concentrarem o maior risco técnico do projeto. |
 | RI-09 | **Nova mudança de escopo**: o escopo já foi alterado nas versões 2.0 e 3.0 do Visão, e os casos de uso foram revistos na apresentação da Iniciação. | Retrabalho nos artefatos de requisitos e de análise; consumo de um prazo já restrito (RE-13). | **Mitigar.** As alterações decorreram de defeitos achados em revisão, e não de mudança de opinião. Toda alteração passa por issue no GitHub, com análise de impacto do Product Owner. |
-| RI-10 | **Limite de duração inadequado ao parque de carregadores**: 6 horas não bastam para carregadores de 3,7 kW, em que a carga completa passa de 11 horas. | Recarga dividida em várias sessões; percepção de que o sistema atrapalha em vez de organizar. | **Mitigar.** O limite é parâmetro de configuração, e não valor fixo no código: o síndico o ajusta se o parque exigir. As 6 horas são o padrão inicial, dimensionado para 7,4 kW e 11 kW. |
+| RI-10 | **Limite de duração inadequado ao parque de carregadores**: 6 horas não bastam para carregadores de 3,7 kW, em que a carga completa passa de 11 horas. | Recarga dividida em várias sessões; percepção de que o sistema atrapalha em vez de organizar. | **Mitigar.** O limite é parâmetro de configuração, e não valor fixo no código: ajusta-se na configuração da API se o parque exigir (não há tela para o síndico, RF-18). As 6 horas são o padrão inicial, dimensionado para 7,4 kW e 11 kW. |
 | RI-11 | **Disputa não mediada pelo sistema**: sem agendamento (RE-12), dois moradores podem descer ao ver a mesma vaga livre, e quem perde a corrida desce à toa. | Conflito entre vizinhos; volta à combinação informal que o sistema pretendia substituir; morador com rotina menos flexível sistematicamente preterido. | **Aceitar, com mitigação parcial.** O painel evita a maior parte das descidas inúteis, mas não a corrida pela vaga recém-liberada. A demanda reprimida é medida (UC12) e levada à assembleia: havendo disputa frequente, a resposta é **ampliar a estrutura**, e não acrescentar regra de software. Fila poderá ser avaliada em versão futura. |
 
 ## 9. Requisitos de Documentação
