@@ -1,6 +1,6 @@
 # Documento de Requisitos
 
-**Versão 1.4**
+**Versão 1.5**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -13,6 +13,7 @@
 | 11/10/2026 | 1.2 | RF-13 e RN-08: a tarifa vale a partir da data e hora do cadastro, até o cadastro da próxima, sem data informada pelo síndico. Nova RN-10. | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.3 | RF-01 e nova RN-11: a senha criada pelo síndico é provisória e o usuário a troca no primeiro acesso. | Henrique de Almeida Marangoni Inacio |
 | 17/11/2026 | 1.4 | Referências atualizadas (Visão v4.2, História de Usuário v4.4) e nota do RF-18 e do RI-10: a duração máxima é propriedade da API, ajustada na configuração e sem caso de uso. | Henrique de Almeida Marangoni Inacio |
+| 23/11/2026 | 1.5 | RF-14 e nova RN-13: o apartamento de morador com sessões não pode ser trocado nem retirado (issue #72). RN-12, já citada na História de Usuário, passa a constar da tabela. Referências atualizadas (Visão v4.3, História de Usuário v4.5). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -30,8 +31,8 @@ completa dos riscos.
 
 | Documento | Origem |
 |---|---|
-| CARREGAJA - Visão (v4.2) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - Visão (v4.3) | 1.Requisitos/ |
+| CARREGAJA - História de Usuário (v4.5) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | Guia - Requisitos de Sistema de Software (FURPS+) | SpinOff / Guidelines |
 | Template - Documento de Requisitos | 1.Requisitos/ |
@@ -84,7 +85,7 @@ o usuário que as realizou.
 | RF-11 | Mostrar ao morador o consumo do mês do seu apartamento, sessão a sessão e acumulado. | UC06 |
 | RF-12 | Permitir ao síndico cadastrar, alterar e desativar vagas com carregador e suas potências. | UC07 |
 | RF-13 | Permitir ao síndico cadastrar a tarifa do kWh, que vale da data e hora do cadastro até o cadastro da próxima (RN-10), preservando as anteriores. | UC08 |
-| RF-14 | Permitir ao síndico cadastrar, alterar e desativar moradores, vinculando-os ao apartamento. | UC09 |
+| RF-14 | Permitir ao síndico cadastrar, alterar e desativar moradores, vinculando-os ao apartamento (RN-09, RN-12, RN-13). | UC09 |
 | RF-15 | Permitir ao síndico encerrar administrativamente uma sessão órfã, registrando quem encerrou e quando. | UC10 |
 | RF-16 | Fechar o mês, consolidando energia e valor por apartamento, e exportar o resultado (RN-08). | UC11 |
 | RF-17 | Exibir o histórico de utilização por vaga, apartamento e período, com as tentativas recusadas por falta de vaga. | UC12 |
@@ -119,6 +120,8 @@ restrições e foram aceitos:
 | RN-09 | Vaga ou morador com histórico é desativado, e não removido. |
 | RN-10 | A tarifa vale da data e hora em que foi cadastrada até o cadastro da próxima. O síndico não informa a data: não há tarifa retroativa nem antecipada. Um reajuste no meio do mês vale só para as sessões iniciadas depois dele (RN-03, RN-04). |
 | RN-11 | A senha que o síndico cadastra é provisória. Até trocá-la, o usuário não acessa nenhuma outra função. Se o síndico redefinir a senha, a troca volta a ser exigida. |
+| RN-12 | O condomínio não fica sem síndico ativo: o último síndico ativo não pode ser desativado, removido nem perder o perfil de síndico. |
+| RN-13 | O apartamento de um morador com histórico não muda. Consumo, rateio e histórico seguem o apartamento atual do morador, e trocá-lo levaria as sessões passadas junto. Quem se muda é desativado e cadastrado de novo no apartamento novo, com outro e-mail. |
 
 > **Por que a apuração é por energia, e não por tempo.** Na versão 1.1 do Visão, com motorista
 > anônimo, cobrar por tempo evitava que se subdeclarasse a potência para pagar menos. Aqui o
