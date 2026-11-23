@@ -2,7 +2,7 @@
 
 **CARREGAJA — Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
-Versão 4.4
+Versão 4.5
 
 ## Dados usados nos testes de aceitação
 
@@ -452,10 +452,11 @@ modo que **o consumo seja atribuído à unidade correta no rateio**.
 | 03 | Dois moradores no mesmo apartamento | Segundo morador no apartamento 42 | Aceito; o consumo dos dois soma no apartamento |
 | 04 | Desativação revoga o acesso | Desativar morador do apto 17 | Acesso negado em HU-01; histórico mantido |
 | 05 | Remoção com sessões no período aberto | Remover morador com sessões em setembro não fechado | Recusado, com oferta de desativar |
+| 06 | Troca de apartamento de morador com sessões | Mudar para o 23 o morador do apto 17, que tem sessões | Recusado, com orientação a desativar e fazer um cadastro novo; as sessões continuam no 17 (RN-13) |
 
 **Tem protótipo?** Não.
 
-**Situação da implementação (17/11/2026)**
+**Situação da implementação (23/11/2026)**
 
 O UC09 foi implementado na API (rotas em `/usuarios`), com a tela `mantermoradores/moradores.html`: o síndico cadastra, altera, desativa, reativa e remove
 moradores. O apartamento é criado quando informado pela primeira vez. Morador é quem tem apartamento; o preposto da
@@ -463,7 +464,11 @@ administradora é síndico sem apartamento. O morador nasce com senha provisóri
 condomínio não pode ficar sem síndico ativo (RN-12). Desativar vale na hora, mesmo para quem já tinha token, porque o usuário é
 lido do banco a cada requisição. Os testes foram conferidos também com a API no ar e o MySQL.
 
-`mvn test` em `carregaja-api`: 277 testes, sem falha (17/11/2026).
+O teste 06 foi acrescentado na versão 4.5 (issue #72): o consumo, o rateio e o histórico seguem o apartamento atual do
+morador, e trocar o apartamento de quem já tem sessões levava as sessões passadas junto. Quem tem sessões ou tentativas de
+vaga registradas mantém o apartamento; os outros dados continuam podendo ser alterados.
+
+`mvn test` em `carregaja-api`: 281 testes, sem falha (23/11/2026).
 
 | Nr. | Situação | Evidência |
 |---|---|---|
@@ -472,6 +477,7 @@ lido do banco a cada requisição. Os testes foram conferidos também com a API 
 | 03 | Atendido: o consumo do UC06 e o rateio do UC11 somam pelo apartamento | `UsuarioServiceTest.doisMoradoresNoMesmoApartamentoCompartilhamOApartamento`; com o MySQL, os dois ficam no mesmo apartamento |
 | 04 | Atendido: o cadastro e as sessões continuam | `UsuarioServiceTest.desativarMantemOCadastro`, `AutenticacaoControllerTest.tokenDeUsuarioDesativadoDevolve401`; com o MySQL, o token deixa de valer e o login é recusado |
 | 05 | Atendido | `UsuarioServiceTest.moradorComSessoesNaoERemovido`; com o MySQL, a recusa oferece desativar |
+| 06 | Atendido: a retirada do apartamento também é recusada | `UsuarioServiceTest.moradorComSessoesNaoTrocaDeApartamento`, `moradorComSessoesNaoFicaSemApartamento`, `moradorComTentativaDeVagaNaoTrocaDeApartamento`, `moradorComSessoesAlteraOsOutrosDadosNoMesmoApartamento`; com o MySQL e na tela, a recusa aparece e a sessão aberta segue no 17 |
 
 ---
 

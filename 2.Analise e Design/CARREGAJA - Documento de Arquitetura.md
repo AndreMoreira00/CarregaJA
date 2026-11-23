@@ -1,6 +1,6 @@
 # Documento de Arquitetura
 
-**Versão 1.4**
+**Versão 1.5**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -13,6 +13,7 @@
 | 03/11/2026 | 1.2 | Autenticação e perfis (UC01): token assinado na API, sessão nas telas e recusas com mensagem. Diagramas de classes do UC01 e veículo ligado ao morador. Por enquanto, o sistema tem só o UC01 e o UC05. | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.3 | Telas simplificadas no modelo de LP2: cada cliente REST faz as próprias chamadas e cada bean mostra as próprias mensagens (seções 4, 5.1 e 8). | Henrique de Almeida Marangoni Inacio |
 | 17/11/2026 | 1.4 | Telas em HTML, CSS e JavaScript simples, servidas pela própria API: saem o JSF, o PrimeFaces e o Tomcat 9, e o sistema passa a ser um projeto só (seções 2, 3, 5, 6 e 8). Os 12 casos de uso implementados. Pacotes por caso de uso dentro de cada camada. Resultado dos testes atualizado (seção 7). | Henrique de Almeida Marangoni Inacio |
+| 23/11/2026 | 1.5 | Referências aos demais documentos atualizadas (Visão v4.3, Documento de Requisitos v1.5, História de Usuário v4.5, Guia de Implementação v1.6). Sem mudança na arquitetura. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -46,11 +47,11 @@ do back-end (seção 3.2).
 
 | Documento | Origem |
 |---|---|
-| CARREGAJA - Visão (v4.2) | 1.Requisitos/ |
-| CARREGAJA - Documento de Requisitos (v1.4) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - Visão (v4.3) | 1.Requisitos/ |
+| CARREGAJA - Documento de Requisitos (v1.5) | 1.Requisitos/ |
+| CARREGAJA - História de Usuário (v4.5) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
-| CARREGAJA - Guia de Implementação (v1.5) | 3.Implementacao/ |
+| CARREGAJA - Guia de Implementação (v1.6) | 3.Implementacao/ |
 | Código fonte (submódulo `CarregaJA_Implementacao`) | 3.Implementacao/ |
 
 ## 2. Visão Geral da Arquitetura
