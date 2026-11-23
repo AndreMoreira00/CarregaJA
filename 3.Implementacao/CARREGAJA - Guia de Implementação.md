@@ -1,6 +1,6 @@
 # Guia de Implementação
 
-**Versão 1.5**
+**Versão 1.6**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -14,6 +14,7 @@
 | 03/11/2026 | 1.3 | Autenticação nos testes e nas telas, `ApiClient`, `BeanBase`, recusas por `RegraNegocioException` e indentação unificada em 2 espaços. | Henrique de Almeida Marangoni Inacio |
 | 03/11/2026 | 1.4 | Bean e cliente REST no formato do modelo de LP2, sem `BeanBase` e sem `ApiClient` (seção 5.2), e rotas sem registro de log (seção 5.1). | Henrique de Almeida Marangoni Inacio |
 | 17/11/2026 | 1.5 | Telas em HTML, CSS e JavaScript simples dentro da API, no lugar do JSF (seções 2, 3, 4, 5.2, 6 e 7). Pacotes por caso de uso dentro de cada camada (seção 3). Segurança por rota e resultado dos testes (277). | Henrique de Almeida Marangoni Inacio |
+| 23/11/2026 | 1.6 | Referências aos demais documentos atualizadas (Documento de Arquitetura v1.5, História de Usuário v4.5). Sem mudança nas orientações. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -30,9 +31,9 @@ segue o leiaute do template do Visão.
 
 | Documento | Origem |
 |---|---|
-| CARREGAJA - Documento de Arquitetura (v1.4) | 2.Analise e Design/ |
+| CARREGAJA - Documento de Arquitetura (v1.5) | 2.Analise e Design/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
-| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - História de Usuário (v4.5) | 1.Requisitos/Casos de Uso/ |
 | README do código fonte (como rodar) | 3.Implementacao/CarregaJA_Implementacao/ |
 | Exercícios de API de Linguagem de Programação 2 | Disciplina integrada (RE-02) |
 

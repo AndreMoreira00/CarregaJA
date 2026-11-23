@@ -1,6 +1,6 @@
 # Visão
 
-**Versão 4.2**
+**Versão 4.3**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -15,6 +15,7 @@
 | 26/09/2026 | 4.0 | Documento reduzido a uma visão geral, conforme a apresentação da Iniciação. O detalhamento de problemas, restrições, riscos e limitações passou para o Documento de Requisitos. Seções 2 a 6 reescritas. | Henrique de Almeida Marangoni Inacio |
 | 26/09/2026 | 4.1 | RI-08: a arquitetura passa a ser testada com o UC05 (Manter Veículo), e a previsão e a apuração vão para o início da Construção. | Henrique de Almeida Marangoni Inacio |
 | 17/11/2026 | 4.2 | Referências aos demais documentos atualizadas (Documento de Requisitos v1.4, História de Usuário v4.4); a duração máxima é ajustada na configuração, e não pelo síndico (RF-18); glossário do painel com as quatro situações e quatro termos novos (encerramento administrativo, previsão de conclusão, recusa por vaga ocupada e senha provisória). Sem mudança de escopo. | Henrique de Almeida Marangoni Inacio |
+| 23/11/2026 | 4.3 | Referências aos demais documentos atualizadas (Documento de Requisitos v1.5, História de Usuário v4.5). Sem mudança de escopo. | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -64,8 +65,8 @@ energia que ele de fato consumiu.
 | Documento | Origem |
 |---|---|
 | SpinOff - Processo de Desenvolvimento de Sistemas | http://arum.tec.br/SpinOff/index.htm |
-| CARREGAJA - Documento de Requisitos (v1.4) | 1.Requisitos/ |
-| CARREGAJA - História de Usuário (v4.4) | 1.Requisitos/Casos de Uso/ |
+| CARREGAJA - Documento de Requisitos (v1.5) | 1.Requisitos/ |
+| CARREGAJA - História de Usuário (v4.5) | 1.Requisitos/Casos de Uso/ |
 | CARREGAJA - Modelos de Análise e Design | 2.Analise e Design/ |
 | CARREGAJA - Planejamento e Controle do Projeto | 6.Gerenciamento de Projeto/ |
 
