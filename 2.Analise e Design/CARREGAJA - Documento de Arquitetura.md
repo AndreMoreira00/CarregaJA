@@ -1,6 +1,6 @@
 # Documento de Arquitetura
 
-**Versão 1.5**
+**Versão 1.6**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -14,6 +14,7 @@
 | 03/11/2026 | 1.3 | Telas simplificadas no modelo de LP2: cada cliente REST faz as próprias chamadas e cada bean mostra as próprias mensagens (seções 4, 5.1 e 8). | Henrique de Almeida Marangoni Inacio |
 | 17/11/2026 | 1.4 | Telas em HTML, CSS e JavaScript simples, servidas pela própria API: saem o JSF, o PrimeFaces e o Tomcat 9, e o sistema passa a ser um projeto só (seções 2, 3, 5, 6 e 8). Os 12 casos de uso implementados. Pacotes por caso de uso dentro de cada camada. Resultado dos testes atualizado (seção 7). | Henrique de Almeida Marangoni Inacio |
 | 23/11/2026 | 1.5 | Referências aos demais documentos atualizadas (Visão v4.3, Documento de Requisitos v1.5, História de Usuário v4.5, Guia de Implementação v1.6). Sem mudança na arquitetura. | Henrique de Almeida Marangoni Inacio |
+| 23/11/2026 | 1.6 | Nuvem escolhida: Render com Supabase (seções 3, 6, 8 e 9). Restrição de mês único no fechamento e tokens invalidados pela troca de senha (seção 9). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -72,7 +73,7 @@ do back-end (seção 3.2).
 | **Um projeto Maven, `carregaja-api`, que serve a API REST e as telas.** Front-end e back-end continuam separados no código: as telas só conversam com a API por HTTP e JSON, e os diagramas os mostram em separado | O professor pediu, na apresentação do sprint 3 (06/10/2026), front-end e back-end separados. Em 25/10 eles eram dois projetos (`carregaja-api` e `carregaja-jsf`). Em 16/11/2026 as telas passaram para dentro da API, para o sistema ser um programa só para subir e para explicar. Como as telas e a API ficam no mesmo endereço, não há configuração de acesso entre endereços (CORS) |
 | **API REST em Spring Boot 2.7**, com Spring Data JPA, Bean Validation, Spring Security e Lombok | Mesma pilha dos exercícios de LP2. A linha 2.7 é a última com `javax.*` |
 | **Telas em HTML, CSS e JavaScript simples**, sem framework e sem passo de compilação, em `src/main/resources/static` | Decisão de 16/11/2026: o JSF com PrimeFaces e o Tomcat 9 exigiam um segundo projeto, um servidor à parte e componentes difíceis de explicar. Cada tela é um arquivo HTML e um script, que chama a API com `fetch` |
-| **MySQL 8** | Banco relacional usado na disciplina. As tabelas são geradas pelo JPA (`ddl-auto=update`). O driver do PostgreSQL também está no pacote, para um banco na nuvem; o serviço de hospedagem ainda não foi escolhido |
+| **MySQL 8** | Banco relacional usado na disciplina. As tabelas são geradas pelo JPA (`ddl-auto=update`). O driver do PostgreSQL também está no pacote: na nuvem, o banco é um PostgreSQL no Supabase, e o banco usado sai do endereço configurado |
 | **Pacotes por camada e, dentro de cada camada, por caso de uso** (`br.edu.ifsp.carregaja.control.manterveiculo`, `service.fecharmes` e assim por diante), com o nome do caso de uso do Astah. O que mais de um caso de uso usa fica em `compartilhado` | Em 26/10/2026 os pacotes eram só por camada. A PR #40 do código passou a ter uma pasta por caso de uso dentro de cada camada, com o nome do caso de uso no Astah, e as pastas das telas seguem o mesmo nome. A separação em camadas, que é a dos exercícios de LP2, continua; nenhuma regra de negócio mudou |
 | **Autenticação por token na API**, com Spring Security e JWT. A API confere e-mail e senha (BCrypt), devolve um token assinado e, a cada requisição, lê do banco o usuário do token | É a API que garante as regras, qualquer que seja o cliente: mesmo chamada sem passar pela tela, ela não deixa um morador agir como síndico nem em nome de outro. Ler o usuário do banco a cada requisição faz a desativação valer na hora (HU-09, teste 04), sem esperar o token vencer |
 | **Validação nos dois lados** | A tela valida para orientar o morador na hora (`required`, `min` nos campos). A API valida de novo porque é ela que garante a regra, qualquer que seja o cliente |
@@ -217,6 +218,11 @@ do token e os dados do primeiro síndico; nenhum deles fica no versionamento. O 
 a API, e o banco não precisa ficar exposto à rede do condomínio. O passo a passo de instalação vai
 para o Guia de Implantação, na Transição.
 
+Na nuvem, escolhida em 23/11/2026, o servidor vira um serviço web do **Render**, que constrói a imagem
+pelo `Dockerfile`, e o MySQL vira um **PostgreSQL no Supabase**, ligado pelo *Session pooler* (IPv4). O
+pacote é o mesmo. O passo a passo e a simulação feita com a imagem e um PostgreSQL 16 estão no
+`CARREGAJA - Guia de Implantação`, em `5.Implantação/`.
+
 ## 7. Teste da Arquitetura
 
 O UC05 foi implementado e testado em 25/10/2026, quando as telas ainda eram JSF; as telas foram
@@ -265,12 +271,13 @@ com `min` recusa o valor, e a API recusa de novo.
 | 03/11/2026 | `ApiClient` e `BeanBase` retirados: cada cliente REST faz as próprias chamadas e cada bean mostra as próprias mensagens; `AutenticacaoFilter` reduzido ao login e à senha provisória | Deixar as telas no formato do modelo de LP2 |
 | 16/11/2026 | Telas em HTML, CSS e JavaScript simples dentro da `carregaja-api`; saem o `carregaja-jsf`, o PrimeFaces e o Tomcat 9. As telas dos 12 casos de uso | Telas fáceis de explicar, um programa só para subir e sem CORS. O ganho de explicação pesou mais que o modelo de LP2 para a tela |
 | 17/11/2026 | Pacotes Java e pastas de telas por caso de uso dentro de cada camada, com `compartilhado` para o que vários usam | Organização do código da PR #40 do `CarregaJA_Implementacao`, aguardando o merge; a camada continua sendo a divisão principal e nenhuma regra de negócio mudou. O motivo da equipe ainda não está registrado |
-| 17/11/2026 | Pacote pronto para a nuvem: `Dockerfile`, porta pela variável `PORT` e driver do PostgreSQL | Publicação na nuvem (PR #39 do código). O serviço ainda não foi escolhido |
+| 17/11/2026 | Pacote pronto para a nuvem: `Dockerfile`, porta pela variável `PORT` e driver do PostgreSQL | Publicação na nuvem (PR #39 do código) |
+| 23/11/2026 | Nuvem: Render (API e telas) e Supabase (PostgreSQL), na mesma região | Plano gratuito suficiente para um condomínio, sem servidor no prédio. Conferido numa simulação com a imagem e um PostgreSQL 16 (Guia de Implantação, seção 4.9) |
 
 ## 9. Pendências da Arquitetura
 
 | Pendência | Quando |
 |---|---|
-| Escolher o serviço de nuvem e conferir a execução na nuvem. O `war` com `java -jar` foi conferido em 17/11/2026: sobe o Tomcat embutido e só para na conexão com o banco, que a máquina de teste não tinha | Implantação |
+| Conferir a execução no Render e no Supabase de verdade. A imagem com um PostgreSQL 16 foi conferida numa simulação em 23/11/2026 | Implantação (issue #80) |
 | Duração máxima da sessão sem tela (RF-18) | Fica como propriedade da API |
-| Pontos da revisão: dois síndicos desativando um ao outro ao mesmo tempo, token válido por 12 horas depois de trocar a senha, fechamento duplicado em requisições simultâneas, soma de energia em `double`, sessões antigas mostrando o modelo atual do veículo | Pós-entrega |
+| Pontos da revisão: dois síndicos desativando um ao outro ao mesmo tempo, soma de energia em `double`, sessões antigas mostrando o modelo atual do veículo. O token válido depois da troca de senha e o fechamento duplicado foram corrigidos no sprint 7 (issues #81 e #82) | Pós-entrega |
