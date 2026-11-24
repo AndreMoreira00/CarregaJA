@@ -1,6 +1,6 @@
 # Guia de Implantação
 
-**Versão 1.0**
+**Versão 1.1**
 
 **CARREGAJA - Sistema de Controle e Rateio de Recarga de Veículos Elétricos em Condomínio**
 
@@ -9,6 +9,7 @@
 | Data | Versão | Descrição | Autor |
 |---|---|---|---|
 | 23/11/2026 | 1.0 | Criação do guia para a implantação da v-4.0.0 na nuvem: API e telas no Render, banco PostgreSQL no Supabase. Roteiro conferido numa simulação local, com a imagem do sistema e um PostgreSQL 16. | Henrique de Almeida Marangoni Inacio |
+| 24/11/2026 | 1.1 | Implantação feita: endereço do sistema, servidor do *Session pooler*, Data API desligada e plano Free escolhido no formulário (seções 4.2, 4.3 e 4.10); situação do cronograma (seção 2.2). | Henrique de Almeida Marangoni Inacio |
 
 ## 1. Introdução
 
@@ -87,17 +88,17 @@ aberta.
 
 Dentro do sprint 7, a Transição (23/11 a 04/12/2026):
 
-| Atividade | Responsável | Prazo | Situação em 23/11 |
+| Atividade | Responsável | Prazo | Situação em 24/11 |
 |---|---|---|---|
 | Testes de sistema, ciclos 1 e 2 (issue #77) | Henrique | 23/11 | Feito: 82 de 82 no ciclo 2 |
-| Correção dos defeitos #81, #82 e #84 | Henrique | 23/11 | PRs #44, #45 e #46 do código em revisão |
+| Correção dos defeitos #81, #82 e #84 | Henrique | 23/11 | Feito: PRs #44, #45 e #46 do código |
 | Simulação local da implantação (seção 4.9) | Henrique | 23/11 | Feito |
-| Guia de Implantação (#78) e Manual do Usuário (#79) | Henrique | 24/11 | Em revisão |
-| Mesclar as PRs, levar o código ao `main` e marcar a v-4.0.0 | André e PO | 26/11 | A fazer |
-| Banco no Supabase, serviço no Render e conferência (#80) | Henrique | 27/11 | A fazer |
-| Homologação pelo PO | Matheus | 28/11 a 01/12 | A fazer |
-| Limpeza dos dados e entrega ao síndico | Henrique | 02/12 | A fazer |
-| Tag v-4.0.0 nos artefatos e fechamento do sprint | Henrique e PO | 04/12 | A fazer |
+| Guia de Implantação (#78) e Manual do Usuário (#79) | Henrique | 24/11 | Feito |
+| Mesclar as PRs, levar o código ao `main` e marcar a v-4.0.0 | André e PO | 26/11 | Feito em 24/11 (PR #47 do código) |
+| Banco no Supabase, serviço no Render e conferência (#80) | Henrique | 27/11 | Feito em 24/11: <https://carregaja.onrender.com> (seção 4.10) |
+| Homologação pelo PO | Matheus | 28/11 a 01/12 | Dada como feita pela equipe em 24/11 |
+| Limpeza dos dados e entrega ao síndico | Henrique | 02/12 | A fazer, na entrega ao síndico do condomínio |
+| Tag v-4.0.0 nos artefatos e fechamento do sprint | Henrique e PO | 04/12 | Feito em 24/11 (issue #89) |
 
 ## 3. Recursos Necessários para Implantar o Produto
 
@@ -163,6 +164,8 @@ Ninguém instala nada no condomínio: o Render baixa o Java e compila o código 
 1. Em <https://supabase.com>, criar a conta e um projeto **carregaja**, na região **East US (North
    Virginia)**, plano Free.
 2. Definir a senha do banco e guardá-la num gerenciador de senhas. Ela vai para o Render no passo 4.3.
+   Em **Data access**, desmarcar **Enable Data API**: a aplicação não usa essa API, e com ela ligada as tabelas
+   criadas pela API do CARREGAJA, inclusive a de usuários, ficariam expostas pela interface pública do Supabase.
 3. No painel do projeto, clicar em **Connect** e escolher **Session pooler**. O endereço tem a forma
    `postgresql://postgres.<ref>:[SENHA]@aws-0-us-east-1.pooler.supabase.com:5432/postgres`. Anotar:
    - o **servidor**: `aws-0-us-east-1.pooler.supabase.com` (o do painel, que pode ser diferente);
@@ -206,6 +209,8 @@ As tabelas não são criadas à mão: a API as cria na primeira subida (`ddl-aut
 
    A porta não é configurada: o Render informa a variável `PORT`, e a imagem a usa. A senha do banco
    vai em variável própria, e não dentro do endereço, para não precisar codificar caracteres especiais.
+   Em **Compute**, conferir que o plano escolhido é o **Free** ($0/month): o formulário pode vir com o plano
+   pago Starter selecionado.
 5. Clicar em **Deploy Web Service**. O Render constrói a imagem (alguns minutos) e sobe o sistema.
 
 ### 4.4. Acompanhar a primeira subida
@@ -299,6 +304,20 @@ A etapa de compilação do `Dockerfile` (`mvn package` dentro do contêiner) nã
 porque o Docker desta máquina caiu no meio dela por falta de recursos; ela é a mesma compilação que
 roda nos testes (`mvn package`, 287 testes sem falha) e é feita pelo Render na seção 4.3. A
 conferência da seção 4.5 no Render e no Supabase de verdade é parte da issue #80.
+
+### 4.10. Implantação de 24/11/2026
+
+| Item | Como ficou |
+|---|---|
+| Endereço | <https://carregaja.onrender.com> |
+| Serviço | Render, Web Service `carregaja`, Docker, plano Free, Virginia (US East), branch `main` do código (commit `05c0fce`), health check `/autenticarusuario/login.html` |
+| Banco | Supabase, projeto `carregaja`, PostgreSQL 17, East US (North Virginia), *Session pooler* em `aws-1-us-east-1.pooler.supabase.com:5432`, Data API desligada |
+| Primeiro síndico | `sindica@carregaja.test`, com a senha provisória já trocada; as senhas ficam com o implantador, fora do repositório |
+| Construção | A imagem foi construída pelo `Dockerfile`, inclusive a etapa de compilação, e o sistema ficou no ar em cerca de 3 minutos |
+| Conferência da seção 4.5 | 15 verificações pela API pública, sem falha; horários no fuso de Brasília; restrição de mês único (#82) criada no banco; painel aberto no navegador |
+
+Os dados criados pela conferência (uma vaga, a tarifa e um morador de teste) ficam até a entrega ao síndico, quando
+saem pela seção 4.7.
 
 ## 5. Treinamento e Suporte
 
